@@ -6,20 +6,20 @@ import 'constants.dart';
 
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
-  primaryColor: primaryColor,
-  splashColor: primaryColor.withValues(alpha: 0.3),
-  highlightColor: primaryColor.withValues(alpha: 0.3),
-  colorScheme: ColorScheme.fromSeed(seedColor: primaryColor),
-  fontFamily: 'TTNorms',
-  scaffoldBackgroundColor: primaryColor,
+  primaryColor: primaryBackgroundColor,
+  splashColor: primaryBackgroundColor.withValues(alpha: 0.3),
+  highlightColor: primaryBackgroundColor.withValues(alpha: 0.3),
+  colorScheme: ColorScheme.fromSeed(seedColor: primaryBackgroundColor),
+  // fontFamily: 'TTNorms',
+  scaffoldBackgroundColor: primaryBackgroundColor,
   appBarTheme: const AppBarTheme(
     surfaceTintColor: Colors.transparent,
     backgroundColor: Colors.white,
     titleTextStyle: TextStyle(
-      fontFamily: 'TTNorms',
+      // fontFamily: 'TTNorms',
       fontWeight: FontWeight.w700,
       fontSize: 18,
-      color: primaryColor,
+      color: primaryBackgroundColor,
     ),
     elevation: 0,
     leadingWidth: 63,
@@ -29,7 +29,7 @@ ThemeData lightTheme = ThemeData(
     style: ElevatedButton.styleFrom(
       minimumSize: const Size(40, 40),
       foregroundColor: Colors.white,
-      backgroundColor: primaryColor,
+      backgroundColor: primaryBackgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       elevation: 0,
     ).copyWith(elevation: const WidgetStatePropertyAll(0)),
@@ -38,30 +38,30 @@ ThemeData lightTheme = ThemeData(
     style: IconButton.styleFrom().copyWith(
       foregroundColor: const WidgetStateColor.fromMap({
         WidgetState.disabled: Colors.grey,
-        WidgetState.any: primaryColor,
+        WidgetState.any: primaryBackgroundColor,
       }),
     ),
   ),
   checkboxTheme: const CheckboxThemeData(
     fillColor: WidgetStateColor.fromMap({
-      WidgetState.selected: primaryColor,
+      WidgetState.selected: primaryBackgroundColor,
       WidgetState.any: Colors.transparent,
     }),
     shape: RoundedRectangleBorder(),
-    side: BorderSide(color: primaryColor, width: 2),
+    side: BorderSide(color: primaryBackgroundColor, width: 2),
   ),
   inputDecorationTheme: InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
+      borderSide: const BorderSide(color: primaryBackgroundColor),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
+      borderSide: const BorderSide(color: primaryBackgroundColor),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
+      borderSide: const BorderSide(color: primaryBackgroundColor),
     ),
     prefixIconConstraints: BoxConstraints.tight(const Size.square(43)),
   ),
@@ -72,17 +72,17 @@ ThemeData lightTheme = ThemeData(
       Icon(IconData(0), color: Colors.transparent),
     ),
     thumbColor: WidgetStateProperty.fromMap({
-      WidgetState.selected: primaryColor,
-      WidgetState.disabled: primaryColor,
+      WidgetState.selected: primaryBackgroundColor,
+      WidgetState.disabled: primaryBackgroundColor,
       WidgetState.error: Colors.red,
-      WidgetState.hovered & WidgetState.focused: primaryColor,
-      WidgetState.focused: primaryColor,
-      ~WidgetState.disabled: primaryColor,
+      WidgetState.hovered & WidgetState.focused: primaryBackgroundColor,
+      WidgetState.focused: primaryBackgroundColor,
+      ~WidgetState.disabled: primaryBackgroundColor,
     }),
     trackColor: WidgetStateProperty.fromMap({
-      WidgetState.selected: primaryColor,
-      WidgetState.disabled: primaryColor.withValues(alpha: 0.5),
-      ~WidgetState.disabled: primaryColor.withValues(alpha: 0.5),
+      WidgetState.selected: primaryBackgroundColor,
+      WidgetState.disabled: primaryBackgroundColor.withValues(alpha: 0.5),
+      ~WidgetState.disabled: primaryBackgroundColor.withValues(alpha: 0.5),
     }),
   ),
 );

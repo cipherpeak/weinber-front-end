@@ -16,6 +16,10 @@ const String usernameRegexForInputFormatter = r'^[a-zA-Z0-9_]{0,16}$';
 // Regular expression for email validation
 const String emailRegex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
 
-const Color primaryColor = Color(0xFF69A2E7);
+const Color primaryBackgroundColor = Color(0xFFF6F8FF);
+const Color primaryColor = Color(0xFF7795ff);
+const Color greyIconsColor = Color(0xFFbdc1c6);
+
+
 
 

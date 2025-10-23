@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
             // Replace with your logo widget as needed
-            Icon(Icons.flash_on, size: 80, color: primaryColor),
+            Icon(Icons.flash_on, size: 80, color: primaryBackgroundColor),
             SizedBox(height: 20),
             Text(
               "Welcome!",
