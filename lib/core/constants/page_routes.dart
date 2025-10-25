@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
-import '../../features/Homepage/Presentation/Screens/bottom_nav_screen.dart';
+import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
+import '../../features/Homepage/Presentation/Screens/Homepage.dart';
 import '../../features/splash/presentation/Screens/splash_screen.dart';
 
 const String routerSplash = '/';
@@ -43,6 +44,17 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const BottomNavScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+
+    GoRoute(
+      path: routerHomePage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const HomepageScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
