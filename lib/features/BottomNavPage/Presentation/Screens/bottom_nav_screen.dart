@@ -38,41 +38,45 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(bottomNavProvider);
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: const Color(0xFFF7F9FC),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/logos/logo.png',
-              height: 35,
-            ),
-            const Spacer(),
-            IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.notifications_none),
-              color: Colors.black87,
-            ),
-            const SizedBox(width: 8),
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: Colors.grey.shade200,
-              backgroundImage: const AssetImage('assets/images/profile.png'),
-            ),
-          ],
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: const Color(0xFFF7F9FC),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+              Image.asset(
+                'assets/logos/logo.png',
+                height: 35,
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.notifications_none),
+                color: Colors.black87,
+              ),
+              const SizedBox(width: 8),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.grey.shade200,
+                backgroundImage: const AssetImage('assets/images/profile.png'),
+              ),
+            ],
+          ),
         ),
-      ),
-      body: IndexedStack(
-        index: currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: _FloatingBottomNavBar(
-        currentIndex: currentIndex,
-        onTap: _onTap,
+        body: IndexedStack(
+          index: currentIndex,
+          children: _screens,
+        ),
+        bottomNavigationBar: _FloatingBottomNavBar(
+          currentIndex: currentIndex,
+          onTap: _onTap,
+        ),
       ),
     );
   }
@@ -98,7 +102,7 @@ class _FloatingBottomNavBar extends StatelessWidget {
     final labels = ['Home', 'Tasks', 'Attendance', 'Report'];
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 15, left: 5, right: 5),
+      padding: const EdgeInsets.only(bottom: 5, left: 5, right: 5),
       child: Container(
         height: 70,
         decoration: const BoxDecoration(
@@ -135,8 +139,8 @@ class _FloatingBottomNavBar extends StatelessWidget {
                       offset: Offset(0, lift),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 300),
-                        padding: const EdgeInsets.all(2),
-                        height: isSelected ? 50 : 44,
+                        padding: const EdgeInsets.all(1),
+                        height: isSelected ? 50 : 45,
                         width: isSelected ? 50 : 44,
                         decoration: BoxDecoration(
                           color:
@@ -156,7 +160,7 @@ class _FloatingBottomNavBar extends StatelessWidget {
                           items[index],
                           color: isSelected
                               ? Colors.white
-                              : Colors.grey.shade600,
+                              : Colors.grey.shade500,
                           size: isSelected ? 32 : 30,
                         ),
                       ),
@@ -165,11 +169,11 @@ class _FloatingBottomNavBar extends StatelessWidget {
                     Text(
                       labels[index],
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight:
                         isSelected ? FontWeight.w700 : FontWeight.w500,
                         color:
-                        isSelected ? primaryColor : Colors.grey.shade600,
+                        isSelected ? primaryColor : Colors.grey.shade500,
                       ),
                     ),
                   ],
