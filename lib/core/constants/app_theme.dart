@@ -10,13 +10,13 @@ ThemeData lightTheme = ThemeData(
   splashColor: primaryBackgroundColor.withValues(alpha: 0.3),
   highlightColor: primaryBackgroundColor.withValues(alpha: 0.3),
   colorScheme: ColorScheme.fromSeed(seedColor: primaryBackgroundColor),
-  fontFamily: 'CroissantOne',
+  fontFamily: 'Gotham',
   scaffoldBackgroundColor: primaryBackgroundColor,
   appBarTheme: const AppBarTheme(
     surfaceTintColor: Colors.transparent,
     backgroundColor: Colors.white,
     titleTextStyle: TextStyle(
-      fontFamily: 'CroissantOne',
+      fontFamily: 'Gotham',
       fontWeight: FontWeight.w700,
       fontSize: 18,
       color: primaryColor,
@@ -33,7 +33,7 @@ ThemeData lightTheme = ThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       elevation: 0,
       textStyle: const TextStyle(
-        fontFamily: 'CroissantOne',
+        fontFamily: 'Gotham',
         fontWeight: FontWeight.w700,
       ),
     ).copyWith(elevation: const WidgetStatePropertyAll(0)),
@@ -54,21 +54,57 @@ ThemeData lightTheme = ThemeData(
     shape: RoundedRectangleBorder(),
     side: BorderSide(color: primaryColor, width: 2),
   ),
-  inputDecorationTheme: InputDecorationTheme(
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+
+      // ✅Default border (grey)
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide(
+          color: Colors.grey.shade200,
+          width: 1.0,
+        ),
+      ),
+
+      //  Focused border (blue outline)
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(
+          color: primaryColor,
+          width: 1.6,
+        ),
+      ),
+
+      //  Disabled border
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: BorderSide(
+          color: Colors.grey.shade300,
+          width: 1.0,
+        ),
+      ),
+
+      //  Error border
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(color: Colors.red, width: 1.2),
+      ),
+
+      //  When focused + error
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(color: Colors.red, width: 1.5),
+      ),
+
+      hintStyle: TextStyle(
+        color: Colors.grey.shade500,
+        fontSize: 13,
+        fontFamily: 'Gotham',
+      ),
+      prefixIconConstraints: BoxConstraints.tight(const Size.square(43)),
     ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: const BorderSide(color: primaryColor),
-    ),
-    prefixIconConstraints: BoxConstraints.tight(const Size.square(43)),
-  ),
   switchTheme: SwitchThemeData(
     trackOutlineWidth: const WidgetStatePropertyAll(0.0),
     trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),

@@ -20,6 +20,15 @@ const Color primaryBackgroundColor = Color(0xFFF6F8FF);
 const Color primaryColor = Color(0xFF7795ff);
 const Color greyIconsColor = Color(0xFFbdc1c6);
 
+//Icons
+const Color iconBlue = Color(0xFF8ECAE6);
+const Color iconOrange = Color(0xFFFFD6A5);
+const Color iconGreen = Color(0xFFC1FBA4);
+const Color iconPink = Color(0xFFDDBDF1);
+
+
+
+
 
 
 

@@ -137,7 +137,7 @@ class LoginPage extends StatelessWidget {
                     textStyle: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
-                      fontFamily: 'CroissantOne',
+                      fontFamily: 'Gotham',
                     ),
                   ),
                   child: const Text('Login'),
@@ -150,7 +150,7 @@ class LoginPage extends StatelessWidget {
                   text: 'Need access or facing login issues? \t',
                   style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 10,
+                    fontSize: 11,
                   ),
                   children: [
                     WidgetSpan(
@@ -161,7 +161,7 @@ class LoginPage extends StatelessWidget {
                         child: const Text(
                           'Contact Support.',
                           style: TextStyle(
-                            fontSize: 10,
+                            fontSize: 11,
                             color: Color(0xFF5B7CFE),
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,

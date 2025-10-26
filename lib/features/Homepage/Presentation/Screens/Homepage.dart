@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:weinber/core/constants/constants.dart';
+import 'package:weinber/features/Homepage/Presentation/Widgets/attendace_card.dart';
+
+import '../Widgets/announcement_card_widget.dart';
+import '../Widgets/task_widget_homepage.dart';
 
 class HomepageScreen extends ConsumerStatefulWidget {
   const HomepageScreen({super.key});
@@ -36,7 +41,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                 Text(
                   'Hello John 👋',
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 17,
                     fontWeight: FontWeight.w700,
                     color: Colors.black87,
                   ),
@@ -44,160 +49,12 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                 const SizedBox(height: 6),
                 const Text(
                   'Welcome back to your workspace.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.black54,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.black54),
                 ),
                 const SizedBox(height: 15),
 
-                // Attendance Status Card
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                  child: Column(
-                    children: [
-                      /// Attendance Status Row
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Status: ',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFE6E6),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Text(
-                              'Pending',
-                              style: TextStyle(
-                                color: Color(0xFFE74C3C),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 9,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Check-in / Check-out times
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: const [
-                                Text(
-                                  'Checked In at:',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '--:-- AM',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // Check In Circle Button
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFFDAA3FF),
-                                    Color(0xFFFFBEBE),
-                                  ],
-                                  stops: [0.0, 1.0],
-                                ),
-                              ),
-                              child: Container(
-                                margin: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color:
-                                      Colors.redAccent.withOpacity(0.3),
-                                      spreadRadius: 2,
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                child: const Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        'Check In',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      SizedBox(height: 4),
-                                      Icon(Icons.check_circle_outline,
-                                          color: Colors.black54, size: 24),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Column(
-                              children: const [
-                                Text(
-                                  'Checked Out at:',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '--:-- PM',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // Attendance Status Card for check in
+                attendanceCardCheckIn(),
               ],
             ),
           ),
@@ -210,7 +67,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                 const TextSpan(
                   text: 'You have ',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
@@ -218,7 +75,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                 const TextSpan(
                   text: '4 tasks ',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: Colors.redAccent,
                   ),
@@ -226,7 +83,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                 const TextSpan(
                   text: 'to complete today.',
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
@@ -236,16 +93,16 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
           ),
           const SizedBox(height: 12),
 
-          _taskCard(
+          taskCard(
             icon: Icons.local_car_wash_outlined,
-            color: const Color(0xFF8ECAE6),
+            color: iconBlue,
             title: 'Car Wash – Sedan',
             subtitle: '123 Main Street · 10:00 AM',
           ),
           const SizedBox(height: 10),
-          _taskCard(
+          taskCard(
             icon: Icons.cleaning_services_outlined,
-            color: const Color(0xFFFFD6A5),
+            color: iconOrange,
             title: 'Interior Detailing – SUV',
             subtitle: '456 Oak Ave · 10:00 AM',
           ),
@@ -258,7 +115,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
               child: const Text(
                 'View All',
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
@@ -272,29 +129,29 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
             'COMPANY ANNOUNCEMENTS',
             style: TextStyle(
               fontWeight: FontWeight.w700,
-              fontSize: 12,
+              fontSize: 13,
               color: Colors.black54,
             ),
           ),
           const SizedBox(height: 12),
 
-          _announcementCard(
+          announcementCard(
             icon: Icons.campaign_outlined,
-            color: const Color(0xFFDDBDF1),
+            color: iconPink,
             title: 'New Leave Policy Updates',
             date: 'Oct 15, 2025',
           ),
           const SizedBox(height: 10),
-          _announcementCard(
+          announcementCard(
             icon: Icons.event_note_outlined,
-            color: const Color(0xFFFFD6A5),
+            color: iconOrange,
             title: 'Team Building Event - Oct 20',
             date: 'Oct 14, 2025',
           ),
           const SizedBox(height: 10),
-          _announcementCard(
+          announcementCard(
             icon: Icons.build_circle_outlined,
-            color: const Color(0xFFA8DADC),
+            color: iconBlue,
             title: 'System Maintenance Notice',
             date: 'Oct 13, 2025',
           ),
@@ -307,7 +164,7 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
               child: const Text(
                 'View All',
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
@@ -319,123 +176,5 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
     );
   }
 
-  // Task Card
-  Widget _taskCard({
-    required IconData icon,
-    required Color color,
-    required String title,
-    required String subtitle,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.arrow_forward_ios_rounded,
-              size: 16, color: Colors.black45),
-        ],
-      ),
-    );
-  }
-
   // Announcement Card
-  Widget _announcementCard({
-    required IconData icon,
-    required Color color,
-    required String title,
-    required String date,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 11,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  date,
-                  style: const TextStyle(
-                    fontSize: 9,
-                    color: Colors.black54,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
