@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
+import '../../../../core/constants/constants.dart';
+
 class SemiCircularProgress extends StatelessWidget {
   final double progress; // from 0.0 to 1.0
   final double size;
@@ -40,7 +42,7 @@ class SemiCircularProgress extends StatelessWidget {
                 Text(
                   "$percentage%",
                   style: TextStyle(
-                    fontFamily: 'Gotham',
+                    fontFamily: appFont,
                     fontWeight: FontWeight.w700,
                     fontSize: 22,
                     color: gradientColors.first,
@@ -50,7 +52,7 @@ class SemiCircularProgress extends StatelessWidget {
                 Text(
                   "Monthly Progress",
                   style: TextStyle(
-                    fontFamily: 'Gotham',
+                    fontFamily: appFont,
                     fontWeight: FontWeight.w500,
                     fontSize: 11,
                     color: Colors.grey[700],

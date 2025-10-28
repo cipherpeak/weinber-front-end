@@ -66,7 +66,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                               ? "Hide Monthly Review"
                               : "View Monthly Review",
                           style: TextStyle(
-                            fontFamily: 'Gotham',
+                            fontFamily: appFont,
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
                             color: Colors.black87,
@@ -135,7 +135,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                   headerProps: EasyHeaderProps(
                     selectedDateFormat: SelectedDateFormat.fullDateDMY,
                     selectedDateStyle: TextStyle(
-                      fontFamily: 'Gotham',
+                      fontFamily: appFont,
                       fontWeight: FontWeight.w600,
                       fontSize: 14,
                     ),
@@ -235,7 +235,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
             Text(
               "MONTHLY REVIEW",
               style: TextStyle(
-                fontFamily: 'Gotham',
+                fontFamily: appFont,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 color: Colors.grey[700],
@@ -298,7 +298,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           Text(
             title,
             style: TextStyle(
-              fontFamily: 'Gotham',
+              fontFamily: appFont,
               fontSize: 13,
               color: Colors.grey[700],
             ),
@@ -307,7 +307,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           Text(
             value,
             style: TextStyle(
-              fontFamily: 'Gotham',
+              fontFamily: appFont,
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: color,

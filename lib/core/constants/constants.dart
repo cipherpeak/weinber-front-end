@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+const String appFont = 'ProductSans';
 const String appName = 'Weinber';
 const String privacyPolicyUrl = '';
 const String playStoreId = '';

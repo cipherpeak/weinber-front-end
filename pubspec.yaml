@@ -41,10 +41,14 @@ dependencies:
   go_router: ^16.3.0
   flutter_secure_storage: ^9.2.4
   upgrader: ^12.1.0
-  package_info_plus: ^9.0.0
+  package_info_plus: ^8.0.0
   percent_indicator: ^4.2.5
   intl: ^0.20.2
   easy_date_timeline: ^2.0.9
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
+  permission_handler: ^11.4.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -76,16 +80,17 @@ flutter:
   # https://flutter.dev/to/resolution-aware-images
 
   fonts:
-    - family: CroissantOne
+    - family: Product Sans
       fonts:
-        - asset: assets/fonts/CroissantOne-Regular.ttf
-    - family: Gotham
-      fonts:
-        - asset: assets/fonts/gotham/Gotham-Book.otf
-        - asset: assets/fonts/gotham/Gotham-Medium.otf
-          weight: 500
-        - asset: assets/fonts/gotham/gotham-rounded-bold.otf
+        - asset: assets/fonts/Product Sans Regular.ttf
+        - asset: assets/fonts/Product Sans Italic.ttf
+          style: italic
+        - asset: assets/fonts/Product Sans Bold.ttf
           weight: 700
+        - asset: assets/fonts/Product Sans Bold Italic.ttf
+          weight: 700
+          style: italic
+
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
 

@@ -10,13 +10,13 @@ ThemeData lightTheme = ThemeData(
   splashColor: primaryBackgroundColor.withValues(alpha: 0.3),
   highlightColor: primaryBackgroundColor.withValues(alpha: 0.3),
   colorScheme: ColorScheme.fromSeed(seedColor: primaryBackgroundColor),
-  fontFamily: 'Gotham',
+  fontFamily: appFont,
   scaffoldBackgroundColor: primaryBackgroundColor,
   appBarTheme: const AppBarTheme(
     surfaceTintColor: Colors.transparent,
     backgroundColor: Colors.white,
     titleTextStyle: TextStyle(
-      fontFamily: 'Gotham',
+      fontFamily: appFont,
       fontWeight: FontWeight.w700,
       fontSize: 18,
       color: primaryColor,
@@ -33,7 +33,7 @@ ThemeData lightTheme = ThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       elevation: 0,
       textStyle: const TextStyle(
-        fontFamily: 'Gotham',
+        fontFamily: appFont,
         fontWeight: FontWeight.w700,
       ),
     ).copyWith(elevation: const WidgetStatePropertyAll(0)),
@@ -101,7 +101,7 @@ ThemeData lightTheme = ThemeData(
       hintStyle: TextStyle(
         color: Colors.grey.shade500,
         fontSize: 13,
-        fontFamily: 'Gotham',
+        fontFamily: appFont,
       ),
       prefixIconConstraints: BoxConstraints.tight(const Size.square(43)),
     ),

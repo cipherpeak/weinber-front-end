@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
 
@@ -90,8 +92,8 @@ class _TaskScreenState extends State<TaskScreen>
               indicatorWeight: 2.2,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: const [
-                Tab(text: "Today's Task"),
-                Tab(text: 'Pending Task'),
+                Tab(child: Text("Today's Task", style: TextStyle(fontFamily: appFont),)),
+                Tab(child: Text("Pending Task",style: TextStyle(fontFamily: appFont))),
               ],
             ),
           ),

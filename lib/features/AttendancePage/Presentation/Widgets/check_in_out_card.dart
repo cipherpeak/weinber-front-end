@@ -43,7 +43,7 @@ Widget checkInOutCard(Map<String, dynamic> task) {
             child: Text(
               task["time"],
               style: TextStyle(
-                fontFamily: 'Gotham',
+                // fontFamily: 'Gotham',
                 fontSize: 12,
                 color: Colors.grey[700],
               ),
@@ -64,7 +64,7 @@ Widget checkInOutCard(Map<String, dynamic> task) {
                 Text(
                   title,
                   style: TextStyle(
-                    fontFamily: 'Gotham',
+                    // fontFamily: 'Gotham',
                     fontWeight: FontWeight.w600,
                     fontSize: 13,
                     color: textColor,
@@ -75,7 +75,7 @@ Widget checkInOutCard(Map<String, dynamic> task) {
                   Text(
                     "Reason: $reason",
                     style: TextStyle(
-                      fontFamily: 'Gotham',
+                      // fontFamily: 'Gotham',
                       fontSize: 12,
                       color: Colors.grey[700],
                     ),
