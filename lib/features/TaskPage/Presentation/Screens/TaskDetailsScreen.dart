@@ -84,37 +84,26 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return SafeArea(
-      bottom: true,
-      top: false,
-      child: Scaffold(
-        backgroundColor: primaryBackgroundColor,
-        body: Padding(
+    return Scaffold(
+      backgroundColor: primaryBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 2,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: const Text(
+            'Task Details',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ),
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// Task details top row
-              Padding(
-                padding: const EdgeInsets.only(top: 55),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        ref.read(bottomNavProvider.notifier).changeIndex(1);
-                        context.go(routerBottomNav);
-                      },
-                      child: Icon(Icons.keyboard_arrow_left, size: 25),
-                    ),
-                    SizedBox(width: 10),
-                    Text('Task Details', style: TextStyle(fontSize: 16)),
-                    Spacer(),
-                    Icon(Icons.more_vert),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -215,7 +204,9 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.push(routerStartTaskDetailsPage);
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 14),

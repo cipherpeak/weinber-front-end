@@ -16,14 +16,17 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 1), () async {
+    Future.delayed(const Duration(milliseconds: 1200), () async {
       if (!mounted) return;
-      if (await AuthService.instance.isLoggedIn()) {
-        context.go(routerHomePage);
+      final isLoggedIn = await AuthService.instance.isLoggedIn();
+
+      if (isLoggedIn) {
+        context.go('/app/home');
       } else {
         context.go(routerLoginPage);
       }
     });
+
   }
 
   @override

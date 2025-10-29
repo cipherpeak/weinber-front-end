@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:weinber/core/constants/constants.dart';
 
 import '../../../AttendancePage/Presentation/Screens/AttendancePage.dart';
@@ -9,7 +10,9 @@ import '../../../TaskPage/Presentation/Screens/TaskScreen.dart';
 import '../Provider/bottom_nav_provider.dart';
 
 class BottomNavScreen extends ConsumerStatefulWidget {
-  const BottomNavScreen({super.key});
+  final Widget child; // <-- required by ShellRoute
+
+  const BottomNavScreen({super.key, required this.child});
 
   @override
   ConsumerState<BottomNavScreen> createState() => _BottomNavScreenState();
@@ -17,21 +20,30 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late final List<Widget> _screens;
+
+  // Map index -> route path inside the shell
+  static const List<String> _tabRoutes = [
+    '/app/home',   // index 0
+    '/app/task',   // index 1
+    '/app/attendance', // index 2 (if you add route)
+    '/app/report', // index 3 (if you add route)
+  ];
 
   @override
   void initState() {
-    _screens = [
-      HomepageScreen(),
-      TaskScreen(),
-      AttendanceScreen(),
-      ReportScreen(),
-    ];
     super.initState();
   }
 
   void _onTap(int index) {
+    // Update Riverpod state
     ref.read(bottomNavProvider.notifier).changeIndex(index);
+
+    // Use GoRouter to switch the shell child route so URL + navigator are in sync.
+    // Guard against out-of-range routes:
+    if (index >= 0 && index < _tabRoutes.length) {
+      // Use context.go to switch the nested route under ShellRoute
+      context.go(_tabRoutes[index]);
+    }
   }
 
   @override
@@ -69,10 +81,10 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
             ],
           ),
         ),
-        body: IndexedStack(
-          index: currentIndex,
-          children: _screens,
-        ),
+
+        // Use the child provided by ShellRoute as the body (this is the key change)
+        body: widget.child,
+
         bottomNavigationBar: _FloatingBottomNavBar(
           currentIndex: currentIndex,
           onTap: _onTap,
@@ -158,22 +170,19 @@ class _FloatingBottomNavBar extends StatelessWidget {
                         ),
                         child: Icon(
                           items[index],
-                          color: isSelected
-                              ? Colors.white
-                              : Colors.grey.shade500,
+                          color:
+                          isSelected ? Colors.white : Colors.grey.shade500,
                           size: isSelected ? 32 : 30,
                         ),
                       ),
                     ),
-                    // const SizedBox(height: 2),
                     Text(
                       labels[index],
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight:
                         isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color:
-                        isSelected ? primaryColor : Colors.grey.shade500,
+                        color: isSelected ? primaryColor : Colors.grey.shade500,
                       ),
                     ),
                   ],

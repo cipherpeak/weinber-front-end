@@ -105,7 +105,7 @@ class LoginPage extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    /*TODO: Fucntion to implement forgot password */
+                    /*TODO: Function to implement forgot password */
                   },
                   child: const Text(
                     'Forgot Password?',
@@ -126,7 +126,7 @@ class LoginPage extends StatelessWidget {
                 height: screenHeight * 0.055,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go(routerBottomNav);
+                    context.go(routerHomePage);
                     /* TODO: Implement */
                   },
                   style: ElevatedButton.styleFrom(
