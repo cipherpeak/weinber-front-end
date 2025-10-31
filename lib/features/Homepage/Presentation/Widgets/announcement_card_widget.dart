@@ -9,11 +9,13 @@ Widget announcementCard({
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: Colors.grey.shade200),
+      borderRadius: BorderRadius.circular(16),
       boxShadow: [
         BoxShadow(
-          color: Colors.black12.withOpacity(0.05),
+          color: Colors.black12.withOpacity(0.08),
           blurRadius: 8,
+
           offset: const Offset(0, 3),
         ),
       ],

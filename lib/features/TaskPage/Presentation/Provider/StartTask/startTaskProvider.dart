@@ -14,7 +14,7 @@ final taskListProvider = StateNotifierProvider<TaskListNotifier, List<TaskItem>>
   ]),
 );
 
-final progressProvider = Provider<double>((ref) {
+final saveProgressPercentageProvider = Provider<double>((ref) {
   final tasks = ref.watch(taskListProvider);
   final completedCount = tasks.where((t) => t.isCompleted).length;
   return completedCount / tasks.length;

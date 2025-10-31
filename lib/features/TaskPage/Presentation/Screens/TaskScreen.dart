@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
+import 'package:weinber/features/TaskPage/Presentation/Screens/TodaysTask.dart';
 
 import '../Widgets/task_card.dart';
+import 'PendingTask.dart';
 
 class TaskScreen extends StatefulWidget {
   const TaskScreen({super.key});
@@ -106,53 +108,10 @@ class _TaskScreenState extends State<TaskScreen>
               controller: _tabController,
               children: [
                 // Today's Task Tab
-                Column(
-                  children: [
-                    TaskCard(
-                      icon: Icons.local_car_wash_outlined,
-                      color: iconBlue,
-                      title: 'Car Wash – Sedan',
-                      subtitle: 'Toyota Camry · ABC 123',
-                      dueTime: '02:00 PM',
-                    ),
-                    const SizedBox(height: 10),
-                    TaskCard(
-                      icon: Icons.cleaning_services_outlined,
-                      color: iconOrange,
-                      title: 'Interior Detailing – SUV',
-                      subtitle: 'Ford Focus · XYZ 789',
-                      dueTime: '04:00 PM',
-                    ),
-                    const SizedBox(height: 10),
-                    TaskCard(
-                      icon: Icons.tire_repair_outlined,
-                      color: iconGreen,
-                      title: 'Tire Pressure Check',
-                      subtitle: 'Honda Civic · LMN 456',
-                      dueTime: '06:00 PM',
-                    ),
-                  ],
-                ),
+                TodaysTask(),
 
                 // Pending Task Tab
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.inbox_outlined,
-                          size: 60, color: Colors.grey),
-                      SizedBox(height: 12),
-                      Text(
-                        'No Pending Tasks',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                PendingTask(),
               ],
             ),
           ),

@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 import '../../../../utils/Common Functions/picImage.dart';
+import '../../../../utils/Common Widgets/percentageBar.dart';
 import '../../../BottomNavPage/Presentation/Provider/bottom_nav_provider.dart';
 import '../Provider/StartTask/pic image provider.dart';
 import '../Provider/StartTask/startTaskProvider.dart';
@@ -24,7 +25,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
 
     final parentContext = context;
     final tasks = ref.watch(taskListProvider);
-    final progress = ref.watch(progressProvider);
+    final progress = ref.watch(saveProgressPercentageProvider);
 
     final areAllTasksCompleted = tasks.every((task) => task.isCompleted);
     final isAnyTaskChecked = tasks.any((task) => task.isCompleted);
@@ -49,8 +50,9 @@ class StartTaskDetailsScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 16.0),
             child: GestureDetector(
               onTap: () {
-                // Handle "Take Break" tap
+                _showPauseDialog(context, completedPercent);
               },
+
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
@@ -107,30 +109,8 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Container(
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: FractionallySizedBox(
-                      widthFactor: progress,
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Colors.purpleAccent, Colors.indigoAccent],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                //Progress Bar
+                PercentageBar( saveProgressPercentageProvider),
 
                 const SizedBox(height: 24),
 
@@ -454,5 +434,111 @@ class StartTaskDetailsScreen extends ConsumerWidget {
       ),
     );
   }
+
+  void _showPauseDialog(BuildContext context, String completedPercent) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: const Text(
+                    "Task Has Been Paused",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  "Your task has been paused at $completedPercent% completion.",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.black,
+                    height: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // --- Progress Bar ---
+                PercentageBar(saveProgressPercentageProvider),
+
+                const SizedBox(height: 24),
+
+                // --- Return to Tasks button ---
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "Return to Tasks",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // --- Go to Home button ---
+                SizedBox(
+                  width: double.infinity,
+                  height: 45,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(dialogContext).pop();
+                      context.go(routerHomePage); // Navigate to your Home page
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "Go to Home",
+                      style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 }
 
