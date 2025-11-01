@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weinber/core/constants/constants.dart';
 
+import '../../../../utils/Common Widgets/build_labelled_field.dart';
+
 class ReportScreen extends StatefulWidget {
   const ReportScreen({super.key});
 
@@ -153,7 +155,7 @@ class _ReportScreenState extends State<ReportScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildLabelledField(
+                    child: buildLabelledField(
                       label: "Date",
                       required: true,
                       child: InkWell(
@@ -180,7 +182,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: _buildLabelledField(
+                    child: buildLabelledField(
                       label: "Time",
                       required: true,
                       child: InkWell(
@@ -210,7 +212,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
               const SizedBox(height: 20),
 
-              _buildLabelledField(
+              buildLabelledField(
                 label: "Location",
                 required: true,
                 child: TextField(
@@ -239,7 +241,7 @@ class _ReportScreenState extends State<ReportScreen> {
               const SizedBox(height: 20),
 
 
-            _buildLabelledField(
+            buildLabelledField(
               label: "Issue Category",
               required: true,
               child: Container(
@@ -302,7 +304,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
               const SizedBox(height: 20),
 
-              _buildLabelledField(
+              buildLabelledField(
                 label: "Description",
                 required: true,
                 child: TextField( style:
@@ -406,37 +408,6 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildLabelledField({
-    required String label,
-    required Widget child,
-    bool required = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
-            text: label,
-            style: const TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-                fontSize: 14
-            ),
-            children: required
-                ? const [
-              TextSpan(
-                text: ' *',
-                style: TextStyle(color: Colors.red),
-              ),
-            ]
-                : [],
-          ),
-        ),
-        const SizedBox(height: 6),
-        child,
-      ],
-    );
-  }
 
   BoxDecoration _inputDecoration() {
     return BoxDecoration(

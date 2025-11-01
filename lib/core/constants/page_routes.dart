@@ -4,6 +4,8 @@ import 'package:weinber/features/AttendancePage/Presentation/Screens/AttendanceP
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
+import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
+import '../../features/Homepage/Presentation/Screens/CheckOutPages/check_out_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/Homepage.dart';
 import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
@@ -11,7 +13,6 @@ import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
 import '../../features/splash/presentation/Screens/splash_screen.dart';
 
 // 🧭 Route constants
-
 
 const String routerSplash = '/';
 const String routerLoginPage = '/login';
@@ -23,6 +24,8 @@ const String routerAttendancePage = '/app/attendance';
 const String routerReportPage = '/app/report';
 const String routerTaskDetailsPage = '/app/task/details';
 const String routerStartTaskDetailsPage = '/app/task/start';
+const String routerCheckInFirstPage = '/app/attendance/check_in_first';
+const String routerCheckOutFirstPage = '/app/attendance/check_out_first';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,6 +41,8 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const SplashScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -47,6 +52,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: routerLoginPage,
       pageBuilder: (context, state) => CustomTransitionPage(
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         key: state.pageKey,
         child: const LoginPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -61,27 +68,50 @@ final GoRouter router = GoRouter(
       routes: [
         GoRoute(
           path: routerHomePage,
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: HomepageScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const HomepageScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: routerTaskPage,
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: TaskScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const TaskScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: routerAttendancePage,
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: AttendanceScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const AttendanceScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
         GoRoute(
           path: routerReportPage,
-          pageBuilder: (context, state) => const NoTransitionPage(
-            child: ReportScreen(),
-          ),
+          pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const ReportScreen(),
+              transitionDuration: const Duration(milliseconds: 300),
+              reverseTransitionDuration: const Duration(milliseconds: 300),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) =>
+                      FadeTransition(opacity: animation, child: child)),
         ),
       ],
     ),
@@ -92,6 +122,8 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const TaskDetailsPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -102,10 +134,35 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const StartTaskDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerCheckInFirstPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const CheckInFirstPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerCheckOutFirstPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const CheckOutFirstPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
   ],
 );
-

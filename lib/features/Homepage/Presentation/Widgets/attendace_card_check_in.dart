@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weinber/core/constants/page_routes.dart';
 
 Widget attendanceCardCheckIn() {
   return Container(
@@ -64,48 +65,52 @@ Widget attendanceCardCheckIn() {
               ),
 
               // Check In Circle Button
-              Container(
-                width: 120,
-                height: 120,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFDAA3FF), Color(0xFFFFBEBE)],
-                    stops: [0.0, 1.0],
-                  ),
-                ),
+              GestureDetector(onTap: (){
+                router.push(routerCheckInFirstPage);
+              },
                 child: Container(
-                  margin: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
+                  width: 120,
+                  height: 120,
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.redAccent.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    gradient: LinearGradient(
+                      colors: [Color(0xFFDAA3FF), Color(0xFFFFBEBE)],
+                      stops: [0.0, 1.0],
+                    ),
                   ),
-                  child: const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Check In',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.black54,
-                          size: 24,
+                  child: Container(
+                    margin: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.redAccent.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
                       ],
+                    ),
+                    child: const Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Check In',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.black54,
+                            size: 24,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

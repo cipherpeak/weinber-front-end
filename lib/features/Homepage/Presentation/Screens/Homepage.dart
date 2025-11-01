@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weinber/core/constants/constants.dart';
-import 'package:weinber/features/Homepage/Presentation/Widgets/attendace_card.dart';
 
+import 'package:weinber/core/constants/constants.dart';
+
+import 'package:weinber/features/Homepage/Presentation/Widgets/attendace_card_check_in.dart';
+
+import '../Provider/checkInStatusProvider.dart';
 import '../Widgets/announcement_card_widget.dart';
+import '../Widgets/attendance_card_check_out.dart';
 import '../Widgets/break_widget.dart';
 import '../Widgets/greetingWidget.dart';
 import '../Widgets/ongoing task widget Homepage.dart';
@@ -17,10 +21,19 @@ class HomepageScreen extends ConsumerStatefulWidget {
 }
 
 class _HomepageState extends ConsumerState<HomepageScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final checkInStatus = ref.watch(checkInStatusProvider);
 
+
+    // print("Reloaded homepage");
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Column(
@@ -44,9 +57,19 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
 
                 GreetingWidget,
                 OngoingTaskWidgetHomepage(),
-                SizedBox(height: 20),
-                // Attendance Status Card for check in
-                attendanceCardCheckIn(),
+                const SizedBox(height: 20),
+                // Attendance Status Card based on check-in status
+              checkInStatus.when(
+                data: (isCheckedIn) {
+                  return isCheckedIn
+                      ? attendanceCardCheckOut()
+                      : attendanceCardCheckIn();
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (err, _) => Text("Error: $err"),
+              )
+
+
               ],
             ),
           ),
