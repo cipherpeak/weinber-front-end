@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
+import 'attendace_card_check_in.dart';
+
 Widget attendanceCardCheckOut() {
   return Container(
     decoration: BoxDecoration(
@@ -46,90 +48,77 @@ Widget attendanceCardCheckOut() {
 
         // Check-in / Check-out times
         Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: const [
-                  Text(
-                    'Checked In at:',
-                    style: TextStyle(color: Colors.black54, fontSize: 11),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '10:00 AM',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-                  ),
-                ],
-              ),
-
-              // Check In Circle Button
-              GestureDetector(onTap: (){
-                router.push(routerCheckOutFirstPage);
-              },
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: AlignmentGeometry.topCenter,
-                      end: AlignmentGeometry.bottomCenter,
-                      colors: [Color(0xFFDF99DB), Color(0xFFDD474A)],
-                      stops: [0.0, 1.0],
-                    ),
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.redAccent.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+              timeInfo("Checked In at:", "--:-- AM"),
+              GestureDetector(
+                onTap: () {
+                  router.push(routerCheckOutFirstPage);
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Gradient Outer Ring
+                    Container(
+                      width: 110,
+                      height: 110,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFDE97D9),
+                            Color(0xFFE8474A),
+                          ],
+                          stops: [0.0, 1.0],
                         ),
-                      ],
+                      ),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Check Out',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.black54,
-                            size: 24,
+
+                    // White Inner Circle
+                    Container(
+                      width: 85,
+                      height: 85,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pinkAccent.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
+                      child: const Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Check Out',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: Colors.black54,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              Column(
-                children: const [
-                  Text(
-                    'Checked Out at:',
-                    style: TextStyle(color: Colors.black54, fontSize: 11),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '--:-- PM',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-                  ),
-                ],
-              ),
+              timeInfo("Checked Out at:", "--:-- PM"),
             ],
           ),
         ),

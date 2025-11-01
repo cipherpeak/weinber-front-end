@@ -246,10 +246,11 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                             hintText: "Select or enter Reason",
                             hintStyle:
                             TextStyle(color: Colors.grey, fontSize: 13),
-                            border: InputBorder.none,
                             isDense: true,
-                            contentPadding:
-                            EdgeInsets.symmetric(vertical: 12),
+                            contentPadding: EdgeInsets.zero,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
                           ),
                         ),
                       ),

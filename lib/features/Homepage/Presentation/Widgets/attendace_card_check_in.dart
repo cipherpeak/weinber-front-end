@@ -6,29 +6,35 @@ Widget attendanceCardCheckIn() {
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: Colors.grey.shade200, width: 1),
       boxShadow: [
         BoxShadow(
-          color: Colors.black12.withOpacity(0.05),
+          color: Colors.grey.withOpacity(0.06),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
       ],
     ),
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
     child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        /// Attendance Status Row
+        /// 🔹 Status Row
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
               'Status: ',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFE6E6),
+                color: const Color(0xFFFFEBEB),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
@@ -36,102 +42,115 @@ Widget attendanceCardCheckIn() {
                 style: TextStyle(
                   color: Color(0xFFE74C3C),
                   fontWeight: FontWeight.w600,
-                  fontSize: 10,
+                  fontSize: 11,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
 
-        // Check-in / Check-out times
+        const SizedBox(height: 20),
+
+        /// 🕓 Check-In / Check-Out Info
         Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Column(
-                children: const [
-                  Text(
-                    'Checked In at:',
-                    style: TextStyle(color: Colors.black54, fontSize: 11),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '--:-- AM',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-                  ),
-                ],
-              ),
-
-              // Check In Circle Button
-              GestureDetector(onTap: (){
-                router.push(routerCheckInFirstPage);
-              },
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFFDAA3FF), Color(0xFFFFBEBE)],
-                      stops: [0.0, 1.0],
-                    ),
-                  ),
-                  child: Container(
-                    margin: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.redAccent.withOpacity(0.3),
-                          spreadRadius: 2,
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+              timeInfo("Checked In at:", "--:-- AM"),
+              GestureDetector(
+                onTap: () {
+                  router.push(routerCheckInFirstPage);
+                },
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Gradient Outer Ring
+                    Container(
+                      width: 110,
+                      height: 110,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Color(0xFFC999E2),
+                            Color(0xFFEDB1B8),
+                          ],
+                          stops: [0.0, 1.0],
                         ),
-                      ],
+                      ),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Check In',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.black54,
-                            size: 24,
+
+                    // White Inner Circle
+                    Container(
+                      width: 85,
+                      height: 85,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pinkAccent.withOpacity(0.2),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
+                      child: const Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Check In',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Icon(
+                              Icons.login_rounded,
+                              color: Colors.black54,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              Column(
-                children: const [
-                  Text(
-                    'Checked Out at:',
-                    style: TextStyle(color: Colors.black54, fontSize: 11),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    '--:-- PM',
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 11),
-                  ),
-                ],
-              ),
+              timeInfo("Checked Out at:", "--:-- PM"),
             ],
           ),
         ),
       ],
     ),
+  );
+}
+
+Widget timeInfo(String label, String value) {
+  return Column(
+    children: [
+      Text(
+        label,
+        style: const TextStyle(
+          color: Colors.black54,
+          fontSize: 11,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        value,
+        style: const TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+          color: Colors.black87,
+        ),
+      ),
+    ],
   );
 }
