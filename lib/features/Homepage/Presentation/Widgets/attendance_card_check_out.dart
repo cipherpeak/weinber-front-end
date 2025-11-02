@@ -122,32 +122,36 @@ Widget attendanceCardCheckOut() {
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 10),
-          child: Container(height: 35,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFF69159), Color(0xFFF6685F)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFA5A5A5).withOpacity(0.5),
-
-                  blurRadius: 4,
-                  offset: const Offset(0, 4),
+        GestureDetector(onTap: (){
+          router.go(routerTakeBreakPage);
+        },
+          child: Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 10),
+            child: Container(height: 35,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFF69159), Color(0xFFF6685F)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: const Center(
-              child: Text(
-                'Take a break',
-                style: TextStyle(
-                  color: Colors.white,fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFA5A5A5).withOpacity(0.5),
+
+                    blurRadius: 4,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: const Center(
+                child: Text(
+                  'Take a break',
+                  style: TextStyle(
+                    color: Colors.white,fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

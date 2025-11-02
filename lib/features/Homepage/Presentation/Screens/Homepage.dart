@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../Widgets/announcement_section_widget.dart';
 import '../Widgets/attendace_card_full_section.dart';
+import '../Widgets/break_timer_widget_homepage.dart';
 import '../Widgets/break_widget.dart';
 import '../Widgets/greetingWidget.dart';
 import '../Widgets/ongoing task widget Homepage.dart';
@@ -50,6 +51,21 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
             ),
 
             const SizedBox(height: 10),
+
+            BreakTimerWidget(
+              breakType: "Lunch Break",
+              durationInMinutes: 1, // test with 1 min
+              onExtendBreak: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Break Extended by 5 min"), backgroundColor: Colors.red,),
+                );
+              },
+              onEndBreak: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Break Ended"), backgroundColor: Colors.blue,),
+                );
+              },
+            ),
 
             /// Break History Section
             const BreakHistoryCard(

@@ -21,9 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
       final isLoggedIn = await AuthService.instance.isLoggedIn();
 
       if (isLoggedIn) {
-        context.go('/app/home');
+        router.go('/app/home');
       } else {
-        context.go(routerLoginPage);
+        router.go(routerLoginPage);
       }
     });
 

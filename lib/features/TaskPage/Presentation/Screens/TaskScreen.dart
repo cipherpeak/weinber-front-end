@@ -65,9 +65,8 @@ class _TaskScreenState extends State<TaskScreen>
                     ),
                     prefixIcon: Icon(Icons.search,
                         color: Colors.grey.shade500, size: 22),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
-
+                    // Aligns the hint text vertically center
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   ),
                 ),
               ),

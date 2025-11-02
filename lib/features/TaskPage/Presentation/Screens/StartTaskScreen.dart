@@ -407,7 +407,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.of(context, rootNavigator: true).pop();
-          context.go(routerTaskPage);
+          router.go(routerTaskPage);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
@@ -512,7 +512,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(dialogContext).pop();
-                      context.go(routerHomePage); // Navigate to your Home page
+                      router.go(routerHomePage); // Navigate to your Home page
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weinber/core/constants/constants.dart';
 
+import '../../../../core/constants/page_routes.dart';
 import '../../../AttendancePage/Presentation/Screens/AttendancePage.dart';
 import '../../../Homepage/Presentation/Screens/Homepage.dart';
 import '../../../ReportPage/Presentation/Screens/ReportPage.dart';
@@ -42,7 +43,7 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
     // Guard against out-of-range routes:
     if (index >= 0 && index < _tabRoutes.length) {
       // Use context.go to switch the nested route under ShellRoute
-      context.go(_tabRoutes[index]);
+      router.go(_tabRoutes[index]);
     }
   }
 
@@ -73,10 +74,14 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
                 color: Colors.black87,
               ),
               const SizedBox(width: 8),
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.grey.shade200,
-                backgroundImage: const AssetImage('assets/images/profile.png'),
+              GestureDetector(onTap: (){
+                router.push(routerProfilePage);
+              },
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.grey.shade200,
+                  backgroundImage: const AssetImage('assets/images/profile.png'),
+                ),
               ),
             ],
           ),

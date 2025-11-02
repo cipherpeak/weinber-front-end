@@ -126,13 +126,13 @@ class LoginPage extends StatelessWidget {
                 height: screenHeight * 0.055,
                 child: ElevatedButton(
                   onPressed: () {
-                    context.go(routerHomePage);
+                    router.go(routerHomePage);
                     /* TODO: Implement */
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF5B7CFE),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(45),
                     ),
                     textStyle: const TextStyle(
                       fontSize: 15,

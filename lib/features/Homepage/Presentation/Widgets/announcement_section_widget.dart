@@ -61,8 +61,9 @@ class AnnouncementSectionWidget extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
+              iconAlignment: IconAlignment.end,
               onPressed: () {},
-              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.black54,),
               label: const Text(
                 'View All',
                 style: TextStyle(

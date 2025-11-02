@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weinber/features/AttendancePage/Presentation/Screens/AttendancePage.dart';
+import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
 import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckOutPages/check_out_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/Homepage.dart';
+import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
 import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
@@ -23,9 +25,11 @@ const String routerTaskPage = '/app/task';
 const String routerAttendancePage = '/app/attendance';
 const String routerReportPage = '/app/report';
 const String routerTaskDetailsPage = '/app/task/details';
+const String routerProfilePage = '/app/home/profile';
 const String routerStartTaskDetailsPage = '/app/task/start';
 const String routerCheckInFirstPage = '/app/attendance/check_in_first';
 const String routerCheckOutFirstPage = '/app/attendance/check_out_first';
+const String routerTakeBreakPage = '/app/attendance/take_a_break_first';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -158,6 +162,31 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const CheckOutFirstPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerTakeBreakPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const TakeABreakFirstPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    // --- Profile Page (outside shell) ---
+    GoRoute(
+      path: routerProfilePage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ProfileScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
