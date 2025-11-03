@@ -154,7 +154,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -175,7 +175,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                         child: Text(
                           _currentAddress ?? "Fetching location...",
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             color: Colors.black54,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -209,7 +209,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                       Text(
                         selectedTime.format(context),
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                           color: Colors.black54,
                         ),
                       ),
@@ -239,13 +239,13 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                           controller: TextEditingController(text: selectedReason),
                           onChanged: (value) => selectedReason = value,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             color: Colors.black87,
                           ),
                           decoration: const InputDecoration(
                             hintText: "Select or enter Reason",
                             hintStyle:
-                            TextStyle(color: Colors.grey, fontSize: 13),
+                            TextStyle(color: Colors.grey, fontSize: 14),
                             isDense: true,
                             contentPadding: EdgeInsets.zero,
                             border: InputBorder.none,
@@ -274,7 +274,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                               child: Text(
                                 value,
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: Colors.black87,
                                 ),
                               ),
@@ -365,7 +365,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                                   "Tap to",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 14,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 SizedBox(height: 6),
@@ -407,7 +407,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                       TextSpan(
                         text: 'You have ',
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 14,
                           color: Colors.black54,
                         ),
                         children: [
@@ -458,7 +458,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                 "Confirm Check-Out?",
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 15,
+                  fontSize: 16,
                   color: Colors.black87,
                 ),
               ),
@@ -466,7 +466,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
             const SizedBox(height: 20),
             const Text(
               "Your attendance will be marked for today. Make sure you’re at the work site before confirming.",
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 13, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -507,7 +507,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -534,7 +534,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
               child: const Text(
                 "Cancel",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,
                 ),
@@ -588,7 +588,7 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
               child: const Text(
                 "Confirm Check Out",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),

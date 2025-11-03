@@ -31,7 +31,7 @@ class TaskSectionWidget extends StatelessWidget {
               'TASKS ASSIGNED',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 13,
+                fontSize: 14,
                 color: Colors.black54,
                 letterSpacing: -0.3,
               ),
@@ -43,14 +43,14 @@ class TaskSectionWidget extends StatelessWidget {
                 TextSpan(
                   text: 'You have ',
                   style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87),
                 ),
                 TextSpan(
                   text: '4 tasks ',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: Colors.redAccent,
                   ),
@@ -58,7 +58,7 @@ class TaskSectionWidget extends StatelessWidget {
                 TextSpan(
                   text: 'to complete today.',
                   style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: Colors.black87),
                 ),
@@ -89,7 +89,7 @@ class TaskSectionWidget extends StatelessWidget {
               label: const Text(
                 'View All',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),

@@ -141,7 +141,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -162,7 +162,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
                         child: Text(
                           _currentAddress ?? "Fetching location...",
                           style: const TextStyle(
-                              fontSize: 13, color: Colors.black54),
+                              fontSize: 14, color: Colors.black54),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -191,7 +191,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
                       Text(
                         selectedTime.format(context),
                         style: const TextStyle(
-                            fontSize: 13, color: Colors.black54),
+                            fontSize: 14, color: Colors.black54),
                       ),
                       const Icon(Icons.access_time_outlined,
                           size: 18, color: Colors.black54),
@@ -277,7 +277,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
                                   "Tap to",
                                   style: TextStyle(
                                     color: Colors.black54,
-                                    fontSize: 14,
+                                    fontSize: 15,
                                   ),
                                 ),
                                 SizedBox(height: 6),
@@ -319,7 +319,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
                       TextSpan(
                         text: 'You have ',
                         style: TextStyle(
-                            fontSize: 13, color: Colors.black54),
+                            fontSize: 14, color: Colors.black54),
                         children: [
                           TextSpan(
                             text: '4 tasks ',
@@ -363,14 +363,14 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
               "Confirm Check-In?",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 15,
+                fontSize: 16,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 20),
             const Text(
               "Your attendance will be marked for today. Make sure you’re at the work site before confirming.",
-              style: TextStyle(fontSize: 12, color: Colors.black54),
+              style: TextStyle(fontSize: 13, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
@@ -409,7 +409,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
+            style: const TextStyle(fontSize: 13, color: Colors.black54),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -436,7 +436,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
               child: const Text(
                 "Cancel",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.black87,
                   fontWeight: FontWeight.w500,
                 ),
@@ -480,7 +480,7 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
               child: const Text(
                 "Confirm Check In",
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                 ),

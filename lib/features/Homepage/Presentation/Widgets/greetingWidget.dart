@@ -6,7 +6,7 @@ Widget GreetingWidget = Column(
     Text(
       'Hello John 👋',
       style: const TextStyle(
-        fontSize: 17,
+        fontSize: 19,
         fontWeight: FontWeight.w700,
         color: Colors.black87,
       ),
@@ -14,7 +14,7 @@ Widget GreetingWidget = Column(
     const SizedBox(height: 6),
     const Text(
       'Welcome back to your workspace.',
-      style: TextStyle(fontSize: 12, color: Colors.black54),
+      style: TextStyle(fontSize: 14, color: Colors.black54),
     ),
     const SizedBox(height: 15),
   ],

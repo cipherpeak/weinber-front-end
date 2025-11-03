@@ -24,7 +24,7 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
         children: [
           const Text(
             "ONGOING TASK",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black45),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black45),
           ),
           const SizedBox(height: 8),
           Row(
@@ -32,7 +32,7 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Car Wash - Sedan',
-                  style: const TextStyle(fontSize: 11, color: Colors.black, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
               Container(
@@ -45,7 +45,7 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'Paused',
-                    style: TextStyle(fontSize: 9, color: Colors.red, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 11, color: Colors.red, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -54,13 +54,13 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '125 Main Street : 10:00 AM',
-            style: const TextStyle(fontSize: 9, color: Colors.black54, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Align(alignment: AlignmentGeometry.centerRight,
             child: const Text(
               '15% Completed',
-              style: TextStyle(fontSize: 11, color: Colors.black, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(height: 10),

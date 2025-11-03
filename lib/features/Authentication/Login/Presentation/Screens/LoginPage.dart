@@ -51,7 +51,7 @@ class LoginPage extends StatelessWidget {
                 child: const Text(
                   'Enter your login information',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     color: Color(0xFF8890A6),
                     // fontFamily: 'Lato',
                   ),
@@ -65,10 +65,10 @@ class LoginPage extends StatelessWidget {
                   decoration: InputDecoration(
                     // alignLabelWithHint: true,
                     labelText: 'User ID',
-                    labelStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 13),
                     hintText: 'Enter your username here',
                     hintStyle: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       // fontFamily: 'Lato',
                       color: Color(0xFF8890A6),
                     ),
@@ -86,10 +86,10 @@ class LoginPage extends StatelessWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: TextStyle(fontSize: 12),
+                    labelStyle: TextStyle(fontSize: 13),
                     hintText: 'Enter your password',
                     hintStyle: TextStyle(
-                      fontSize: 12,
+                      fontSize: 13,
                       // fontFamily: 'Lato',
                       color: Color(0xFF8890A6),
                     ),
@@ -112,7 +112,7 @@ class LoginPage extends StatelessWidget {
                     style: TextStyle(
                       color: primaryColor,
                       fontWeight: FontWeight.w500,
-                      fontSize: 12,
+                      fontSize: 13,
                       // fontFamily: 'Lato',
                     ),
                   ),
@@ -135,7 +135,7 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(45),
                     ),
                     textStyle: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       // fontFamily: 'Gotham',
                     ),
@@ -150,7 +150,7 @@ class LoginPage extends StatelessWidget {
                   text: 'Need access or facing login issues? \t',
                   style: const TextStyle(
                     color: Colors.black,
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                   children: [
                     WidgetSpan(
@@ -161,7 +161,7 @@ class LoginPage extends StatelessWidget {
                         child: const Text(
                           'Contact Support.',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 12,
                             color: Color(0xFF5B7CFE),
                             fontWeight: FontWeight.w600,
                             decoration: TextDecoration.underline,

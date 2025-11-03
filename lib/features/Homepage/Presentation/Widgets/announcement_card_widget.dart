@@ -45,7 +45,7 @@ Widget announcementCard({
                 title,
                 style: const TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 13,
+                  fontSize: 14,
                   color: Colors.black87,
                   height: 1.3,
                 ),

@@ -30,7 +30,7 @@ class PendingTaskWithProgressCard extends StatelessWidget {
         children: [
           const Text(
             "Morning Vehicle Inspection",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Row(
@@ -38,12 +38,12 @@ class PendingTaskWithProgressCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Toyota Camry - ABC 123',
-                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  style: const TextStyle(fontSize: 13, color: Colors.black54),
                 ),
               ),
               Text(
                 'Task Assigned - Yesterday',
-                style: const TextStyle(fontSize: 11, color: Colors.redAccent),
+                style: const TextStyle(fontSize: 12, color: Colors.redAccent),
               ),
             ],
           ),
@@ -51,7 +51,7 @@ class PendingTaskWithProgressCard extends StatelessWidget {
           Align(alignment: AlignmentGeometry.centerRight,
             child: const Text(
               '85% Completed',
-              style: TextStyle(fontSize: 12, color: primaryColor, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 13, color: primaryColor, fontWeight: FontWeight.w500),
             ),
           ),
           const SizedBox(height: 10),
@@ -73,7 +73,7 @@ class PendingTaskWithProgressCard extends StatelessWidget {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.blue,
                     side: const BorderSide(color: primaryColor),
-                    textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold,),
+                    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold,),
                   ),
                   child: const Text('Mark as Complete', style: TextStyle(color:  primaryColor),),
                 ),
@@ -84,7 +84,7 @@ class PendingTaskWithProgressCard extends StatelessWidget {
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
-                    textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                   ),
                   child: const Text('Continue Task', style: TextStyle(color: Colors.white),),
                 ),

@@ -8,9 +8,10 @@ Widget attendanceCardCheckOut() {
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: Colors.grey.shade200, width: 1),
       boxShadow: [
         BoxShadow(
-          color: Colors.black12.withOpacity(0.05),
+          color: Colors.grey.withOpacity(0.06),
           blurRadius: 10,
           offset: const Offset(0, 4),
         ),
@@ -25,7 +26,7 @@ Widget attendanceCardCheckOut() {
           children: [
             const Text(
               'Status: ',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.black87),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -38,7 +39,7 @@ Widget attendanceCardCheckOut() {
                 style: TextStyle(
                   color: Color(0xFFC19D3D),
                   fontWeight: FontWeight.w600,
-                  fontSize: 10,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -48,7 +49,7 @@ Widget attendanceCardCheckOut() {
 
         // Check-in / Check-out times
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -144,12 +145,12 @@ Widget attendanceCardCheckOut() {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(vertical: 3),
+              padding: const EdgeInsets.symmetric(vertical: 2),
               child: const Center(
                 child: Text(
                   'Take a break',
                   style: TextStyle(
-                    color: Colors.white,fontSize: 13,
+                    color: Colors.white,fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -157,7 +158,6 @@ Widget attendanceCardCheckOut() {
             ),
           ),
         ),
-
       ],
     ),
   );

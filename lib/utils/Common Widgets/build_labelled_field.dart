@@ -14,7 +14,7 @@ Widget buildLabelledField({
           style: const TextStyle(
               color: Colors.black87,
               fontWeight: FontWeight.w600,
-              fontSize: 14
+              fontSize: 15
           ),
           children: required
               ? const [

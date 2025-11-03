@@ -139,7 +139,7 @@ class _ReportScreenState extends State<ReportScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -170,7 +170,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               Text(
                                 DateFormat('dd/MM/yyyy').format(selectedDate),
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: Colors.black87,
                                 ),
                               ),
@@ -204,7 +204,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               Text(
                                 selectedTime.format(context),
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: Colors.black87,
                                 ),
                               ),
@@ -228,7 +228,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 label: "Location",
                 required: true,
                 child: TextField(
-                  style: const TextStyle(fontSize: 13, color: Colors.black),
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
 
                   controller: locationController,
                   readOnly: true,
@@ -242,7 +242,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     ),
                     hintText: "Fetching location...",
                     hintStyle: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       color: Colors.grey,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
@@ -275,14 +275,14 @@ class _ReportScreenState extends State<ReportScreen> {
                             selectedIssueCategory = value;
                           },
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             color: Colors.black87,
                           ),
                           decoration: const InputDecoration(
                             hintText: "Select or enter Issue type",
                             hintStyle: TextStyle(
                               color: Colors.grey,
-                              fontSize: 13,
+                              fontSize: 14,
                             ),
                             border: InputBorder.none,
                             // 👈 Removes all internal borders
@@ -316,7 +316,7 @@ class _ReportScreenState extends State<ReportScreen> {
                               child: Text(
                                 value,
                                 style: const TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: Colors.black87,
                                 ),
                               ),
@@ -335,14 +335,14 @@ class _ReportScreenState extends State<ReportScreen> {
                 label: "Description",
                 required: true,
                 child: TextField(
-                  style: const TextStyle(fontSize: 13, color: Colors.black87),
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
                   controller: descriptionController,
                   maxLines: 4,
                   decoration: InputDecoration(
                     hintText: "Briefly describe the issue",
                     hintStyle: const TextStyle(
                       color: Colors.grey,
-                      fontSize: 13,
+                      fontSize: 14,
                     ),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -386,21 +386,21 @@ class _ReportScreenState extends State<ReportScreen> {
                         text: 'Select a ',
                         style: const TextStyle(
                           color: Colors.black87,
-                          fontSize: 12,
+                          fontSize: 13,
                         ),
                         children: [
                           TextSpan(
                             text: 'file ',
                             style: TextStyle(
                               color: Colors.blue.shade600,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w600,fontSize: 13
                             ),
                           ),
                           const TextSpan(
                             text: 'and upload it here.',
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 12,
+                              fontSize: 13,
                             ),
                           ),
                         ],
@@ -410,7 +410,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     const Text(
                       "Supports PNG, JPEG Max file size 2MB.",
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey, fontSize: 10),
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),
@@ -438,14 +438,14 @@ class _ReportScreenState extends State<ReportScreen> {
                                 'CONFIRM SUBMISSION',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 15,
                                 ),
                               ),
                               const SizedBox(height: 15),
                               const Text(
                                 'Are you sure you want to report this issue?',
                                 textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 12),
+                                style: TextStyle(fontSize: 13),
                               ),
                               const SizedBox(height: 15),
 
@@ -480,7 +480,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                           style: TextStyle(
                                             color: Colors.black87,
                                             fontWeight: FontWeight.w500,
-                                            fontSize: 13,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
@@ -515,7 +515,7 @@ class _ReportScreenState extends State<ReportScreen> {
                                           style: TextStyle(
                                             color: Colors.white,
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 13,
+                                            fontSize: 14,
                                           ),
                                         ),
                                       ),
@@ -545,7 +545,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     "Submit Issue",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
                   ),

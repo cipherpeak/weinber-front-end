@@ -93,7 +93,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                 Text(
                   "${widget.breakType} Timer",
                   style: const TextStyle(
-                    fontSize: 13,
+                    fontSize: 14,
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
@@ -112,7 +112,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                 Text(
                   "$remainingMinutes min remaining",
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.white70,
                   ),
                 ),
@@ -140,7 +140,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                 const Text(
                   "Break Time Exceeded !!",
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 15,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
@@ -159,7 +159,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                 const Text(
                   "Please return to your daily work",
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.white70,
                   ),
                 ),
@@ -193,7 +193,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                         style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.w600,
-                            fontSize: 13),
+                            fontSize: 14),
                       ),
                     ),
                   ),
@@ -215,7 +215,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
-                          fontSize: 13,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -233,7 +233,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                 onPressed: widget.onEndBreak,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.redAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 3),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
@@ -243,7 +243,7 @@ class _BreakTimerWidgetState extends State<BreakTimerWidget> {
                   "End Break Now",
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: Colors.white,
                   ),
                 ),

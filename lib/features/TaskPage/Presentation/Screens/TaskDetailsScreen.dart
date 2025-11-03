@@ -100,7 +100,7 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
         ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -159,7 +159,7 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
                     const SizedBox(height: 16),
                     const Text(
                       "Task Notes",
-                      style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+                      style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14),
                     ),
                     const SizedBox(height: 6),
                     Container(
@@ -172,7 +172,7 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
                       ),
                       child: const Text(
                         "Please ensure to confirm vehicle condition before starting the wash. Take before and after photos.",
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 13),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -190,7 +190,7 @@ class _TaskDetailsPageState extends ConsumerState<TaskDetailsPage> {
                           style: TextStyle(
                             color: Colors.green,
                             fontWeight: FontWeight.w600,
-                            fontSize: 13
+                            fontSize: 14
                           ),
                         ),
                       ),

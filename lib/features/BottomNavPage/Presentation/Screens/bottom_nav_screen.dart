@@ -184,7 +184,7 @@ class _FloatingBottomNavBar extends StatelessWidget {
                     Text(
                       labels[index],
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight:
                         isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected ? primaryColor : Colors.grey.shade500,

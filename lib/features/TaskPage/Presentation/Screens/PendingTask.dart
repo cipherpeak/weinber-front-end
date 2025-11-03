@@ -16,7 +16,7 @@ class PendingTask extends StatelessWidget {
           child: PendingTaskWithProgressCard(),
         ),
         SizedBox(height: 25,),
-        Text('PENDING QUEUE', style: TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold),),
+        Text('PENDING QUEUE', style: TextStyle(color: Colors.grey, fontSize: 15, fontWeight: FontWeight.bold),),
         SizedBox(height: 20),
         TaskCard(
           icon: Icons.local_car_wash_outlined,

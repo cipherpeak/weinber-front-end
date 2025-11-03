@@ -23,7 +23,6 @@ class StartTaskDetailsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final parentContext = context;
     final tasks = ref.watch(taskListProvider);
     final progress = ref.watch(saveProgressPercentageProvider);
 
@@ -71,7 +70,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                   children: [
                     Text(
                       "Take Break",
-                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 4),
                     Icon(Icons.pause, color: Colors.white, size: 16),
@@ -85,7 +84,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
       body: SafeArea(bottom: true,
         child: Padding(
           // This SafeArea is redundant if AppBar is used, but kept for safety.
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Column(
@@ -104,7 +103,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                     style: const TextStyle(
                       color: primaryColor,
                       fontWeight: FontWeight.w500,
-                      fontSize: 12
+                      fontSize: 13
                     ),
                   ),
                 ),
@@ -155,7 +154,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                 // --- Progress Update Field ---
                 const Text(
                   "PROGRESS UPDATE",
-                  style: TextStyle(
+                  style: TextStyle(fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black54,
                     letterSpacing: 0.3,
@@ -167,7 +166,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Colors.black54,
-                    fontSize: 10
+                    fontSize: 11
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -288,7 +287,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                                           child: const Text(
                                             'Final Comments (Optional)',
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const SizedBox(height: 16),
@@ -310,14 +309,14 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                                             children: [
                                               Text('Task Ready For Completion',style: TextStyle(
                                             color: Colors.green.shade800,
-                                            fontSize: 10,fontWeight: FontWeight.bold
+                                            fontSize: 11,fontWeight: FontWeight.bold
                                           )),
                                               SizedBox(height: 8),
                                               Text(
                                                 'All requires checklist items have been completed.\nThe task will be marked as finished',
                                                 style: TextStyle(
                                                   color: Colors.green.shade800,
-                                                  fontSize: 10,
+                                                  fontSize: 11,
                                                 ),
                                               ),
                                             ],
@@ -343,7 +342,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                                                   side: BorderSide(color: Colors.grey.shade300),
                                                 ),
                                               ),
-                                              child: const Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 13)),
+                                              child: const Text('Cancel', style: TextStyle(color: Colors.black, fontSize: 14)),
                                             ),
                                           ),
                                         ],
@@ -424,7 +423,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: 14,
               ),
             ),
             SizedBox(width: 8),
@@ -465,7 +464,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
                   "Your task has been paused at $completedPercent% completion.",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.black,
                     height: 1.2,
                   ),

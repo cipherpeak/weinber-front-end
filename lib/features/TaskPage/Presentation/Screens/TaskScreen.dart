@@ -29,7 +29,7 @@ class _TaskScreenState extends State<TaskScreen>
     final width = MediaQuery.of(context).size.width;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,7 +61,7 @@ class _TaskScreenState extends State<TaskScreen>
                     hintText: 'Search by vehicle or task',
                     hintStyle: TextStyle(
                       color: Colors.grey.shade500,
-                      fontSize: 13,
+                      fontSize: 14,
                     ),
                     prefixIcon: Icon(Icons.search,
                         color: Colors.grey.shade500, size: 22),
@@ -87,9 +87,9 @@ class _TaskScreenState extends State<TaskScreen>
               labelColor: primaryColor,
               unselectedLabelColor: Colors.grey,
               labelStyle: const TextStyle(
-                  fontSize: 13, fontWeight: FontWeight.w700),
+                  fontSize: 14, fontWeight: FontWeight.w700),
               unselectedLabelStyle: const TextStyle(
-                  fontSize: 13, fontWeight: FontWeight.w500),
+                  fontSize: 14, fontWeight: FontWeight.w500),
               indicatorWeight: 2.2,
               indicatorSize: TabBarIndicatorSize.label,
               tabs: const [

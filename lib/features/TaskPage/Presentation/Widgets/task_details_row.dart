@@ -11,7 +11,7 @@ Widget buildDetailRow(String title, String value, {required final myWidth, bool 
               width: myWidth * 0.4,
               child: Text(
                 title,
-                style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+                style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 13),
               ),
             ),
             Expanded(
@@ -21,7 +21,7 @@ Widget buildDetailRow(String title, String value, {required final myWidth, bool 
                 textAlign: TextAlign.start,
                 style: TextStyle(
                   fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
-                  fontSize: 12,
+                  fontSize: 13,
                 ),
               ),
             ),

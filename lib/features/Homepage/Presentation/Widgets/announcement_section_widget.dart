@@ -31,7 +31,7 @@ class AnnouncementSectionWidget extends StatelessWidget {
               'COMPANY ANNOUNCEMENTS',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 13,
+                fontSize: 14,
                 color: Colors.black54,
               ),
             ),
@@ -67,7 +67,7 @@ class AnnouncementSectionWidget extends StatelessWidget {
               label: const Text(
                 'View All',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),

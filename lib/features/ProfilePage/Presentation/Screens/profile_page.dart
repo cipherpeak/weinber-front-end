@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
-import 'package:weinber/features/BottomNavPage/Presentation/Widgets/profile_header_section.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Widgets/profile_header_section.dart';
 
 import '../../../../core/constants/page_routes.dart';
 
@@ -50,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
           "Your Account",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -63,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -121,7 +121,7 @@ class ProfileScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.grey.shade600,
                   fontWeight: FontWeight.w600,
-                  fontSize: 12,
+                  fontSize: 14,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -164,7 +164,7 @@ class ProfileScreen extends StatelessWidget {
                         child: Text(
                           item['title'] as String,
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                             color: Colors.black87,
                           ),

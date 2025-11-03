@@ -29,7 +29,7 @@ class AttendanceCardSection extends ConsumerWidget {
       const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),
       error: (err, _) => Text(
         "Error: $err",
-        style: const TextStyle(color: Colors.redAccent, fontSize: 12),
+        style: const TextStyle(color: Colors.redAccent, fontSize: 13),
       ),
     );
   }

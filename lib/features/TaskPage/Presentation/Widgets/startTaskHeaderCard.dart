@@ -27,21 +27,21 @@ class TaskHeaderCard extends StatelessWidget {
             "Car Wash – Sedan",
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              fontSize: 13,
+              fontSize: 14,
               color: Colors.black87,
             ),
           ),
           const SizedBox(height: 4),
           const Text(
             "Toyota Camry - ABC 123",
-            style: TextStyle(color: Colors.black54, fontSize: 12),
+            style: TextStyle(color: Colors.black54, fontSize: 13),
           ),
           const SizedBox(height: 4),
           Row(
             children: [
               const Text(
                 "02:00 PM",
-                style: TextStyle( fontSize: 12),
+                style: TextStyle( fontSize: 13),
               ),
               const Spacer(),
               Container(
@@ -58,7 +58,7 @@ class TaskHeaderCard extends StatelessWidget {
                   style: TextStyle(
                     color: Color(0xffE19B34),
                     fontWeight: FontWeight.w600,
-                    fontSize: 11,
+                    fontSize: 12,
                   ),
                 ),
               ),

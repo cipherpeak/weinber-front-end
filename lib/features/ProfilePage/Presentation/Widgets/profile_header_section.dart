@@ -29,7 +29,7 @@ class ProfileHeaderSection extends StatelessWidget {
               Text(
                 'John Doe',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: Colors.black87,
                 ),
@@ -38,7 +38,7 @@ class ProfileHeaderSection extends StatelessWidget {
               Text(
                 'Employee ID: EMP-00-123',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
@@ -46,7 +46,7 @@ class ProfileHeaderSection extends StatelessWidget {
               Text(
                 'Car Service Associate',
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 14,
                   color: primaryColor, // or Colors.blueAccent
                   fontWeight: FontWeight.w600,
                 ),

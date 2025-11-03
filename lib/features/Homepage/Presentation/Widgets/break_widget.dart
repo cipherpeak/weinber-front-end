@@ -35,7 +35,7 @@ class BreakHistoryCard extends StatelessWidget {
                   "Today's Break History",
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
-                    fontSize: 13,
+                    fontSize: 14,
                   ),
                 ),
                 Row(
@@ -72,7 +72,7 @@ class BreakHistoryCard extends StatelessWidget {
                       Text(
                         'Total break time',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Colors.grey[700],
                         ),
                       ),
@@ -94,7 +94,7 @@ class BreakHistoryCard extends StatelessWidget {
                       Text(
                         'Extended breaks',
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Colors.grey[700],
                         ),
                       ),

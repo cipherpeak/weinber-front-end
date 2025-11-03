@@ -15,7 +15,7 @@ Widget attendanceCardCheckIn() {
         ),
       ],
     ),
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -26,7 +26,7 @@ Widget attendanceCardCheckIn() {
             const Text(
               'Status: ',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
               ),
@@ -42,7 +42,7 @@ Widget attendanceCardCheckIn() {
                 style: TextStyle(
                   color: Color(0xFFE74C3C),
                   fontWeight: FontWeight.w600,
-                  fontSize: 11,
+                  fontSize: 12,
                 ),
               ),
             ),
@@ -53,7 +53,7 @@ Widget attendanceCardCheckIn() {
 
         /// 🕓 Check-In / Check-Out Info
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -105,7 +105,7 @@ Widget attendanceCardCheckIn() {
                             Text(
                               'Check In',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.black87,
                               ),
@@ -139,7 +139,7 @@ Widget timeInfo(String label, String value) {
         label,
         style: const TextStyle(
           color: Colors.black54,
-          fontSize: 11,
+          fontSize: 12,
         ),
       ),
       const SizedBox(height: 4),
@@ -147,7 +147,7 @@ Widget timeInfo(String label, String value) {
         value,
         style: const TextStyle(
           fontWeight: FontWeight.w600,
-          fontSize: 12,
+          fontSize: 13,
           color: Colors.black87,
         ),
       ),

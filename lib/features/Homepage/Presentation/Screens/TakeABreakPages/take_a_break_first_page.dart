@@ -41,7 +41,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
         title: const Text(
           "Choose Your Break Type",
           style: TextStyle(
-              fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black),
+              fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
@@ -53,7 +53,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
       ),
       backgroundColor: primaryBackgroundColor,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +105,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                         Text(
                           b['title'],
                           style: const TextStyle(
-                            fontSize: 13,
+                            fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -119,7 +119,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                 "Others",
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 8),
@@ -143,7 +143,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                     });
                   },
                   decoration: InputDecoration(
-                    hintStyle: const TextStyle(fontSize: 13),
+                    hintStyle: const TextStyle(fontSize: 14),
                     hintText: "Enter break type",
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 14),
@@ -161,7 +161,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                 "Duration",
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
               ),
               const SizedBox(height: 10),
@@ -203,7 +203,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                           "$d min",
                           style: TextStyle(
                             fontWeight: FontWeight.w500,
-                            fontSize: 13,
+                            fontSize: 14,
                             color: selectedDuration == d
                                 ? Colors.blueAccent
                                 : Colors.black87,
@@ -229,9 +229,9 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                 ),
                 child: DropdownButtonFormField<int>(
                   decoration: InputDecoration(
-                    hintStyle: const TextStyle(fontSize: 13),
+                    hintStyle: const TextStyle(fontSize: 14),
                     hintText: "Custom minutes",
-                    suffixStyle: const TextStyle(fontSize: 13),
+                    suffixStyle: const TextStyle(fontSize: 14),
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 15, vertical: 14),
                     filled: true,
@@ -298,7 +298,7 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
               "Start Break",
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontSize: 15,
                 color: Colors.white,
               ),
             ),
