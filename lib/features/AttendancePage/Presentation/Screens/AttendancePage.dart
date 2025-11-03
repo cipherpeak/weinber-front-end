@@ -45,7 +45,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                 },
                 child: Container(
                   padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -137,7 +137,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                     selectedDateStyle: TextStyle(
                       fontFamily: appFont,
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 15,
                     ),
                   ),
                   dayProps: EasyDayProps(
@@ -237,7 +237,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
               style: TextStyle(
                 fontFamily: appFont,
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: 14,
                 color: Colors.grey[700],
               ),
             ),
@@ -299,7 +299,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
             title,
             style: TextStyle(
               fontFamily: appFont,
-              fontSize: 13,
+              fontSize: 14,
               color: Colors.grey[700],
             ),
           ),

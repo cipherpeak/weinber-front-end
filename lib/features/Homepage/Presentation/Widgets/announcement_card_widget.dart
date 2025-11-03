@@ -62,7 +62,7 @@ Widget announcementCard({
                   Text(
                     date,
                     style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 13,
                       color: Colors.black54,
                     ),
                   ),

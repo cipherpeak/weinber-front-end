@@ -54,7 +54,7 @@ class SemiCircularProgress extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: appFont,
                     fontWeight: FontWeight.w500,
-                    fontSize: 11,
+                    fontSize: 13,
                     color: Colors.grey[700],
                   ),
                 ),

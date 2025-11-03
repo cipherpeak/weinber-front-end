@@ -32,7 +32,7 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
               Expanded(
                 child: Text(
                   'Car Wash - Sedan',
-                  style: const TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
               Container(
@@ -54,7 +54,7 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             '125 Main Street : 10:00 AM',
-            style: const TextStyle(fontSize: 12, color: Colors.black54, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Align(alignment: AlignmentGeometry.centerRight,

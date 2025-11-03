@@ -41,7 +41,7 @@ Widget taskCard({
                 title,
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 13,
+                  fontSize: 14,
                   color: Colors.black87,
                 ),
               ),
@@ -49,7 +49,7 @@ Widget taskCard({
               Text(
                 subtitle,
                 style: const TextStyle(
-                  fontSize: 12,
+                  fontSize: 13,
                   color: Colors.black54,
                 ),
               ),

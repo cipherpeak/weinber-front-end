@@ -360,7 +360,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 "Attach Media",
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Colors.black87,fontSize: 14
                 ),
               ),
               const SizedBox(height: 6),
