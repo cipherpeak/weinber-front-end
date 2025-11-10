@@ -38,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FB),
+      backgroundColor: primaryBackgroundColor,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -131,7 +131,16 @@ class ProfileScreen extends StatelessWidget {
             // 🔹 Options List
             ...options.map((item) {
               return GestureDetector(
-                onTap: () {},
+                onTap: () {
+
+                  if (item['title'] == 'Employee Information') {
+                    router.push(routerEmployeeInformationPage);
+                  }
+                  if (item['title'] == 'Settings') {
+                    router.push(routerSettingsPage);
+                  }
+
+                },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
                   padding:

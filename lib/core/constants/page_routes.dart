@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weinber/features/AttendancePage/Presentation/Screens/AttendancePage.dart';
+import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/otp_verification_page.dart';
+import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
+import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
+import '../../features/Authentication/Forgot Password/Presentation/Screens/forgot password page.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
+import '../../features/BottomNavPage/Presentation/Screens/notification_page.dart';
+import '../../features/Employee Information Page/Presentation/Screens/employee_information_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckOutPages/check_out_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/Homepage.dart';
 import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
+import '../../features/Settings Page/Presentation/Screens/settings_screen.dart';
 import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
@@ -26,10 +33,18 @@ const String routerAttendancePage = '/app/attendance';
 const String routerReportPage = '/app/report';
 const String routerTaskDetailsPage = '/app/task/details';
 const String routerProfilePage = '/app/home/profile';
+const String routerNotificationPage = '/app/home/notification';
 const String routerStartTaskDetailsPage = '/app/task/start';
 const String routerCheckInFirstPage = '/app/attendance/check_in_first';
 const String routerCheckOutFirstPage = '/app/attendance/check_out_first';
+const String routerSettingsPage = '/app/home/profile/setting';
 const String routerTakeBreakPage = '/app/attendance/take_a_break_first';
+const String routerEmployeeInformationPage = '/app/home/profile/employee-information';
+
+const routerForgotPassword = '/forgot-password';
+const routerOtpVerificationPage = '/otp-verification';
+const routerResetPasswordPage = '/reset-password';
+const routerPasswordResetSuccessPage = '/password-reset-success';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -67,6 +82,7 @@ final GoRouter router = GoRouter(
 
     // --- Main App Shell ---
     ShellRoute(
+      parentNavigatorKey: rootNavigatorKey,
       navigatorKey: _shellNavigatorKey,
       builder: (context, state, child) => BottomNavScreen(child: child),
       routes: [
@@ -193,5 +209,93 @@ final GoRouter router = GoRouter(
             FadeTransition(opacity: animation, child: child),
       ),
     ),
+
+    // --- Notification Page (outside shell) ---
+    GoRoute(
+      path: routerNotificationPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const NotificationScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    // --- Forgot Password Flow ---
+    GoRoute(
+      path: routerForgotPassword,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ForgotPasswordScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+    GoRoute(
+      path: routerOtpVerificationPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const OtpVerificationScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+    GoRoute(
+      path: routerResetPasswordPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ResetPasswordScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+    GoRoute(
+      path: routerPasswordResetSuccessPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const PasswordResetSuccessScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    // --- Setting Screen ---
+    GoRoute(
+      path: routerSettingsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const SettingsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    // --- Employee Information Screen ---
+    GoRoute(
+      path: routerEmployeeInformationPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child:  EmployeeInformationScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+
   ],
 );
+

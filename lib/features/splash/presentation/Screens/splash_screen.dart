@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:weinber/core/constants/constants.dart';
 import '../../../../core/services/auth_service.dart';
 import '../../../../core/constants/page_routes.dart';

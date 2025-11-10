@@ -69,7 +69,9 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
               ),
               const Spacer(),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  router.go(routerNotificationPage);
+                },
                 icon: const Icon(Icons.notifications_none),
                 color: Colors.black87,
               ),
