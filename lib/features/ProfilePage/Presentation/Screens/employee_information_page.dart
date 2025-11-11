@@ -73,7 +73,7 @@ class EmployeeInformationScreen extends StatelessWidget {
       ),
 
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
         child: Column(
           children: infoList.map((item) {
             return Column(

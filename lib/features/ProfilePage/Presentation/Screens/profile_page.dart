@@ -136,6 +136,15 @@ class ProfileScreen extends StatelessWidget {
                   if (item['title'] == 'Employee Information') {
                     router.push(routerEmployeeInformationPage);
                   }
+                  if (item['title'] == 'Personal Information') {
+                    router.push(routerPersonalInformationPage);
+                  }
+                  if (item['title'] == 'Visa & Document Details') {
+                    router.push(routerVisaAndDocumentPage);
+                  }
+                  if (item['title'] == 'Vehicle Details') {
+                    router.push(routerVehicleDetailsPage);
+                  }
                   if (item['title'] == 'Settings') {
                     router.push(routerSettingsPage);
                   }
