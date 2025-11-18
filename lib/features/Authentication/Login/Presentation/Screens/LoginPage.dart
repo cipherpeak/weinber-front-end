@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
-class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+
+import '../Provider/login_notifier.dart';
+
+class LoginPage extends ConsumerWidget {
+  LoginPage({Key? key}) : super(key: key);
+
+  final TextEditingController userController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+
+    final loginState = ref.watch(loginNotifierProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -20,6 +28,8 @@ class LoginPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(height: screenHeight * 0.13),
+
+              /// LOGO
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -31,6 +41,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ],
               ),
+
               SizedBox(height: screenHeight * 0.05),
 
               const Text(
@@ -41,6 +52,7 @@ class LoginPage extends StatelessWidget {
                   color: Colors.black,
                 ),
               ),
+
               SizedBox(height: screenHeight * 0.01),
 
               const Text(
@@ -50,43 +62,52 @@ class LoginPage extends StatelessWidget {
                   color: Color(0xFF8890A6),
                 ),
               ),
+
               SizedBox(height: screenHeight * 0.04),
 
+              /// USERNAME
               SizedBox(
                 height: screenHeight * 0.055,
                 child: TextField(
+                  controller: userController,
                   decoration: InputDecoration(
                     labelText: 'User ID',
                     labelStyle: const TextStyle(fontSize: 13),
                     hintText: 'Enter your username here',
-                    hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF8890A6)),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    hintStyle: const TextStyle(
+                        fontSize: 13, color: Color(0xFF8890A6)),
+                    border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
+
               SizedBox(height: screenHeight * 0.02),
 
+              /// PASSWORD
               SizedBox(
                 height: screenHeight * 0.055,
                 child: TextField(
+                  controller: passController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: const TextStyle(fontSize: 13),
                     hintText: 'Enter your password',
-                    hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF8890A6)),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                    hintStyle: const TextStyle(
+                        fontSize: 13, color: Color(0xFF8890A6)),
+                    border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
 
               SizedBox(height: screenHeight * 0.01),
+
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    router.go(routerForgotPassword);
-                  },
+                  onPressed: () => router.go(routerForgotPassword),
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(
@@ -100,12 +121,25 @@ class LoginPage extends StatelessWidget {
 
               SizedBox(height: screenHeight * 0.08),
 
+              /// LOGIN BUTTON
               SizedBox(
                 width: double.infinity,
                 height: screenHeight * 0.055,
                 child: ElevatedButton(
-                  onPressed: () {
-                    router.go(routerHomePage);
+                  onPressed: loginState.isLoading
+                      ? null
+                      : () {
+                    final employeeId = userController.text.trim();
+                    final password = passController.
+                    text.trim();
+
+                    ref
+                        .read(loginNotifierProvider.notifier)
+                        .login(
+                      employeeId: employeeId,
+                      password: password,
+                      context: context,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF5B7CFE),
@@ -117,7 +151,12 @@ class LoginPage extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  child: const Text('Login'),
+                  child: loginState.isLoading
+                      ? const CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  )
+                      : const Text('Login'),
                 ),
               ),
 
@@ -131,9 +170,7 @@ class LoginPage extends StatelessWidget {
                   children: [
                     WidgetSpan(
                       child: GestureDetector(
-                        onTap: () {
-                          _showSupportBottomSheet(context);
-                        },
+                        onTap: () => _showSupportBottomSheet(context),
                         child: const Text(
                           'Contact Support.',
                           style: TextStyle(
@@ -158,7 +195,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  /// 🔹 BOTTOM SHEET FUNCTION
+  /// SUPPORT BOTTOM SHEET
   void _showSupportBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -173,7 +210,6 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Close Button
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
@@ -182,7 +218,6 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-
               const Text(
                 'Need Support?',
                 style: TextStyle(
@@ -203,45 +238,33 @@ class LoginPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              /// 🔹 Chat With Us
               _supportOptionTile(
                 context,
                 icon: Icons.chat_bubble_outline,
                 color: iconOrange,
                 title: "Chat With Us",
                 subtitle: "Chat with our agents to fix the issue",
-                onTap: () {
-                  Navigator.pop(context);
-                  // Implement chat action here
-                },
+                onTap: () => Navigator.pop(context),
               ),
-              const SizedBox(height: 10),
 
-              /// 🔹 Call Us
+              const SizedBox(height: 10),
               _supportOptionTile(
                 context,
                 icon: Icons.call_outlined,
                 color: iconGreen,
                 title: "Call Us",
                 subtitle: "Available from 09:00 AM to 05:00 PM",
-                onTap: () {
-                  Navigator.pop(context);
-                  // Call logic here
-                },
+                onTap: () => Navigator.pop(context),
               ),
-              const SizedBox(height: 10),
 
-              /// 🔹 Email Support
+              const SizedBox(height: 10),
               _supportOptionTile(
                 context,
                 icon: Icons.email_outlined,
                 color: iconPink,
                 title: "Email Support",
                 subtitle: "We’ll get back to you within 24 hours",
-                onTap: () {
-                  Navigator.pop(context);
-                  // Open email logic
-                },
+                onTap: () => Navigator.pop(context),
               ),
             ],
           ),
@@ -250,7 +273,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  /// 🔹 Reusable Support Option Widget
   Widget _supportOptionTile(
       BuildContext context, {
         required IconData icon,
@@ -280,6 +302,7 @@ class LoginPage extends StatelessWidget {
               child: Icon(icon, color: Colors.black87),
             ),
             const SizedBox(width: 16),
+
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -304,7 +327,9 @@ class LoginPage extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black45),
+
+            const Icon(Icons.arrow_forward_ios,
+                size: 16, color: Colors.black45),
           ],
         ),
       ),

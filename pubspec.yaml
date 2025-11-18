@@ -31,10 +31,12 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  flutter_riverpod: ^3.0.3
+
+  # RIVERPOD VERSION 2 (COMPATIBLE WITH HIVE)
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
   data_connection_checker_tv: ^0.3.5-nullsafety
   dio: ^5.9.0
   flutter_screenutil: ^5.9.3
@@ -51,17 +53,22 @@ dependencies:
   image_picker: ^1.2.0
   shared_preferences: ^2.5.3
   pinput: ^5.0.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  connectivity_plus: ^6.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  hive_generator: ^2.0.1
+  riverpod_generator: ^2.3.5
+
+  # SAFE VERSION
+  build_runner: ^2.4.6
+
   flutter_lints: ^6.0.0
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

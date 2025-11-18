@@ -85,7 +85,7 @@ final GoRouter router = GoRouter(
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         key: state.pageKey,
-        child: const LoginPage(),
+        child:  LoginPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),

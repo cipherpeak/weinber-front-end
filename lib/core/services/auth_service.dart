@@ -12,9 +12,9 @@ class AuthService {
 
   static final AuthService instance = AuthService._private();
 
-  Future<bool> login({required String userId, required String password}) async {
+  Future<bool> login({required String employeeId, required String password}) async {
     try {
-      final res = await _dio.post(ApiEndpoints.login, data: {'userId': userId, 'password': password});
+      final res = await _dio.post(ApiEndpoints.login, data: {'employeeId': employeeId, 'password': password});
       await _storeTokens(res.data);
       return true;
     } catch (e, st) {
