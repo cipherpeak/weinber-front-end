@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
-
 import '../Provider/login_notifier.dart';
 
 class LoginPage extends ConsumerWidget {
@@ -57,10 +56,7 @@ class LoginPage extends ConsumerWidget {
 
               const Text(
                 'Enter your login informations',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF8890A6),
-                ),
+                style: TextStyle(fontSize: 15, color: Color(0xFF8890A6)),
               ),
 
               SizedBox(height: screenHeight * 0.04),
@@ -75,9 +71,12 @@ class LoginPage extends ConsumerWidget {
                     labelStyle: const TextStyle(fontSize: 13),
                     hintText: 'Enter your username here',
                     hintStyle: const TextStyle(
-                        fontSize: 13, color: Color(0xFF8890A6)),
-                    border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      fontSize: 13,
+                      color: Color(0xFF8890A6),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
@@ -95,9 +94,12 @@ class LoginPage extends ConsumerWidget {
                     labelStyle: const TextStyle(fontSize: 13),
                     hintText: 'Enter your password',
                     hintStyle: const TextStyle(
-                        fontSize: 13, color: Color(0xFF8890A6)),
-                    border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      fontSize: 13,
+                      color: Color(0xFF8890A6),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
@@ -129,18 +131,17 @@ class LoginPage extends ConsumerWidget {
                   onPressed: loginState.isLoading
                       ? null
                       : () {
-                    final employeeId = userController.text.trim();
-                    final password = passController.
-                    text.trim();
+                          final employeeId = userController.text.trim();
+                          final password = passController.text.trim();
 
-                    ref
-                        .read(loginNotifierProvider.notifier)
-                        .login(
-                      employeeId: employeeId,
-                      password: password,
-                      context: context,
-                    );
-                  },
+                          ref
+                              .read(loginNotifierProvider.notifier)
+                              .login(
+                                employeeId: employeeId,
+                                password: password,
+                                context: context,
+                              );
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF5B7CFE),
                     shape: RoundedRectangleBorder(
@@ -153,9 +154,9 @@ class LoginPage extends ConsumerWidget {
                   ),
                   child: loginState.isLoading
                       ? const CircularProgressIndicator(
-                    color: Colors.white,
-                    strokeWidth: 2,
-                  )
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        )
                       : const Text('Login'),
                 ),
               ),
@@ -274,13 +275,13 @@ class LoginPage extends ConsumerWidget {
   }
 
   Widget _supportOptionTile(
-      BuildContext context, {
-        required IconData icon,
-        required Color color,
-        required String title,
-        required String subtitle,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -328,8 +329,11 @@ class LoginPage extends ConsumerWidget {
               ),
             ),
 
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.black45),
+            const Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: Colors.black45,
+            ),
           ],
         ),
       ),

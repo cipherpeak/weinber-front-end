@@ -1,31 +1,34 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:weinber/core/constants/constants.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../../core/constants/page_routes.dart';
 
-class SplashScreen extends StatefulWidget {
+import '../../../Authentication/Login/Model/hive_login_model.dart';
+import '../../../Authentication/Login/Presentation/Provider/login_notifier.dart';
+
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  late Box box;
   @override
   void initState() {
     super.initState();
+    initialiseFunctions();
+  }
+  void initialiseFunctions() async {
+    await AuthLocalStorage.instance.init();
+
     Future.delayed(const Duration(milliseconds: 1200), () async {
       if (!mounted) return;
-      final isLoggedIn = await AuthService.instance.isLoggedIn();
-
-      if (isLoggedIn) {
-        router.go('/app/home');
-      } else {
-        router.go(routerLoginPage);
-      }
+      ref.read(loginNotifierProvider.notifier).checkIfUserIsLoggedIn();
     });
-
   }
 
   @override
@@ -36,12 +39,18 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
-            // Replace with your logo widget as needed
-            Icon(Icons.flash_on, size: 80, color: primaryBackgroundColor),
+            Icon(
+              Icons.flash_on,
+              size: 80,
+              color: primaryBackgroundColor,
+            ),
             SizedBox(height: 20),
             Text(
               "Welcome!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-Widget GreetingWidget = Column(
+Widget GreetingWidget({required  String name})  {
+   return Column(
   children: [
     Text(
-      'Hello John 👋',
+      'Hello $name 👋',
       style: const TextStyle(
         fontSize: 19,
         fontWeight: FontWeight.w700,
@@ -19,3 +20,4 @@ Widget GreetingWidget = Column(
     const SizedBox(height: 15),
   ],
 );
+}

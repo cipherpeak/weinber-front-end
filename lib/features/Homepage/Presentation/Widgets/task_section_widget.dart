@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:weinber/features/Homepage/Presentation/Widgets/task_widget_homepage.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../Model/homepage_response.dart';
 
 class TaskSectionWidget extends StatelessWidget {
-  const TaskSectionWidget({super.key});
+  final List<Task> tasks;
+
+  const TaskSectionWidget({required this. tasks,super.key});
 
   @override
   Widget build(BuildContext context) {

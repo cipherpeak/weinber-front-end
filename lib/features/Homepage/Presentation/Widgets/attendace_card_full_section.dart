@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../Model/homepage_response.dart';
 import '../Provider/checkInStatusNotifier.dart';
 import 'attendace_card_check_in.dart';
 import 'attendance_card_check_out.dart';
 
 class AttendanceCardSection extends ConsumerWidget {
-  const AttendanceCardSection({super.key});
+  final String status;
+
+  final CheckInOut checkInOut;
+
+  const AttendanceCardSection({required this.status, required this.checkInOut, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

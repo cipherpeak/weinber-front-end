@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../Model/homepage_response.dart';
 import 'announcement_card_widget.dart';
 
 class AnnouncementSectionWidget extends StatelessWidget {
-  const AnnouncementSectionWidget({super.key});
+  final List<Announcement> announcements;
+
+  const AnnouncementSectionWidget({required this. announcements,super.key});
 
   @override
   Widget build(BuildContext context) {

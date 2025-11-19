@@ -1,8 +1,9 @@
-
-
 import 'package:hive/hive.dart';
 
 class AuthLocalStorage {
+  AuthLocalStorage._privateConstructor();
+  static final AuthLocalStorage instance = AuthLocalStorage._privateConstructor();
+
   static const String authBoxName = "authBox";
 
   static const String accessKey = "accessToken";

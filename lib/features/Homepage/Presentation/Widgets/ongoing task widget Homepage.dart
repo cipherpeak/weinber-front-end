@@ -1,21 +1,21 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:weinber/core/constants/constants.dart';
-import 'package:weinber/utils/Common%20Widgets/percentageBar.dart';
-
-import '../../../TaskPage/Presentation/Provider/StartTask/startTaskProvider.dart';
-
-
+import '../../../../utils/Common Functions/format_date_time.dart';
+import '../../../../utils/Common Widgets/percentageBarHomepage.dart';
+import '../../Model/homepage_response.dart';
 
 class OngoingTaskWidgetHomepage extends StatelessWidget {
-  const OngoingTaskWidgetHomepage({super.key});
+  final List<OngoingTask> tasks;
+
+  const OngoingTaskWidgetHomepage({required this.tasks, super.key});
 
   @override
   Widget build(BuildContext context) {
+    if (tasks.isEmpty) return const SizedBox();
+
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Color(0xffe4e9ff),
+        color: const Color(0xffe4e9ff),
         borderRadius: BorderRadius.circular(10.0),
         border: Border.all(color: Colors.grey.shade200, width: 1.0),
       ),
@@ -23,54 +23,127 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "ONGOING TASK",
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black45),
+            "ONGOING TASKS",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black45,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+
+          Column(
+            children: tasks.map((task) {
+              return _buildTaskCard(context, task);
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTaskCard(BuildContext context, OngoingTask task) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          /// Heading + Status Row
+
           Row(
             children: [
               Expanded(
                 child: Text(
-                  'Car Wash - Sedan',
-                  style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
+                  task.heading,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
+
+              const SizedBox(width: 8),
+
               Container(
-                height: 20,
-                padding: EdgeInsets.symmetric(horizontal: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.red.shade100,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Center(
-                  child: Text(
-                    'Paused',
-                    style: TextStyle(fontSize: 11, color: Colors.red, fontWeight: FontWeight.bold),
+                child: Text(
+                  task.status.toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 8),
+
+          /// Address
+
           Text(
-            '125 Main Street : 10:00 AM',
-            style: const TextStyle(fontSize: 13, color: Colors.black54, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Align(alignment: AlignmentGeometry.centerRight,
-            child: const Text(
-              '15% Completed',
-              style: TextStyle(fontSize: 12, color: Colors.black, fontWeight: FontWeight.w500),
+            task.address,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.black54,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: PercentageBar(saveProgressPercentageProvider), // example with 85%
-              ),
-            ],
+
+          const SizedBox(height: 4),
+
+          /// Time - Formatted
+
+          Text(
+            formatDateTime(task.taskAssignTime),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black54,
+            ),
           ),
+
+          const SizedBox(height: 10),
+
+          /// Progress %
+          Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              "${task.percentageCompleted}%",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          /// Percentage Bar
+
+          PercentageBarHomepage(task.percentageCompleted),
         ],
       ),
     );

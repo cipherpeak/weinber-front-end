@@ -26,9 +26,18 @@ class LoginNotifier extends _$LoginNotifier {
   @override
   FutureOr<void> build() async {
     _repo = AuthRepository();
-    _local = AuthLocalStorage();
+    _local = AuthLocalStorage.instance;
     networkInfo = NetworkInfoImpl(DataConnectionChecker());
     await _local.init();
+  }
+
+  Future<void> checkIfUserIsLoggedIn() async {
+    final token = _local.getAccessToken();
+    if (token != null && token.isNotEmpty) {
+      router.go(routerHomePage);
+    }else{
+      router.go(routerLoginPage);
+    }
   }
 
   Future<void> login({
