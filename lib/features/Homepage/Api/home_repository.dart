@@ -1,35 +1,36 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
 import '../../../../core/constants/api_endpoints.dart';
+import '../../../core/constants/dio_interceptor.dart';
 import '../Database/home_local_storage.dart';
 import '../Model/homepage_response.dart';
-
 
 class HomeRepository {
   final HomeLocalStorage local;
 
   HomeRepository(this.local);
 
-  Future<HomeResponse> fetchHomeData(String token) async {
-    final url = Uri.parse("${ApiEndpoints.baseUrl}${ApiEndpoints.home}");
-
+  Future<HomeResponse> fetchHomeData() async {
     try {
-      final res = await http.get(url, headers: {
-        "Authorization": "Bearer $token",
-      });
+      final response = await DioClient.dio.get(ApiEndpoints.home);
 
-      if (res.statusCode == 200) {
-        await local.saveHomeData(res.body);
-        return HomeResponse.fromRawJson(res.body);
-      }
+      final jsonString = jsonEncode(response.data);
 
-      throw Exception("Failed to load home data");
-    } catch (_) {
-      // Offline → return cached
+      // Save JSON string to cache
+      await local.saveHomeData(jsonString);
+
+      // Convert map to string → then parse model
+      return HomeResponse.fromRawJson(jsonString);
+    }
+
+    catch (e) {
       final cache = local.getHomeData();
+
       if (cache != null) {
         return HomeResponse.fromRawJson(cache);
       }
+
       rethrow;
     }
   }

@@ -7,7 +7,33 @@ import '../../Model/homepage_response.dart';
 class TaskSectionWidget extends StatelessWidget {
   final List<Task> tasks;
 
-  const TaskSectionWidget({required this. tasks,super.key});
+  const TaskSectionWidget({required this.tasks, super.key});
+
+  IconData _getTaskIcon(String type) {
+    switch (type.toLowerCase()) {
+      case "car_wash":
+        return Icons.local_car_wash_outlined;
+      case "cleaning":
+        return Icons.cleaning_services_outlined;
+      case "delivery":
+        return Icons.delivery_dining_outlined;
+      default:
+        return Icons.task_alt_rounded;
+    }
+  }
+
+  Color _getTaskColor(String type) {
+    switch (type.toLowerCase()) {
+      case "car_wash":
+        return iconBlue;
+      case "cleaning":
+        return iconOrange;
+      case "delivery":
+        return Colors.green;
+      default:
+        return Colors.black54;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,65 +66,76 @@ class TaskSectionWidget extends StatelessWidget {
               ),
             ),
           ),
+
+          // Summary Text
           Text.rich(
             TextSpan(
-              children: const [
-                TextSpan(
+              children: [
+                const TextSpan(
                   text: 'You have ',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
                 ),
                 TextSpan(
-                  text: '4 tasks ',
-                  style: TextStyle(
+                  text: '${tasks.length} tasks ',
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: Colors.redAccent,
                   ),
                 ),
-                TextSpan(
+                const TextSpan(
                   text: 'to complete today.',
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
                 ),
               ],
             ),
           ),
+
           const SizedBox(height: 12),
-          taskCard(
-            icon: Icons.local_car_wash_outlined,
-            color: iconBlue,
-            title: 'Car Wash – Sedan',
-            subtitle: '123 Main Street · 10:00 AM',
-          ),
-          const SizedBox(height: 10),
-          taskCard(
-            icon: Icons.cleaning_services_outlined,
-            color: iconOrange,
-            title: 'Interior Detailing – SUV',
-            subtitle: '456 Oak Ave · 10:00 AM',
-          ),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              iconAlignment: IconAlignment.end,
-              onPressed: () {},
-              icon: const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.black54,),
-              label: const Text(
-                'View All',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+
+          // Dynamic Task List
+          ...tasks.map((task) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: taskCard(
+                icon: _getTaskIcon(task.type),
+                color: _getTaskColor(task.type),
+                title: task.heading,
+                subtitle: "${task.details} • ${task.time}",
+              ),
+            );
+          }),
+
+          // View All Button
+          if (tasks.isNotEmpty)
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                iconAlignment: IconAlignment.end,
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Colors.black54,
+                ),
+                label: const Text(
+                  'View All',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

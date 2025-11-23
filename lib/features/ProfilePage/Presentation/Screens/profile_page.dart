@@ -1,41 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
+import 'package:weinber/core/constants/page_routes.dart';
+import 'package:weinber/features/ProfilePage/Api/profile_api.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Widgets/profile_header_section.dart';
 
-import '../../../../core/constants/page_routes.dart';
+import '../../Model/profile_api_model.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  ProfileResponse? profile;
+  bool loading = true;
+  String? errorMessage;
+
+  final options = [
+    {
+      'title': 'Employee Information',
+      'icon': Icons.work_outline,
+      'color': Colors.orange.shade100,
+    },
+    {
+      'title': 'Personal Information',
+      'icon': Icons.person_outline,
+      'color': Colors.purple.shade100,
+    },
+    {
+      'title': 'Visa & Document Details',
+      'icon': Icons.article_outlined,
+      'color': Colors.green.shade100,
+    },
+    {
+      'title': 'Vehicle Details',
+      'icon': Icons.directions_car_outlined,
+      'color': Colors.blue.shade100,
+    },
+    {
+      'title': 'Settings',
+      'icon': Icons.settings_outlined,
+      'color': Colors.yellow.shade100,
+    },
+  ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  Future<void> loadProfile() async {
+    try {
+      final repo = ProfileRepository();
+      final data = await repo.fetchProfile();
+
+      setState(() {
+        profile = data;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        loading = false;
+        errorMessage = e.toString();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final options = [
-      {
-        'title': 'Employee Information',
-        'icon': Icons.work_outline,
-        'color': Colors.orange.shade100,
-      },
-      {
-        'title': 'Personal Information',
-        'icon': Icons.person_outline,
-        'color': Colors.purple.shade100,
-      },
-      {
-        'title': 'Visa & Document Details',
-        'icon': Icons.article_outlined,
-        'color': Colors.green.shade100,
-      },
-      {
-        'title': 'Vehicle Details',
-        'icon': Icons.directions_car_outlined,
-        'color': Colors.blue.shade100,
-      },
-      {
-        'title': 'Settings',
-        'icon': Icons.settings_outlined,
-        'color': Colors.yellow.shade100,
-      },
-    ];
 
     return Scaffold(
       backgroundColor: primaryBackgroundColor,
@@ -62,23 +98,49 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
+
+
+      body: loading
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
+
+          : errorMessage != null
+          ? Center(
+        child: Text(
+          errorMessage!,
+          style: const TextStyle(
+            color: Colors.red,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      )
+
+          : profile == null
+          ? const Center(
+        child: Text(
+          "No profile data found",
+          style: TextStyle(fontSize: 16),
+        ),
+      )
+
+          : SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 🔹 Profile Section
-            ProfileHeaderSection(),
+
+
+            ProfileHeaderSection(profile: profile!),
+
 
             const SizedBox(height: 20),
-
-            // 🔹 Leave Management Section
             GestureDetector(
               onTap: () {},
               child: Container(
                 width: double.infinity,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
                 decoration: BoxDecoration(
                   color: Colors.red.shade50,
                   borderRadius: BorderRadius.circular(12),
@@ -132,23 +194,23 @@ class ProfileScreen extends StatelessWidget {
             ...options.map((item) {
               return GestureDetector(
                 onTap: () {
-
-                  if (item['title'] == 'Employee Information') {
-                    router.push(routerEmployeeInformationPage);
+                  switch (item['title']) {
+                    case 'Employee Information':
+                      router.push(routerEmployeeInformationPage);
+                      break;
+                    case 'Personal Information':
+                      router.push(routerPersonalInformationPage);
+                      break;
+                    case 'Visa & Document Details':
+                      router.push(routerVisaAndDocumentPage);
+                      break;
+                    case 'Vehicle Details':
+                      router.push(routerVehicleDetailsPage);
+                      break;
+                    case 'Settings':
+                      router.push(routerSettingsPage);
+                      break;
                   }
-                  if (item['title'] == 'Personal Information') {
-                    router.push(routerPersonalInformationPage);
-                  }
-                  if (item['title'] == 'Visa & Document Details') {
-                    router.push(routerVisaAndDocumentPage);
-                  }
-                  if (item['title'] == 'Vehicle Details') {
-                    router.push(routerVehicleDetailsPage);
-                  }
-                  if (item['title'] == 'Settings') {
-                    router.push(routerSettingsPage);
-                  }
-
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
@@ -209,8 +271,7 @@ class ProfileScreen extends StatelessWidget {
               child: Container(
                 height: 50,
                 width: double.infinity,
-                padding:
-                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.redAccent,
                   borderRadius: BorderRadius.circular(25),

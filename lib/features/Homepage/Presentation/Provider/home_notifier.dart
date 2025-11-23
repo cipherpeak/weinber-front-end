@@ -26,14 +26,14 @@ class HomeNotifier extends _$HomeNotifier {
 
     if (token == null) return null;
 
-    return await _repo.fetchHomeData(token);
+    return await _repo.fetchHomeData();
   }
 
   Future<void> refreshData() async {
     final token = _auth.getAccessToken();
     if (token == null) return;
 
-    final data = await _repo.fetchHomeData(token);
+    final data = await _repo.fetchHomeData();
     state = AsyncData(data);
   }
 }

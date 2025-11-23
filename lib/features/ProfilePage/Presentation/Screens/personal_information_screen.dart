@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../Api/personal_information_repository.dart';
+import '../../Model/personal_information_response.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
   const PersonalInformationScreen({super.key});
@@ -10,19 +12,47 @@ class PersonalInformationScreen extends StatefulWidget {
       _PersonalInformationScreenState();
 }
 
-class _PersonalInformationScreenState
-    extends State<PersonalInformationScreen> {
+class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
+  PersonalInfoResponse? personalInfo;
+  bool loading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    loadPersonalInfo();
+  }
+
+  Future<void> loadPersonalInfo() async {
+    try {
+      final repo = PersonalInformationRepository();
+      final data = await repo.fetchPersonalInfo();
+
+      setState(() {
+        personalInfo = data;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        loading = false;
+        errorMessage = e.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              size: 20, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -33,126 +63,147 @@ class _PersonalInformationScreenState
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: false,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                alignment: Alignment.bottomRight,
-                children: [
-                  const CircleAvatar(
-                    radius: 55,
-                    backgroundImage:
-                    AssetImage('assets/images/profile.png'),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: primaryColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: primaryColor.withOpacity(0.4),
-                            blurRadius: 6,
-                          )
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        size: 18,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage != null
+          ? Center(
+              child: Text(
+                errorMessage!,
+                style: const TextStyle(color: Colors.red, fontSize: 15),
               ),
-            ),
+            )
+          : buildPersonalInfoUI(),
+    );
+  }
 
-            const SizedBox(height: 30),
+  Widget buildPersonalInfoUI() {
+    final info = personalInfo!;
+    final emergency = info.emergencyContacts.isNotEmpty
+        ? info.emergencyContacts.first
+        : null;
 
-
-            _buildLabel(Icons.phone_outlined, "Mobile Number"),
-            _editableField("+1 123 456 7890"),
-
-
-            _buildLabel(Icons.email_outlined, "Email"),
-            _editableField("john.doe@example.com"),
-
-
-            _buildLabel(Icons.location_on_outlined, "Address"),
-            _editableField("123 Main Road, Anytown, Dubai -12345"),
-
-
-            Row(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+            child: Stack(
               children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLabel(Icons.calendar_today_outlined, "Date of Birth"),
-                      _editableField("06 October 1867"),
-                    ],
+                CircleAvatar(
+                  backgroundColor: Colors.grey.shade200,
+                  radius: 55,
+                  foregroundImage: NetworkImage(
+                    "https://www.cipher-peak.com${info.proPic}",
                   ),
+                  onForegroundImageError: (exception, stackTrace) {},
+                  child: const Icon(Icons.person, size: 60, color: Colors.grey),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLabel(Icons.flag_outlined, "Nationality"),
-                      _editableField("+1 123 456 7890"),
-                    ],
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.edit,
+                      size: 18,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
             ),
+          ),
 
-            const SizedBox(height: 25),
+          const SizedBox(height: 30),
 
+          // ============================
+          // MOBILE
+          // ============================
+          _buildLabel(Icons.phone_outlined, "Mobile Number"),
+          _editableField(info.mobNumber),
 
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "EMERGENCY CONTACT INFO",
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
+          // ============================
+          // EMAIL
+          // ============================
+          _buildLabel(Icons.email_outlined, "Email"),
+          _editableField(info.email),
+
+          // ============================
+          // ADDRESS
+          // ============================
+          _buildLabel(Icons.location_on_outlined, "Address"),
+          _editableField(info.address),
+
+          // ============================
+          // DOB + Nationality
+          // ============================
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel(Icons.calendar_today_outlined, "Date of Birth"),
+                    _editableField(info.dob),
+                  ],
                 ),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel(Icons.flag_outlined, "Nationality"),
+                    _editableField(info.nationality),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 25),
+
+          // ============================
+          // EMERGENCY CONTACT SECTION
+          // ============================
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "EMERGENCY CONTACT INFO",
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+              ),
             ),
-            const SizedBox(height: 15),
+          ),
+          const SizedBox(height: 15),
 
-            // Full Name
+          if (emergency != null) ...[
             _buildLabel(Icons.person_outline, "Full Name"),
-            _nonEditableField("Robert Doe"),
+            _nonEditableField(emergency.name),
 
-            // Phone
             _buildLabel(Icons.phone_outlined, "Mobile Number"),
-            _nonEditableField("+1 123 456 7890"),
+            _nonEditableField(emergency.phone),
 
-            // Relation
             _buildLabel(Icons.people_outline, "Relation with Employee"),
-            _nonEditableField("Brother"),
-
-            const SizedBox(height: 50),
+            _nonEditableField(emergency.relation),
           ],
-        ),
+
+          const SizedBox(height: 50),
+        ],
       ),
     );
   }
 
+  // ------------------------------------------------------------------
 
   Widget _buildLabel(IconData icon, String text) {
     return Row(
@@ -170,7 +221,6 @@ class _PersonalInformationScreenState
       ],
     );
   }
-
 
   Widget _editableField(String value) {
     return Container(
@@ -197,7 +247,6 @@ class _PersonalInformationScreenState
     );
   }
 
-
   Widget _nonEditableField(String value) {
     return Container(
       width: double.infinity,
@@ -214,7 +263,6 @@ class _PersonalInformationScreenState
       ),
     );
   }
-
 
   BoxDecoration _fieldDecoration() {
     return BoxDecoration(

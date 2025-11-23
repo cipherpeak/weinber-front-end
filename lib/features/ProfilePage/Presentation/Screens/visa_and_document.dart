@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/constants/constants.dart';
+
+import '../../Api/visa_document_repository.dart';
+import '../../Model/visa_documen_response_model.dart';
 
 class VisaAndDocument extends StatefulWidget {
   const VisaAndDocument({super.key});
@@ -10,28 +12,32 @@ class VisaAndDocument extends StatefulWidget {
 }
 
 class _VisaAndDocumentState extends State<VisaAndDocument> {
+  VisaDocumentResponse? visaData;
+  bool loading = true;
+  String? errorMessage;
 
+  @override
+  void initState() {
+    super.initState();
+    loadVisaData();
+  }
 
+  Future<void> loadVisaData() async {
+    try {
+      final repo = VisaDocumentRepository();
+      final data = await repo.fetchVisaData();
 
-  final List<Map<String, String>> documents = [
-    {
-      "title": "Visa Photo Copy",
-      "file": "VisaDocument (1). pdf",
-      "date": "08/11/2022",
-    },
-    {
-      "title": "Labor Card",
-      "file": "Labor Card - E5342 (1). pdf",
-      "date": "08/11/2022",
-    },
-  ];
-
-
-  final List<String> pendingUploads = [
-    "Passport Photo Copy",
-    "Emirates ID Photo Copy",
-    "Work Permit",
-  ];
+      setState(() {
+        visaData = data;
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        loading = false;
+        errorMessage = e.toString();
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +47,11 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              size: 20, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: Colors.black,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -53,87 +62,113 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: false,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-
-
-            Text(
-              "VISA DETAILS",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey.shade600,
+      body: loading
+          ? const Center(child: CircularProgressIndicator())
+          : errorMessage != null
+          ? Center(
+              child: Text(
+                errorMessage!,
+                style: const TextStyle(color: Colors.red, fontSize: 15),
               ),
+            )
+          : buildVisaUI(),
+    );
+  }
+
+
+  Widget buildVisaUI() {
+    final data = visaData!;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Text(
+            "VISA DETAILS",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey.shade600,
             ),
-            const SizedBox(height: 15),
+          ),
+          const SizedBox(height: 15),
 
-            // ============================
-            // ✅ VISA DETAILS FIELDS
-            // ============================
-            _buildField(Icons.calendar_today_outlined,
-                "Visa Expiry Date", "24 December 2025"),
+          _buildField(Icons.badge_outlined, "Visa Number", data.visaNumber),
+          _buildField(
+            Icons.calendar_month,
+            "Visa Expiry Date",
+            data.visaExpiryDate,
+            valueColor: Colors.red,
+          ),
 
-            _buildField(Icons.badge_outlined, "Emirates ID", "XXXXX XXX56"),
+          _buildField(
+            Icons.wallet_travel_outlined,
+            "Passport Number",
+            data.passportNumber,
+          ),
 
-            _buildField(Icons.calendar_today_outlined, "Emirates ID Expiry",
-                "23 December 2025"),
+          _buildField(
+            Icons.calendar_today_outlined,
+            "Passport Expiry Date",
+            data.passportExpiryDate,
+            valueColor: Colors.red,
+          ),
 
-            _buildField(Icons.wallet_travel_outlined, "Passport Number",
-                "AIB2C3D4EF"),
+          _buildField(
+            Icons.credit_card_outlined,
+            "Emirates ID Expiry",
+            data.emiratesIdExpiry,
+          ),
 
-            _buildField(
-              Icons.calendar_today_outlined,
-              "Passport Expiry Date",
-              "15 August 2024",
-              valueColor: Colors.red,
+          const SizedBox(height: 25),
+
+          Text(
+            "DOCUMENTS",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.grey.shade600,
             ),
+          ),
+          const SizedBox(height: 15),
 
-            const SizedBox(height: 25),
+          ...data.documents.map((doc) => _buildDocumentCard(doc)).toList(),
+
+          const SizedBox(height: 25),
 
 
-            Text(
-              "DOCUMENTS",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Colors.grey.shade600,
-              ),
+          Text(
+            "PENDING DOCUMENT UPLOADS",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: Colors.red,
             ),
-            const SizedBox(height: 15),
+          ),
+          const SizedBox(height: 15),
 
-            ...documents.map((doc) => _buildDocumentCard(doc)).toList(),
+          ...data.pendingDocuments
+              .map((item) => _buildPendingUpload(item))
+              .toList(),
 
-            const SizedBox(height: 25),
-
-
-            Text(
-              "PENDING DOCUMENT UPLOADS",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: Colors.red,
-              ),
-            ),
-            const SizedBox(height: 15),
-
-            ...pendingUploads.map((item) => _buildPendingUpload(item)).toList(),
-
-            const SizedBox(height: 40),
-          ],
-        ),
+          const SizedBox(height: 40),
+        ],
       ),
     );
   }
 
 
-  Widget _buildField(IconData icon, String label, String value,
-      {Color valueColor = Colors.black87}) {
+
+  Widget _buildField(
+    IconData icon,
+    String label,
+    String value, {
+    Color valueColor = Colors.black87,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -169,28 +204,13 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
               ),
             ],
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: valueColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              const Text(
-                "Non editable",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.black26,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: valueColor,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
 
@@ -199,7 +219,7 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
     );
   }
 
-  Widget _buildDocumentCard(Map<String, String> doc) {
+  Widget _buildDocumentCard(DocumentItem doc) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(15),
@@ -212,35 +232,33 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
             color: Colors.black.withOpacity(0.07),
             blurRadius: 12,
             offset: const Offset(0, 2),
-          )
+          ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            doc['title']!,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
-            ),
+            doc.name,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           ),
           const SizedBox(height: 12),
 
           Row(
             children: [
-              // PDF icon
-              const Icon(Icons.picture_as_pdf,
-                  size: 32, color: Colors.redAccent),
+              const Icon(
+                Icons.picture_as_pdf,
+                size: 32,
+                color: Colors.redAccent,
+              ),
               const SizedBox(width: 12),
 
-              // File info
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      doc['file']!,
+                      doc.file.split('/').last,
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
@@ -248,7 +266,7 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      doc['date']!,
+                      doc.uploadedAt.split("T").first,
                       style: const TextStyle(
                         fontSize: 11,
                         color: Colors.black45,
@@ -258,10 +276,12 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
                 ),
               ),
 
-              // View File Button
+              // ==== VIEW FILE BUTTON ====
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFFEFF3FF),
                   borderRadius: BorderRadius.circular(25),
@@ -281,7 +301,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
       ),
     );
   }
-
 
   Widget _buildPendingUpload(String title) {
     return Container(
@@ -304,23 +323,24 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
           Expanded(
             child: RichText(
               text: TextSpan(
-                text: '$title ',
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
                   color: Colors.black87,
                 ),
-                children: const [
-                  TextSpan(text: '*', style: TextStyle(color: Colors.red)),
+                children: [
+                  TextSpan(text: title),
+                  const TextSpan(
+                    text: " *",
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ],
               ),
             ),
           ),
 
-          // Add button
           Container(
-            padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
               color: primaryColor,
               borderRadius: BorderRadius.circular(25),

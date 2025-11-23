@@ -6,6 +6,7 @@ class AuthLocalStorage {
 
   static const String authBoxName = "authBox";
 
+
   static const String accessKey = "accessToken";
   static const String refreshKey = "refreshToken";
   static const String employeeIdKey = "employeeId";
@@ -13,7 +14,11 @@ class AuthLocalStorage {
   static const String profilePicKey = "profilePic";
   static const String appIconKey = "appIcon";
 
+  static const String savedEmployeeIdKey = "savedEmployeeId";
+  static const String savedPasswordKey = "savedPassword";
+
   late Box box;
+
 
   Future<void> init() async {
     box = await Hive.openBox(authBoxName);
@@ -35,7 +40,24 @@ class AuthLocalStorage {
     await box.put(appIconKey, appIcon);
   }
 
+
+  Future<void> saveCredentials(String id, String pass) async {
+    await box.put(savedEmployeeIdKey, id);
+    await box.put(savedPasswordKey, pass);
+  }
+
+
   String? getAccessToken() => box.get(accessKey);
+  String? getRefreshToken() => box.get(refreshKey);
+
+  String? getEmployeeId() => box.get(employeeIdKey);
+  String? getEmployeeType() => box.get(employeeTypeKey);
+  String? getProfilePic() => box.get(profilePicKey);
+  String? getAppIcon() => box.get(appIconKey);
+
+  String? getSavedEmployeeId() => box.get(savedEmployeeIdKey);
+  String? getSavedPassword() => box.get(savedPasswordKey);
+
 
   Future<void> clear() async => box.clear();
 }

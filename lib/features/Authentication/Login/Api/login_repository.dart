@@ -15,7 +15,7 @@ class AuthRepository {
     try {
       final url = Uri.parse("${ApiEndpoints.baseUrl}${ApiEndpoints.login}");
 
-      print("🔹 Sending login request to: $url");
+      // print("🔹 Sending login request to: $url");
 
       final response = await http
           .post(
