@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../core/constants/dio_interceptor.dart';
-import '../Model/visa_documen_response_model.dart';
+import '../Model/visa_document_response_model.dart';
 
 
 

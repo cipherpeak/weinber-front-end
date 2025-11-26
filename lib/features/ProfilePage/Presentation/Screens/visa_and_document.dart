@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
 
 import '../../Api/visa_document_repository.dart';
-import '../../Model/visa_documen_response_model.dart';
+import '../../Model/visa_document_response_model.dart';
 
 class VisaAndDocument extends StatefulWidget {
   const VisaAndDocument({super.key});
