@@ -5,15 +5,19 @@ import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/S
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
+import 'package:weinber/features/Office%20Staff/Task%20Page/Presentation/Screens/notes_details_screen.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/fine%20details%20page.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehicle_usage.dart';
-import 'package:weinber/features/ProfilePage/Presentation/Screens/vehicle_details_screen.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/visa_and_document.dart';
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
 import '../../features/Authentication/Forgot Password/Presentation/Screens/forgot password page.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
 import '../../features/BottomNavPage/Presentation/Screens/notification_page.dart';
+import '../../features/Office Staff/Task Page/Presentation/Screens/add_notes_screen.dart';
 import '../../features/Office Staff/Task Page/Presentation/Screens/notes_screen.dart';
+import '../../features/ProfilePage/Presentation/Screens/Vehicle details/fines and penalties.dart';
 import '../../features/ProfilePage/Presentation/Screens/employee_information_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckOutPages/check_out_first_page.dart';
@@ -22,7 +26,6 @@ import '../../features/ProfilePage/Presentation/Screens/personal_information_scr
 import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
 import '../../features/Settings Page/Presentation/Screens/settings_screen.dart';
 import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
-import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
 import '../../features/splash/presentation/Screens/splash_screen.dart';
 
@@ -52,8 +55,13 @@ const String routerVisaAndDocumentPage =
 const String routerVehicleDetailsPage =
     '/app/home/profile/vehicle-details';
 const String routerTemporaryVehicleUsagePage = '/app/home/profile/temporary-vehicle-usage';
+const String routerFinesAndPenaltiesPage =
+    '/app/home/profile/vehicle-details/fines-and-penalties';
+const String routerFinesAndPenaltiesDetailsPage =
+    '/app/home/profile/vehicle-details/fines-and-penalties/details';
 const String routerNotesPage = '/app/notes';
-
+const String routerNotesDetailsPage = '/app/notes/details';
+const String routerAddNotesPage = '/app/notes/add-notes';
 const routerForgotPassword = '/forgot-password';
 const routerOtpVerificationPage = '/otp-verification';
 const routerResetPasswordPage = '/reset-password';
@@ -123,6 +131,31 @@ final GoRouter router = GoRouter(
                 FadeTransition(opacity: animation, child: child),
           ),
         ),
+
+        GoRoute(
+          path: routerAddNotesPage,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const AddNoteScreen(),
+            transitionDuration: const Duration(milliseconds: 500),
+            reverseTransitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+
+        GoRoute(
+          path: routerNotesDetailsPage,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const NoteDetailsScreen(),
+            transitionDuration: const Duration(milliseconds: 500),
+            reverseTransitionDuration: const Duration(milliseconds: 500),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+
 
         // GoRoute(
         //   path: routerTaskPage,
@@ -351,6 +384,32 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const VehicleDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+
+    GoRoute(
+      path: routerFinesAndPenaltiesPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const FinesAndPenaltiesScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+
+    GoRoute(
+      path: routerFinesAndPenaltiesDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const FineDetailsScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/constants/constants.dart';
-import '../../Api/personal_information_repository.dart';
 import '../../Model/personal_information_response.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
@@ -13,31 +11,29 @@ class PersonalInformationScreen extends StatefulWidget {
 }
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
-  PersonalInfoResponse? personalInfo;
-  bool loading = true;
-  String? errorMessage;
+
+  late final PersonalInfoResponse personalInfo;
 
   @override
   void initState() {
     super.initState();
-    loadPersonalInfo();
-  }
 
-  Future<void> loadPersonalInfo() async {
-    try {
-      final repo = PersonalInformationRepository();
-      final data = await repo.fetchPersonalInfo();
-
-      setState(() {
-        personalInfo = data;
-        loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        loading = false;
-        errorMessage = e.toString();
-      });
-    }
+    // 🔹 Hardcoded Personal Information
+    personalInfo = PersonalInfoResponse(
+      proPic: "/uploads/profile/john_doe.jpg", // same usage as before
+      mobNumber: "+91 98765 43210",
+      email: "john.doe@weinber.com",
+      address: "Flat 402, Al Nahda, Dubai, UAE",
+      dob: "12 January 1995",
+      nationality: "Indian",
+      emergencyContacts: [
+        EmergencyContact(
+          name: "Jane Doe",
+          phone: "+91 99887 66554",
+          relation: "Sister",
+        ),
+      ],
+    );
   }
 
   @override
@@ -64,25 +60,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           ),
         ),
       ),
-
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-          ? Center(
-              child: Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red, fontSize: 15),
-              ),
-            )
-          : buildPersonalInfoUI(),
+      body: buildPersonalInfoUI(),
     );
   }
 
   Widget buildPersonalInfoUI() {
-    final info = personalInfo!;
-    final emergency = info.emergencyContacts.isNotEmpty
-        ? info.emergencyContacts.first
-        : null;
+    final info = personalInfo;
+    final emergency =
+    info.emergencyContacts.isNotEmpty ? info.emergencyContacts.first : null;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
@@ -98,8 +83,9 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                   foregroundImage: NetworkImage(
                     "https://www.cipher-peak.com${info.proPic}",
                   ),
-                  onForegroundImageError: (exception, stackTrace) {},
-                  child: const Icon(Icons.person, size: 60, color: Colors.grey),
+                  onForegroundImageError: (_, __) {},
+                  child:
+                  const Icon(Icons.person, size: 60, color: Colors.grey),
                 ),
                 Positioned(
                   bottom: 0,
@@ -150,7 +136,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel(Icons.calendar_today_outlined, "Date of Birth"),
+                    _buildLabel(
+                        Icons.calendar_today_outlined, "Date of Birth"),
                     _editableField(info.dob),
                   ],
                 ),
@@ -279,3 +266,5 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
     );
   }
 }
+
+

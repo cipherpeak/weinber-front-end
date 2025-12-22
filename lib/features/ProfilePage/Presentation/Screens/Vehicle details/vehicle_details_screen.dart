@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
-import '../../../../core/constants/constants.dart';
+import '../../../../../core/constants/constants.dart';
 
 class VehicleDetailsScreen extends StatefulWidget {
   const VehicleDetailsScreen({super.key});
@@ -165,6 +165,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
             const SizedBox(height: 30),
 
+
             Text(
               "REPORTED VEHICLE ISSUES",
               style: TextStyle(
@@ -177,7 +178,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
             ...issues.map((issue) => _buildIssueCard(issue)).toList(),
 
-            const SizedBox(height: 25),
+            const SizedBox(height: 20),
 
             SizedBox(
               height: 45,
@@ -205,6 +206,87 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
             ),
 
             const SizedBox(height: 30),
+            Text(
+              "COMPLIANCE & FINES",
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 15),
+
+            GestureDetector(
+              onTap: () {
+                router.push(routerFinesAndPenaltiesPage);
+              },
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.07),
+                      blurRadius: 12,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFE6E6),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.description_outlined,
+                        color: Color(0xFFE57373),
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Fines & Penalties",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            "View history of traffic violations",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 16,
+                      color: Colors.black45,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 25),
+
+
 
             Text(
               "ADDITIONAL INFORMATION",

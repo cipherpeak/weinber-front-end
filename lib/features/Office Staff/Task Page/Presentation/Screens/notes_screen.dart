@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
 
+import '../../../../../core/constants/page_routes.dart';
+import 'add_notes_screen.dart';
+
 class NotesScreen extends StatefulWidget {
   const NotesScreen({super.key});
 
@@ -62,8 +65,11 @@ class _NotesScreenState extends State<NotesScreen>
                   fontSize: 14,
                   fontFamily: appFont,
                 ),
-                prefixIcon: Icon(Icons.search,
-                    color: Colors.grey.shade500, size: 22),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.grey.shade500,
+                  size: 22,
+                ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
               ),
             ),
@@ -134,11 +140,15 @@ class _NotesScreenState extends State<NotesScreen>
         const SizedBox(height: 15),
 
         /// Example Note 1
-        _noteCard(
-          title: "Follow-Up with Vendor",
-          description:
-          "Call the supplier to confirm the delivery timeline for the pending order...",
-          bgColor: const Color(0xFFF8E6D1),
+        GestureDetector(onTap: (){
+          router.push(routerNotesDetailsPage);
+        },
+          child: _noteCard(
+            title: "Follow-Up with Vendor",
+            description:
+                "Call the supplier to confirm the delivery timeline for the pending order...",
+            bgColor: const Color(0xFFF8E6D1),
+          ),
         ),
 
         const SizedBox(height: 15),
@@ -147,7 +157,7 @@ class _NotesScreenState extends State<NotesScreen>
         _noteCard(
           title: "Weekly Expense Summary",
           description:
-          "Prepare the consolidated expense sheet for the week, includin...",
+              "Prepare the consolidated expense sheet for the week, includin...",
           bgColor: const Color(0xFFE0EDFF),
         ),
       ],
@@ -178,37 +188,42 @@ class _NotesScreenState extends State<NotesScreen>
   // ADD NOTES CARD
   // ---------------------------
   Widget _addNotesCard() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: const [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: primaryColor,
-            child: Icon(Icons.add, color: Colors.white),
-          ),
-          SizedBox(width: 12),
-          Text(
-            "Add Notes",
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              fontFamily: appFont,
+    return GestureDetector(
+      onTap: () {
+        router.push(routerAddNotesPage);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 2),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: const [
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: primaryColor,
+              child: Icon(Icons.add, color: Colors.white),
+            ),
+            SizedBox(width: 12),
+            Text(
+              "Add Notes",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                fontFamily: appFont,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -250,9 +265,12 @@ class _NotesScreenState extends State<NotesScreen>
                 ),
                 itemBuilder: (context) => [
                   const PopupMenuItem(value: 1, child: Text("Edit")),
-                  const PopupMenuItem(value: 2, child: Text("Delete")),
+                  const PopupMenuItem(
+                    value: 2,
+                    child: Text("Delete", style: TextStyle(color: Colors.red)),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
           // const SizedBox(height: 8),
