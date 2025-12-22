@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
-
-import '../../Api/visa_document_repository.dart';
 import '../../Model/visa_document_response_model.dart';
 
 class VisaAndDocument extends StatefulWidget {
@@ -12,31 +10,45 @@ class VisaAndDocument extends StatefulWidget {
 }
 
 class _VisaAndDocumentState extends State<VisaAndDocument> {
-  VisaDocumentResponse? visaData;
-  bool loading = true;
-  String? errorMessage;
+
+  late final VisaDocumentResponse visaData;
 
   @override
   void initState() {
     super.initState();
-    loadVisaData();
-  }
 
-  Future<void> loadVisaData() async {
-    try {
-      final repo = VisaDocumentRepository();
-      final data = await repo.fetchVisaData();
-
-      setState(() {
-        visaData = data;
-        loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        loading = false;
-        errorMessage = e.toString();
-      });
-    }
+    // 🔹 Hardcoded Visa & Document Data
+    visaData = VisaDocumentResponse(
+      visaNumber: "VISA-987654321",
+      visaExpiryDate: "30 December 2025",
+      passportNumber: "P12345678",
+      passportExpiryDate: "15 June 2028",
+      emiratesIdExpiry: "10 March 2026",
+      documents: [
+        DocumentItem(
+          type: "passport",
+          name: "Passport Copy",
+          file: "https://example.com/docs/passport.pdf",
+          uploadedAt: "2024-06-15T10:30:00",
+        ),
+        DocumentItem(
+          type: "visa",
+          name: "Visa Copy",
+          file: "https://example.com/docs/visa.pdf",
+          uploadedAt: "2024-06-16T11:45:00",
+        ),
+        DocumentItem(
+          type: "emirates_id",
+          name: "Emirates ID",
+          file: "https://example.com/docs/emirates_id.pdf",
+          uploadedAt: "2024-06-18T09:15:00",
+        ),
+      ],
+      pendingDocuments: [
+        "Labour Card",
+        "Insurance Document",
+      ],
+    );
   }
 
   @override
@@ -63,23 +75,12 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
           ),
         ),
       ),
-
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-          ? Center(
-              child: Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red, fontSize: 15),
-              ),
-            )
-          : buildVisaUI(),
+      body: buildVisaUI(),
     );
   }
 
-
   Widget buildVisaUI() {
-    final data = visaData!;
+    final data = visaData;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
@@ -140,7 +141,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
 
           const SizedBox(height: 25),
 
-
           Text(
             "PENDING DOCUMENT UPLOADS",
             style: TextStyle(
@@ -161,14 +161,12 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
     );
   }
 
-
-
   Widget _buildField(
-    IconData icon,
-    String label,
-    String value, {
-    Color valueColor = Colors.black87,
-  }) {
+      IconData icon,
+      String label,
+      String value, {
+        Color valueColor = Colors.black87,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,9 +184,7 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
             ),
           ],
         ),
-
         const SizedBox(height: 10),
-
         Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
@@ -213,7 +209,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
             ),
           ),
         ),
-
         const SizedBox(height: 25),
       ],
     );
@@ -243,7 +238,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
             style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           ),
           const SizedBox(height: 12),
-
           Row(
             children: [
               const Icon(
@@ -252,7 +246,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
                 color: Colors.redAccent,
               ),
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,8 +268,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
                   ],
                 ),
               ),
-
-              // ==== VIEW FILE BUTTON ====
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 15,
@@ -338,7 +329,6 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
               ),
             ),
           ),
-
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -365,3 +355,5 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
     );
   }
 }
+
+

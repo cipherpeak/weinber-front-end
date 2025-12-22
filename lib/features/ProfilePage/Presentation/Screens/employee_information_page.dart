@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
-import '../../Api/employee_information_repository.dart';
 import '../../Model/employee_information_model.dart';
 
 class EmployeeInformationScreen extends StatefulWidget {
@@ -11,38 +10,26 @@ class EmployeeInformationScreen extends StatefulWidget {
       _EmployeeInformationScreenState();
 }
 
-class _EmployeeInformationScreenState extends State<EmployeeInformationScreen> {
-  EmployeeInformationResponse? info;
-  bool loading = true;
-  String? errorMessage;
+class _EmployeeInformationScreenState
+    extends State<EmployeeInformationScreen> {
+
+  late final EmployeeInformationResponse info;
 
   @override
   void initState() {
     super.initState();
-    initialiseFunctions();
-  }
 
-  Future<void> initialiseFunctions() async {
-    await loadEmployeeInfo();
-  }
-
-  Future<void> loadEmployeeInfo() async {
-    try {
-      final repo = EmployeeInformationRepository();
-      final data = await repo.fetchEmployeeInformation();
-
-      setState(() {
-        info = data;
-        loading = false;
-
-
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
-        loading = false;
-      });
-    }
+    // 🔹 Hardcoded employee information
+    info = EmployeeInformationResponse(
+      employeeId: "EMP-00123",
+      fullName: "John Doe",
+      dateOfJoining: "15 August 2022",
+      department: "Field Operations",
+      profession: "Field Executive",
+      reportingManager: "Michael Johnson",
+      companyName: "Weinber Pvt Ltd",
+      branchLocation: "Dubai",
+    );
   }
 
   @override
@@ -69,22 +56,12 @@ class _EmployeeInformationScreenState extends State<EmployeeInformationScreen> {
           ),
         ),
       ),
-
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : errorMessage != null
-          ? Center(
-              child: Text(
-                errorMessage!,
-                style: const TextStyle(color: Colors.red),
-              ),
-            )
-          : buildEmployeeInfoUI(),
+      body: buildEmployeeInfoUI(),
     );
   }
 
   Widget buildEmployeeInfoUI() {
-    final data = info!;
+    final data = info;
 
     final infoList = [
       {
@@ -154,9 +131,7 @@ class _EmployeeInformationScreenState extends State<EmployeeInformationScreen> {
                   ),
                 ],
               ),
-
               const SizedBox(height: 10),
-
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
@@ -207,3 +182,4 @@ class _EmployeeInformationScreenState extends State<EmployeeInformationScreen> {
     );
   }
 }
+

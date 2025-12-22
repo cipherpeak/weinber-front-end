@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
-import 'package:weinber/features/ProfilePage/Api/profile_api.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Widgets/profile_header_section.dart';
 
 import '../../Model/profile_api_model.dart';
@@ -14,11 +13,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  ProfileResponse? profile;
-  bool loading = true;
-  String? errorMessage;
 
-  final options = [
+  // 🔹 Hardcoded Profile Data (matches your model exactly)
+  late final ProfileResponse profile;
+
+  final List<Map<String, dynamic>> options = [
     {
       'title': 'Employee Information',
       'icon': Icons.work_outline,
@@ -46,40 +45,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     },
   ];
 
-
   @override
   void initState() {
     super.initState();
-    loadProfile();
-  }
 
-  Future<void> loadProfile() async {
-    try {
-      final repo = ProfileRepository();
-      final data = await repo.fetchProfile();
-
-      setState(() {
-        profile = data;
-        loading = false;
-      });
-    } catch (e) {
-      setState(() {
-        loading = false;
-        errorMessage = e.toString();
-      });
-    }
+    // 🔹 Initialize mock data
+    profile = ProfileResponse(
+      employeeId: "EMP-00123",
+      employeeName: "John Doe",
+      profilePic: "https://i.pravatar.cc/300",
+      employeeType: "Service",
+      designation: "Field Executive",
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: primaryBackgroundColor,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Colors.black, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -90,7 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.black),
@@ -99,52 +87,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
 
-
-      body: loading
-          ? const Center(
-        child: CircularProgressIndicator(),
-      )
-
-          : errorMessage != null
-          ? Center(
-        child: Text(
-          errorMessage!,
-          style: const TextStyle(
-            color: Colors.red,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      )
-
-          : profile == null
-          ? const Center(
-        child: Text(
-          "No profile data found",
-          style: TextStyle(fontSize: 16),
-        ),
-      )
-
-          : SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
 
-
-            ProfileHeaderSection(profile: profile!),
-
+            // 🔹 Profile Header
+            ProfileHeaderSection(profile: profile),
 
             const SizedBox(height: 20),
+
+            // 🔹 Leave Management
             GestureDetector(
               onTap: () {},
               child: Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
                 decoration: BoxDecoration(
                   color: Colors.red.shade50,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red.shade100, width: .2),
+                  border: Border.all(
+                      color: Colors.red.shade100, width: .2),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.red.withOpacity(0.05),
@@ -176,6 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             const SizedBox(height: 25),
+
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -188,6 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
             ),
+
             const SizedBox(height: 10),
 
             // 🔹 Options List
@@ -214,8 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 15, vertical: 14),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -260,18 +227,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 30),
 
-            // 🔹 Logout Button
+            // 🔹 Logout
             GestureDetector(
               onTap: () {
                 router.go(routerLoginPage);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Logged out successfully")),
+                  const SnackBar(
+                    content: Text("Logged out successfully"),
+                  ),
                 );
               },
               child: Container(
                 height: 50,
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                 decoration: BoxDecoration(
                   color: Colors.redAccent,
                   borderRadius: BorderRadius.circular(25),

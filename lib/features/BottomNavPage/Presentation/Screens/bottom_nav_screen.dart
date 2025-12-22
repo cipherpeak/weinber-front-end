@@ -24,11 +24,12 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
 
   // Map index -> route path inside the shell
   static const List<String> _tabRoutes = [
-    '/app/home',   // index 0
-    '/app/task',   // index 1
-    '/app/attendance', // index 2 (if you add route)
-    '/app/report', // index 3 (if you add route)
+    '/app/home',        // index 0
+    routerNotesPage,       // index 1
+    '/app/attendance',  // index 2
+    '/app/report',      // index 3
   ];
+
 
   @override
   void initState() {
