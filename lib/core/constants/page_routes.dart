@@ -5,7 +5,6 @@ import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/S
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
-import 'package:weinber/features/Office%20Staff/Task%20Page/Presentation/Screens/notes_details_screen.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/fine%20details%20page.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehicle_usage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
@@ -15,8 +14,6 @@ import '../../features/Authentication/Forgot Password/Presentation/Screens/forgo
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
 import '../../features/BottomNavPage/Presentation/Screens/notification_page.dart';
-import '../../features/Office Staff/Task Page/Presentation/Screens/add_notes_screen.dart';
-import '../../features/Office Staff/Task Page/Presentation/Screens/notes_screen.dart';
 import '../../features/ProfilePage/Presentation/Screens/Vehicle details/fines and penalties.dart';
 import '../../features/ProfilePage/Presentation/Screens/employee_information_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
@@ -27,6 +24,13 @@ import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
 import '../../features/Settings Page/Presentation/Screens/settings_screen.dart';
 import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
 import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
+import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
+import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskDetailsPage.dart';
+import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskPage.dart';
+import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskStartTaskPage.dart';
+import '../../features/TaskPageOffice/Presentation/Screens/add_notes_screen.dart';
+import '../../features/TaskPageOffice/Presentation/Screens/notes_details_screen.dart';
+import '../../features/TaskPageOffice/Presentation/Screens/notes_screen.dart';
 import '../../features/splash/presentation/Screens/splash_screen.dart';
 
 // 🧭 Route constants
@@ -62,6 +66,13 @@ const String routerFinesAndPenaltiesDetailsPage =
 const String routerNotesPage = '/app/notes';
 const String routerNotesDetailsPage = '/app/notes/details';
 const String routerAddNotesPage = '/app/notes/add-notes';
+
+const String routerDeliveryTaskPage = '/app/delivery-task';
+const String routerDeliveryTaskDetailsPage = '/app/delivery-task/details';
+const String routerDeliveryTaskStartTaskPage = '/app/delivery-task/details/start';
+
+const String routerOfficeTaskPage = '/app/office-task';
+
 const routerForgotPassword = '/forgot-password';
 const routerOtpVerificationPage = '/otp-verification';
 const routerResetPasswordPage = '/reset-password';
@@ -132,43 +143,34 @@ final GoRouter router = GoRouter(
           ),
         ),
 
+
         GoRoute(
-          path: routerAddNotesPage,
+          path: routerTaskPage,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const AddNoteScreen(),
-            transitionDuration: const Duration(milliseconds: 500),
-            reverseTransitionDuration: const Duration(milliseconds: 500),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            child: const TaskScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
 
         GoRoute(
-          path: routerNotesDetailsPage,
+          path: routerDeliveryTaskPage,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const NoteDetailsScreen(),
-            transitionDuration: const Duration(milliseconds: 500),
-            reverseTransitionDuration: const Duration(milliseconds: 500),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            child: const DeliveryTaskScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
                 FadeTransition(opacity: animation, child: child),
           ),
         ),
 
 
-        // GoRoute(
-        //   path: routerTaskPage,
-        //   pageBuilder: (context, state) => CustomTransitionPage(
-        //     key: state.pageKey,
-        //     child: const TaskScreen(),
-        //     transitionDuration: const Duration(milliseconds: 300),
-        //     reverseTransitionDuration: const Duration(milliseconds: 300),
-        //     transitionsBuilder:
-        //         (context, animation, secondaryAnimation, child) =>
-        //             FadeTransition(opacity: animation, child: child),
-        //   ),
-        // ),
         GoRoute(
           path: routerAttendancePage,
           pageBuilder: (context, state) => CustomTransitionPage(
@@ -193,6 +195,57 @@ final GoRouter router = GoRouter(
                       FadeTransition(opacity: animation, child: child)),
         ),
       ],
+    ),
+
+    GoRoute(
+      path: routerDeliveryTaskDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const DeliveryTaskDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerDeliveryTaskStartTaskPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const DeliveryTaskStartTaskScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+
+    GoRoute(
+      path: routerAddNotesPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const AddNoteScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerNotesDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const NoteDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
     ),
 
     // --- Task details (outside shell) ---
