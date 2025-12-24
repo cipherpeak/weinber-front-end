@@ -10,6 +10,8 @@ import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehi
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/visa_and_document.dart';
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
+import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskDetailsPage.dart';
+import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskInProgressPage.dart';
 import '../../features/Authentication/Forgot Password/Presentation/Screens/forgot password page.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
@@ -22,35 +24,46 @@ import '../../features/Homepage/Presentation/Screens/Homepage.dart';
 import '../../features/ProfilePage/Presentation/Screens/personal_information_screen.dart';
 import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
 import '../../features/Settings Page/Presentation/Screens/settings_screen.dart';
-import '../../features/TaskPage/Presentation/Screens/StartTaskScreen.dart';
-import '../../features/TaskPage/Presentation/Screens/TaskDetailsScreen.dart';
-import '../../features/TaskPage/Presentation/Screens/TaskScreen.dart';
+import '../../features/TaskPageDax/Presentation/Screens/StartTaskScreen.dart';
+import '../../features/TaskPageDax/Presentation/Screens/TaskDetailsScreen.dart';
+import '../../features/TaskPageDax/Presentation/Screens/TaskScreen.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskDetailsPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskStartTaskPage.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/add_notes_screen.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/notes_details_screen.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/notes_screen.dart';
+import '../../features/TaskPageTechnician/Presentation/Screens/technicianTaskCreatePage.dart';
+import '../../features/TaskPageTechnician/Presentation/Screens/technicianTaskPage.dart';
 import '../../features/splash/presentation/Screens/splash_screen.dart';
 
 // 🧭 Route constants
-
 const String routerSplash = '/';
 const String routerLoginPage = '/login';
-// Shell route
+//Password
+const routerForgotPassword = '/forgot-password';
+const routerOtpVerificationPage = '/otp-verification';
+const routerResetPasswordPage = '/reset-password';
+const routerPasswordResetSuccessPage = '/password-reset-success';
 
+// Shell route
 const String routerHomePage = '/app/home';
-const String routerTaskPage = '/app/task';
+
+//Attendance
 const String routerAttendancePage = '/app/attendance';
-const String routerReportPage = '/app/report';
-const String routerTaskDetailsPage = '/app/task/details';
-const String routerProfilePage = '/app/home/profile';
-const String routerNotificationPage = '/app/home/notification';
-const String routerStartTaskDetailsPage = '/app/task/start';
 const String routerCheckInFirstPage = '/app/attendance/check_in_first';
 const String routerCheckOutFirstPage = '/app/attendance/check_out_first';
-const String routerSettingsPage = '/app/home/profile/setting';
 const String routerTakeBreakPage = '/app/attendance/take_a_break_first';
+
+//Report
+const String routerReportPage = '/app/report';
+
+//Notification
+const String routerNotificationPage = '/app/home/notification';
+
+//Profile
+const String routerProfilePage = '/app/home/profile';
+const String routerSettingsPage = '/app/home/profile/setting';
 const String routerEmployeeInformationPage = '/app/home/profile/employee-information';
 const String routerPersonalInformationPage =
     '/app/home/profile/personal-information';
@@ -63,20 +76,28 @@ const String routerFinesAndPenaltiesPage =
     '/app/home/profile/vehicle-details/fines-and-penalties';
 const String routerFinesAndPenaltiesDetailsPage =
     '/app/home/profile/vehicle-details/fines-and-penalties/details';
+
+//Dax Task
+const String routerTaskPageDax = '/app/task-dax';
+const String routerStartTaskDetailsPage = '/app/task-dax/details/start';
+const String routerTaskDetailsPage = '/app/task-dax/details';
+
+// Office Task
 const String routerNotesPage = '/app/notes';
 const String routerNotesDetailsPage = '/app/notes/details';
 const String routerAddNotesPage = '/app/notes/add-notes';
 
+//Delivery Task
 const String routerDeliveryTaskPage = '/app/delivery-task';
 const String routerDeliveryTaskDetailsPage = '/app/delivery-task/details';
 const String routerDeliveryTaskStartTaskPage = '/app/delivery-task/details/start';
 
-const String routerOfficeTaskPage = '/app/office-task';
+//Technician Task
+const String routerTechnicianTaskPage = '/app/technician-task';
+const String routerTechnicianCreateTaskPage = '/app/technician-task/create-task';
+const String routerTechnicianTaskDetailsPage = '/app/technician-task/details';
+const String routerTechnicianTaskInProgressPage = '/app/technician-task/details/in-progress';
 
-const routerForgotPassword = '/forgot-password';
-const routerOtpVerificationPage = '/otp-verification';
-const routerResetPasswordPage = '/reset-password';
-const routerPasswordResetSuccessPage = '/password-reset-success';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -145,7 +166,7 @@ final GoRouter router = GoRouter(
 
 
         GoRoute(
-          path: routerTaskPage,
+          path: routerTaskPageDax,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const TaskScreen(),
@@ -162,6 +183,19 @@ final GoRouter router = GoRouter(
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
             child: const DeliveryTaskScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+
+        GoRoute(
+          path: routerTechnicianTaskPage,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const TechnicianTaskScreen(),
             transitionDuration: const Duration(milliseconds: 300),
             reverseTransitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
@@ -195,6 +229,45 @@ final GoRouter router = GoRouter(
                       FadeTransition(opacity: animation, child: child)),
         ),
       ],
+    ),
+
+    GoRoute(
+      path: routerTechnicianCreateTaskPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const TechnicianCreateTaskScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerTechnicianTaskDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const TechnicianTaskDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerTechnicianTaskInProgressPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const TechnicianTaskInProgressScreen(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
     ),
 
     GoRoute(

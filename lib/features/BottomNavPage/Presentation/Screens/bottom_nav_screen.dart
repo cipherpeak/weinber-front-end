@@ -7,7 +7,7 @@ import '../../../../core/constants/page_routes.dart';
 import '../../../AttendancePage/Presentation/Screens/AttendancePage.dart';
 import '../../../Homepage/Presentation/Screens/Homepage.dart';
 import '../../../ReportPage/Presentation/Screens/ReportPage.dart';
-import '../../../TaskPage/Presentation/Screens/TaskScreen.dart';
+import '../../../TaskPageDax/Presentation/Screens/TaskScreen.dart';
 import '../Provider/bottom_nav_provider.dart';
 
 class BottomNavScreen extends ConsumerStatefulWidget {
@@ -25,7 +25,7 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   // Map index -> route path inside the shell
   static const List<String> _tabRoutes = [
     '/app/home',        // index 0
-    routerDeliveryTaskPage,       // index 1
+    routerTechnicianTaskPage,       // index 1
     '/app/attendance',  // index 2
     '/app/report',      // index 3
   ];

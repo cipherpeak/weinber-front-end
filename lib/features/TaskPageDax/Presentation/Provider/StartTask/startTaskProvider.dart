@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weinber/features/TaskPage/Presentation/Provider/StartTask/startTaskNotifierForCompleted.dart';
+import 'package:weinber/features/TaskPageDax/Presentation/Provider/StartTask/startTaskNotifierForCompleted.dart';
 import '../../../Model/TaskItemStartTask.dart';
 
 final taskListProvider = StateNotifierProvider<TaskListNotifier, List<TaskItem>>(

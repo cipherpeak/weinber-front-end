@@ -405,7 +405,7 @@ class StartTaskDetailsScreen extends ConsumerWidget {
       child: ElevatedButton(
         onPressed: () {
           Navigator.of(context, rootNavigator: true).pop();
-          router.go(routerTaskPage);
+          router.go(routerTaskPageDax);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
