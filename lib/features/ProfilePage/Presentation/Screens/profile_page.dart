@@ -3,6 +3,8 @@ import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Widgets/profile_header_section.dart';
 
+import '../../../Authentication/Login/Model/hive_login_model.dart';
+import '../../Api/profile_api.dart';
 import '../../Model/profile_api_model.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -15,7 +17,10 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   // 🔹 Hardcoded Profile Data (matches your model exactly)
-  late final ProfileResponse profile;
+  ProfileResponse? profile;
+  bool isLoading = true;
+  String? error;
+  final ProfileRepository _repo = ProfileRepository();
 
   final List<Map<String, dynamic>> options = [
     {
@@ -48,17 +53,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-
-    // 🔹 Initialize mock data
-    profile = ProfileResponse(
-      employeeId: "EMP-00123",
-      employeeName: "John Doe",
-      profilePic: "https://i.pravatar.cc/300",
-      employeeType: "Service",
-      designation: "Field Executive",
-    );
+    initializeFunctions();
   }
 
+ void initializeFunctions()async{
+   await _loadProfile();
+
+ }
+  Future<void> _loadProfile() async {
+    try {
+      final res = await _repo.fetchProfile();
+      setState(() {
+        profile = res;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = "Failed to load profile";
+        isLoading = false;
+      });
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,186 +102,203 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+      body: _buildBody(),
+    );
+  }
 
-            // 🔹 Profile Header
-            ProfileHeaderSection(profile: profile),
+  Widget _buildBody() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (error != null) {
+      return Center(child: Text(error!));
+    }
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
 
-            const SizedBox(height: 20),
+          // 🔹 Profile Header
+          ProfileHeaderSection(profile: profile),
 
-            // 🔹 Leave Management
-            GestureDetector(
-              onTap: () {},
+          const SizedBox(height: 20),
+
+          // 🔹 Leave Management
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: double.infinity,
+              padding:
+              const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: Colors.red.shade100, width: .2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.red.withOpacity(0.05),
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: const [
+                  Icon(Icons.calendar_month_outlined,
+                      color: Colors.black87, size: 20),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: Text(
+                      "Leave Management",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios_rounded,
+                      color: Colors.black45, size: 16),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 25),
+
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "ADDITIONAL SETTINGS",
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // 🔹 Options List
+          ...options.map((item) {
+            return GestureDetector(
+              onTap: () {
+                switch (item['title']) {
+                  case 'Employee Information':
+                    router.push(routerEmployeeInformationPage);
+                    break;
+                  case 'Personal Information':
+                    router.push(routerPersonalInformationPage);
+                    break;
+                  case 'Visa & Document Details':
+                    router.push(routerVisaAndDocumentPage);
+                    break;
+                  case 'Vehicle Details':
+                    router.push(routerVehicleDetailsPage);
+                    break;
+                  case 'Settings':
+                    router.push(routerSettingsPage);
+                    break;
+                }
+              },
               child: Container(
-                width: double.infinity,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 15, vertical: 18),
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15, vertical: 14),
                 decoration: BoxDecoration(
-                  color: Colors.red.shade50,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                      color: Colors.red.shade100, width: .2),
+                  border: Border.all(color: Colors.grey.shade200),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.red.withOpacity(0.05),
+                      color: Colors.black.withOpacity(0.05),
                       blurRadius: 5,
-                      offset: const Offset(0, 3),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
                 child: Row(
-                  children: const [
-                    Icon(Icons.calendar_month_outlined,
-                        color: Colors.black87, size: 20),
-                    SizedBox(width: 15),
+                  children: [
+                    CircleAvatar(
+                      radius: 17,
+                      backgroundColor: item['color'] as Color,
+                      child: Icon(
+                        item['icon'] as IconData,
+                        size: 18,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(width: 15),
                     Expanded(
                       child: Text(
-                        "Leave Management",
-                        style: TextStyle(
+                        item['title'] as String,
+                        style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           color: Colors.black87,
                         ),
                       ),
                     ),
-                    Icon(Icons.arrow_forward_ios_rounded,
+                    const Icon(Icons.arrow_forward_ios_rounded,
                         color: Colors.black45, size: 16),
                   ],
                 ),
               ),
-            ),
+            );
+          }).toList(),
 
-            const SizedBox(height: 25),
+          const SizedBox(height: 30),
 
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "ADDITIONAL SETTINGS",
-                style: TextStyle(
-                  color: Colors.grey.shade600,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
+          // 🔹 Logout
+          GestureDetector(
+            onTap: () async {
+              // 1️⃣ Clear all local auth data
+              await AuthLocalStorage.instance.clear();
 
-            const SizedBox(height: 10),
+              // 2️⃣ Navigate to login (replace stack)
+              router.go(routerLoginPage);
+              // ref.invalidateAll(); //
 
-            // 🔹 Options List
-            ...options.map((item) {
-              return GestureDetector(
-                onTap: () {
-                  switch (item['title']) {
-                    case 'Employee Information':
-                      router.push(routerEmployeeInformationPage);
-                      break;
-                    case 'Personal Information':
-                      router.push(routerPersonalInformationPage);
-                      break;
-                    case 'Visa & Document Details':
-                      router.push(routerVisaAndDocumentPage);
-                      break;
-                    case 'Vehicle Details':
-                      router.push(routerVehicleDetailsPage);
-                      break;
-                    case 'Settings':
-                      router.push(routerSettingsPage);
-                      break;
-                  }
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 15, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 17,
-                        backgroundColor: item['color'] as Color,
-                        child: Icon(
-                          item['icon'] as IconData,
-                          size: 18,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: Text(
-                          item['title'] as String,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      const Icon(Icons.arrow_forward_ios_rounded,
-                          color: Colors.black45, size: 16),
-                    ],
-                  ),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Logged out successfully"),
                 ),
               );
-            }).toList(),
+            },
 
-            const SizedBox(height: 30),
-
-            // 🔹 Logout
-            GestureDetector(
-              onTap: () {
-                router.go(routerLoginPage);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Logged out successfully"),
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.redAccent,
+                borderRadius: BorderRadius.circular(25),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.redAccent.withOpacity(0.3),
+                    spreadRadius: 1,
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
                   ),
-                );
-              },
-              child: Container(
-                height: 50,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.redAccent,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.redAccent.withOpacity(0.3),
-                      spreadRadius: 1,
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  "Logout",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                "Logout",
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: Colors.white,
                 ),
               ),
             ),
+          ),
 
-            const SizedBox(height: 25),
-          ],
-        ),
+          const SizedBox(height: 25),
+        ],
       ),
     );
   }

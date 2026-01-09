@@ -4,6 +4,7 @@ import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
 import '../Provider/login_notifier.dart';
+import '../Provider/login_provider.dart' hide loginNotifierProvider;
 
 class LoginPage extends ConsumerWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -55,7 +56,7 @@ class LoginPage extends ConsumerWidget {
               SizedBox(height: screenHeight * 0.01),
 
               const Text(
-                'Enter your login informations',
+                'Enter your login information',
                 style: TextStyle(fontSize: 15, color: Color(0xFF8890A6)),
               ),
 
@@ -88,7 +89,7 @@ class LoginPage extends ConsumerWidget {
                 height: screenHeight * 0.055,
                 child: TextField(
                   controller: passController,
-                  obscureText: true,
+                  obscureText: !ref.watch(passwordVisibilityProvider),
                   decoration: InputDecoration(
                     labelText: 'Password',
                     labelStyle: const TextStyle(fontSize: 13),
@@ -99,6 +100,19 @@ class LoginPage extends ConsumerWidget {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        ref.watch(passwordVisibilityProvider)
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: Colors.grey.shade600,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        ref.read(passwordVisibilityProvider.notifier).state =
+                        !ref.read(passwordVisibilityProvider.notifier).state;
+                      },
                     ),
                   ),
                 ),
@@ -133,7 +147,6 @@ class LoginPage extends ConsumerWidget {
                       : () {
                           final employeeId = userController.text.trim();
                           final password = passController.text.trim();
-
                           ref
                               .read(loginNotifierProvider.notifier)
                               .login(

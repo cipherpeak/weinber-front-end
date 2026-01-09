@@ -24,7 +24,7 @@ final homeNotifierProvider = Provider<HomeResponse>((ref) {
 
     ongoingTasks: [
       OngoingTask(
-        heading: "Outlet Visit",
+        heading: "Example task",
         status: "In Progress",
         address: "Al Nahda, Dubai",
         taskAssignTime: "09:30 AM",
@@ -58,8 +58,8 @@ final homeNotifierProvider = Provider<HomeResponse>((ref) {
 
     tasks: [
       Task(
-        type: "Visit",
-        heading: "Visit New Outlet",
+        type: "Task 1 ",
+        heading: "Example task title",
         details: "Near Union Coop, Karama",
         time: "12:00 PM",
       ),
@@ -70,8 +70,8 @@ final homeNotifierProvider = Provider<HomeResponse>((ref) {
       //   time: "02:00 PM",
       // ),
       Task(
-        type: "Report",
-        heading: "Upload Sales Report",
+        type: "Task 2",
+        heading: "Example task title",
         details: "Daily sales summary",
         time: "05:30 PM",
       ),

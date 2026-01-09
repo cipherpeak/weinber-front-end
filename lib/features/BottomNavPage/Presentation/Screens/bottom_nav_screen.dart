@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weinber/core/constants/constants.dart';
+import 'package:weinber/features/Authentication/Login/Model/hive_login_model.dart';
 
 import '../../../../core/constants/page_routes.dart';
 import '../../../AttendancePage/Presentation/Screens/AttendancePage.dart';
 import '../../../Homepage/Presentation/Screens/Homepage.dart';
 import '../../../ReportPage/Presentation/Screens/ReportPage.dart';
-import '../../../TaskPageDax/Presentation/Screens/TaskScreen.dart';
 import '../Provider/bottom_nav_provider.dart';
 
 class BottomNavScreen extends ConsumerStatefulWidget {
@@ -22,18 +22,53 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+
   // Map index -> route path inside the shell
-  static const List<String> _tabRoutes = [
-    '/app/home',        // index 0
-    routerTechnicianTaskPage,       // index 1
-    '/app/attendance',  // index 2
-    '/app/report',      // index 3
+  final List<String> _tabRoutes = [
+    '/app/home',
+    routerAdvantageTaskPage,
+    '/app/attendance',
+    '/app/report',
   ];
 
+
+  late AuthLocalStorage _local;
 
   @override
   void initState() {
     super.initState();
+    initializeFunctions();
+  }
+
+  Future<void> initializeFunctions() async {
+    _local = AuthLocalStorage.instance;
+    await _local.init();
+
+    final employeeType = _local.getEmployeeType();
+
+    setState(() {
+      _tabRoutes[1] = _getTaskRoute(employeeType);
+    });
+  }
+
+  String _getTaskRoute(String? employeeType) {
+    switch (employeeType) {
+      case "Service":
+        return routerDaxTaskPage;
+
+      case "Deliver":
+        return routerDeliveryTaskPage;
+
+      case "Office":
+        return routerNotesPage;
+
+      case "Mechanic":
+        return routerTechnicianTaskPage;
+
+      default:
+      // 👈 API failed, null, garbage value, anything
+        return routerAdvantageTaskPage;
+    }
   }
 
   void _onTap(int index) {
@@ -64,10 +99,7 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
           backgroundColor: Colors.white,
           title: Row(
             children: [
-              Image.asset(
-                'assets/logos/logo.png',
-                height: 35,
-              ),
+              Image.asset('assets/logos/logo.png', height: 35),
               const Spacer(),
               IconButton(
                 onPressed: () {
@@ -77,13 +109,16 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
                 color: Colors.black87,
               ),
               const SizedBox(width: 8),
-              GestureDetector(onTap: (){
-                router.push(routerProfilePage);
-              },
+              GestureDetector(
+                onTap: () {
+                  router.push(routerProfilePage);
+                },
                 child: CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.grey.shade200,
-                  backgroundImage: const AssetImage('assets/images/profile.png'),
+                  backgroundImage: const AssetImage(
+                    'assets/images/profile.png',
+                  ),
                 ),
               ),
             ],
@@ -163,23 +198,23 @@ class _FloatingBottomNavBar extends StatelessWidget {
                         height: isSelected ? 50 : 45,
                         width: isSelected ? 50 : 44,
                         decoration: BoxDecoration(
-                          color:
-                          isSelected ? primaryColor : Colors.transparent,
+                          color: isSelected ? primaryColor : Colors.transparent,
                           shape: BoxShape.circle,
                           boxShadow: isSelected
                               ? [
-                            BoxShadow(
-                              color: primaryColor.withOpacity(0.35),
-                              blurRadius: 10,
-                              offset: const Offset(0, 6),
-                            ),
-                          ]
+                                  BoxShadow(
+                                    color: primaryColor.withOpacity(0.35),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ]
                               : [],
                         ),
                         child: Icon(
                           items[index],
-                          color:
-                          isSelected ? Colors.white : Colors.grey.shade500,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.grey.shade500,
                           size: isSelected ? 32 : 30,
                         ),
                       ),
@@ -188,8 +223,9 @@ class _FloatingBottomNavBar extends StatelessWidget {
                       labels[index],
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight:
-                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         color: isSelected ? primaryColor : Colors.grey.shade500,
                       ),
                     ),

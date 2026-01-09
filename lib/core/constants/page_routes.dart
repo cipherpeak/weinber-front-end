@@ -10,6 +10,8 @@ import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehi
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/visa_and_document.dart';
 import 'package:weinber/features/ReportPage/Presentation/Screens/ReportPage.dart';
+import 'package:weinber/features/TaskPageAdvantage/Presentation/Screens/advantageTaskInProgressPage.dart';
+import 'package:weinber/features/TaskPageDax/Presentation/Screens/daxCreateTaskPage.dart';
 import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskDetailsPage.dart';
 import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskInProgressPage.dart';
 import '../../features/Authentication/Forgot Password/Presentation/Screens/forgot password page.dart';
@@ -24,9 +26,13 @@ import '../../features/Homepage/Presentation/Screens/Homepage.dart';
 import '../../features/ProfilePage/Presentation/Screens/personal_information_screen.dart';
 import '../../features/ProfilePage/Presentation/Screens/profile_page.dart';
 import '../../features/Settings Page/Presentation/Screens/settings_screen.dart';
-import '../../features/TaskPageDax/Presentation/Screens/StartTaskScreen.dart';
-import '../../features/TaskPageDax/Presentation/Screens/TaskDetailsScreen.dart';
-import '../../features/TaskPageDax/Presentation/Screens/TaskScreen.dart';
+
+import '../../features/TaskPageAdvantage/Presentation/Screens/advantageCreateTaskPage.dart';
+import '../../features/TaskPageAdvantage/Presentation/Screens/advantageTaskDetailsPage.dart';
+import '../../features/TaskPageAdvantage/Presentation/Screens/advantageTaskPage.dart';
+import '../../features/TaskPageDax/Presentation/Screens/daxTaskDetailsPage.dart';
+import '../../features/TaskPageDax/Presentation/Screens/daxTaskInProgressPage.dart';
+import '../../features/TaskPageDax/Presentation/Screens/daxTaskPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskDetailsPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskStartTaskPage.dart';
@@ -78,9 +84,17 @@ const String routerFinesAndPenaltiesDetailsPage =
     '/app/home/profile/vehicle-details/fines-and-penalties/details';
 
 //Dax Task
-const String routerTaskPageDax = '/app/task-dax';
-const String routerStartTaskDetailsPage = '/app/task-dax/details/start';
-const String routerTaskDetailsPage = '/app/task-dax/details';
+const String routerDaxTaskPage = '/app/task-dax';
+const String routerDaxTaskInProgressPage = '/app/task-dax/details/start';
+const String routerDaxTaskDetailsPage = '/app/task-dax/details';
+const String routerDaxCreateTaskPage = '/app/task-dax/create-task';
+
+//Advantage Task
+
+const String routerAdvantageTaskPage = '/app/task-advantage';
+const String routerAdvantageTaskDetailsPage = '/app/task-advantage/details';
+const String routerAdvantageTaskInProgressPage = '/app/task-advantage/details/in-progress';
+const String routerAdvantageCreateTaskPage = '/app/task-advantage/create-task';
 
 // Office Task
 const String routerNotesPage = '/app/notes';
@@ -166,15 +180,28 @@ final GoRouter router = GoRouter(
 
 
         GoRoute(
-          path: routerTaskPageDax,
+          path: routerDaxTaskPage,
           pageBuilder: (context, state) => CustomTransitionPage(
             key: state.pageKey,
-            child: const TaskScreen(),
+            child: const DaxTaskScreen(),
             transitionDuration: const Duration(milliseconds: 300),
             reverseTransitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
                     FadeTransition(opacity: animation, child: child),
+          ),
+        ),
+
+        GoRoute(
+          path: routerAdvantageTaskPage,
+          pageBuilder: (context, state) => CustomTransitionPage(
+            key: state.pageKey,
+            child: const AdvantageTaskScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                FadeTransition(opacity: animation, child: child),
           ),
         ),
 
@@ -323,10 +350,10 @@ final GoRouter router = GoRouter(
 
     // --- Task details (outside shell) ---
     GoRoute(
-      path: routerTaskDetailsPage,
+      path: routerDaxTaskDetailsPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const TaskDetailsPage(),
+        child: const DaxTaskDetailsScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -335,16 +362,65 @@ final GoRouter router = GoRouter(
     ),
 
     GoRoute(
-      path: routerStartTaskDetailsPage,
+      path: routerDaxTaskInProgressPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const StartTaskDetailsScreen(),
+        child: const DaxTaskInProgressScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
+
+    GoRoute(
+      path: routerDaxCreateTaskPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const DaxCreateTaskScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerAdvantageTaskDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const AdvantageTaskDetailsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerAdvantageTaskInProgressPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const AdvantageTaskInProgressScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerAdvantageCreateTaskPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const AdvantageCreateTaskScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
 
     GoRoute(
       path: routerCheckInFirstPage,

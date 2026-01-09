@@ -82,11 +82,14 @@ class LoginNotifier extends _$LoginNotifier {
           employeeType: res.employee.employeeType,
           profilePic: res.employee.profilePic,
           appIcon: res.employee.appIcon,
+          company: res.employee.company,
+          role: res.employee.role,
         );
 
         router.go(routerHomePage);
         state = AsyncData(res);
-      } else {
+      }
+      else {
         state = AsyncError(res.message, StackTrace.current);
       }
     } catch (e) {

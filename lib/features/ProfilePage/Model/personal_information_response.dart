@@ -25,7 +25,7 @@ class PersonalInfoResponse {
       address: json["employee_home_address"] ?? "",
       dob: json["dob"] ?? "",
       nationality: json["nationality"] ?? "",
-      emergencyContacts: (json["emergency_contact_info"] as List)
+      emergencyContacts: (json["emergency_contact_info"] as List? ?? [])
           .map((e) => EmergencyContact.fromJson(e))
           .toList(),
     );

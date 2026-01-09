@@ -9,6 +9,8 @@ class ProfileHeaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = profile?.profilePic ?? "";
+
     return Stack(
       clipBehavior: Clip.none,
       alignment: Alignment.center,
@@ -17,10 +19,9 @@ class ProfileHeaderSection extends StatelessWidget {
         Container(
           width: double.infinity,
           margin: const EdgeInsets.only(top: 55),
-
           padding: const EdgeInsets.only(top: 70, bottom: 20),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
               colors: [Color(0xFFDCE3FA), Color(0xFFEDF2FB)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -35,7 +36,7 @@ class ProfileHeaderSection extends StatelessWidget {
           child: Column(
             children: [
               Text(
-                profile!.employeeName,
+                profile?.employeeName ?? "",
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -44,17 +45,8 @@ class ProfileHeaderSection extends StatelessWidget {
               ),
               const SizedBox(height: 5),
               Text(
-                profile!.employeeId,
-                style: TextStyle(fontSize: 14, color: Colors.black87),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                profile!.designation,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: primaryColor, // or Colors.blueAccent
-                  fontWeight: FontWeight.w600,
-                ),
+                profile?.employeeId ?? "",
+                style: const TextStyle(fontSize: 14, color: Colors.black87),
               ),
             ],
           ),
@@ -66,36 +58,18 @@ class ProfileHeaderSection extends StatelessWidget {
           child: CircleAvatar(
             radius: 55,
             backgroundColor: Colors.white,
-            child: (profile?.profilePic ?? '').isEmpty
-                ? CircleAvatar(
-                    radius: 52,
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: Colors.grey[400],
-                    ),
-                  )
-                : CircleAvatar(
-                    radius: 52,
-                    backgroundImage: NetworkImage(profile!.profilePic),
-                    onBackgroundImageError: (_, _) {},
-                    child: Builder(
-                      builder: (context) {
-                        return CircleAvatar(
-                          radius: 52,
-                          backgroundColor: Colors.grey[200],
-                          child: Icon(
-                            Icons.person,
-                            size: 60,
-                            color: Colors.grey[400],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+            child: CircleAvatar(
+              radius: 52,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+              child: imageUrl.isEmpty
+                  ? Icon(Icons.person, size: 60, color: Colors.grey[400])
+                  : null,
+            ),
           ),
         ),
       ],
     );
   }
 }
+

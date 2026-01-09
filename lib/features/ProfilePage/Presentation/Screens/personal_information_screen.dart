@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
+import '../../Api/personal_information_repository.dart';
 import '../../Model/personal_information_response.dart';
 
 class PersonalInformationScreen extends StatefulWidget {
@@ -12,28 +13,31 @@ class PersonalInformationScreen extends StatefulWidget {
 
 class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
-  late final PersonalInfoResponse personalInfo;
+  PersonalInfoResponse? personalInfo;
+  bool isLoading = true;
+  String? error;
+
+  final PersonalInformationRepository _repo = PersonalInformationRepository();
 
   @override
   void initState() {
     super.initState();
+    _loadPersonalInfo();
+  }
 
-    // 🔹 Hardcoded Personal Information
-    personalInfo = PersonalInfoResponse(
-      proPic: "/uploads/profile/john_doe.jpg", // same usage as before
-      mobNumber: "+91 98765 43210",
-      email: "john.doe@weinber.com",
-      address: "Flat 402, Al Nahda, Dubai, UAE",
-      dob: "12 January 1995",
-      nationality: "Indian",
-      emergencyContacts: [
-        EmergencyContact(
-          name: "Jane Doe",
-          phone: "+91 99887 66554",
-          relation: "Sister",
-        ),
-      ],
-    );
+  Future<void> _loadPersonalInfo() async {
+    try {
+      final res = await _repo.fetchPersonalInfo();
+      setState(() {
+        personalInfo = res;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = "Failed to load personal information";
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -44,11 +48,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 20,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              size: 20, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -60,15 +61,31 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
           ),
         ),
       ),
-      body: buildPersonalInfoUI(),
+      body: _buildBody(),
     );
   }
 
-  Widget buildPersonalInfoUI() {
-    final info = personalInfo;
+  Widget _buildBody() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error != null) {
+      return Center(child: Text(error!));
+    }
+
+    final info = personalInfo!;
     final emergency =
     info.emergencyContacts.isNotEmpty ? info.emergencyContacts.first : null;
 
+    return _buildPersonalInfoUI(info, emergency);
+  }
+
+
+  Widget _buildPersonalInfoUI(
+      PersonalInfoResponse info,
+      EmergencyContact? emergency,
+      ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: Column(
@@ -80,12 +97,14 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                 CircleAvatar(
                   backgroundColor: Colors.grey.shade200,
                   radius: 55,
-                  foregroundImage: NetworkImage(
-                    "https://www.cipher-peak.com${info.proPic}",
-                  ),
+                  foregroundImage: info.proPic.isNotEmpty
+                      ? NetworkImage("https://www.cipher-peak.com${info.proPic}")
+                      : null,
                   onForegroundImageError: (_, __) {},
-                  child:
-                  const Icon(Icons.person, size: 60, color: Colors.grey),
+                  child: info.proPic.isEmpty
+                      ? const Icon(Icons.person,
+                      size: 60, color: Colors.grey)
+                      : null,
                 ),
                 Positioned(
                   bottom: 0,
@@ -96,11 +115,7 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
                       color: primaryColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.edit,
-                      size: 18,
-                      color: Colors.white,
-                    ),
+                    child: const Icon(Icons.edit, size: 18, color: Colors.white),
                   ),
                 ),
               ],
@@ -109,35 +124,22 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
           const SizedBox(height: 30),
 
-          // ============================
-          // MOBILE
-          // ============================
           _buildLabel(Icons.phone_outlined, "Mobile Number"),
           _editableField(info.mobNumber),
 
-          // ============================
-          // EMAIL
-          // ============================
           _buildLabel(Icons.email_outlined, "Email"),
           _editableField(info.email),
 
-          // ============================
-          // ADDRESS
-          // ============================
           _buildLabel(Icons.location_on_outlined, "Address"),
           _editableField(info.address),
 
-          // ============================
-          // DOB + Nationality
-          // ============================
           Row(
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildLabel(
-                        Icons.calendar_today_outlined, "Date of Birth"),
+                    _buildLabel(Icons.calendar_today_outlined, "Date of Birth"),
                     _editableField(info.dob),
                   ],
                 ),
@@ -157,9 +159,6 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
 
           const SizedBox(height: 25),
 
-          // ============================
-          // EMERGENCY CONTACT SECTION
-          // ============================
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
@@ -189,6 +188,8 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
       ),
     );
   }
+
+
 
   // ------------------------------------------------------------------
 

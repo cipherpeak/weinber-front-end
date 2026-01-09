@@ -1,17 +1,17 @@
 class VisaDocumentResponse {
-  final String visaNumber;
-  final String visaExpiryDate;
-  final String passportNumber;
-  final String passportExpiryDate;
-  final String emiratesIdExpiry;
+  final String? visaExpiryDate;
+  final String? passportNumber;
+  final String? passportExpiryDate;
+  final String? emiratesIdNumber;
+  final String? emiratesIdExpiry;
   final List<DocumentItem> documents;
   final List<String> pendingDocuments;
 
   VisaDocumentResponse({
-    required this.visaNumber,
     required this.visaExpiryDate,
     required this.passportNumber,
     required this.passportExpiryDate,
+    required this.emiratesIdNumber,
     required this.emiratesIdExpiry,
     required this.documents,
     required this.pendingDocuments,
@@ -19,15 +19,16 @@ class VisaDocumentResponse {
 
   factory VisaDocumentResponse.fromJson(Map<String, dynamic> json) {
     return VisaDocumentResponse(
-      visaNumber: json["visa_number"] ?? "",
-      visaExpiryDate: json["visa_expiry_date"] ?? "",
-      passportNumber: json["passport_number"] ?? "",
-      passportExpiryDate: json["passport_expiry_date"] ?? "",
-      emiratesIdExpiry: json["emirates_id_expiry"] ?? "",
-      documents: (json["documents"] as List)
+      visaExpiryDate: json["visa_expiry_date"],
+      passportNumber: json["passport_number"],
+      passportExpiryDate: json["passport_expiry_date"],
+      emiratesIdNumber: json["emirates_id_number"],
+      emiratesIdExpiry: json["emirates_id_expiry"],
+      documents: (json["documents"] as List? ?? [])
           .map((e) => DocumentItem.fromJson(e))
           .toList(),
-      pendingDocuments: List<String>.from(json["pending_documents_list"] ?? []),
+      pendingDocuments:
+      List<String>.from(json["pending_documents_list"] ?? []),
     );
   }
 }

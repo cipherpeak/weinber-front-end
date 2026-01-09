@@ -1,5 +1,11 @@
+
+
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
+import '../../Api/visa_document_repository.dart';
 import '../../Model/visa_document_response_model.dart';
 
 class VisaAndDocument extends StatefulWidget {
@@ -11,44 +17,86 @@ class VisaAndDocument extends StatefulWidget {
 
 class _VisaAndDocumentState extends State<VisaAndDocument> {
 
-  late final VisaDocumentResponse visaData;
+  VisaDocumentResponse? visaData;
+  bool isLoading = true;
+  String? error;
+  bool isUploading = false;
+
+  final VisaDocumentRepository _repo = VisaDocumentRepository();
 
   @override
   void initState() {
     super.initState();
+    _loadVisaData();
+  }
 
-    // 🔹 Hardcoded Visa & Document Data
-    visaData = VisaDocumentResponse(
-      visaNumber: "VISA-987654321",
-      visaExpiryDate: "30 December 2025",
-      passportNumber: "P12345678",
-      passportExpiryDate: "15 June 2028",
-      emiratesIdExpiry: "10 March 2026",
-      documents: [
-        DocumentItem(
-          type: "passport",
-          name: "Passport Copy",
-          file: "https://example.com/docs/passport.pdf",
-          uploadedAt: "2024-06-15T10:30:00",
-        ),
-        DocumentItem(
-          type: "visa",
-          name: "Visa Copy",
-          file: "https://example.com/docs/visa.pdf",
-          uploadedAt: "2024-06-16T11:45:00",
-        ),
-        DocumentItem(
-          type: "emirates_id",
-          name: "Emirates ID",
-          file: "https://example.com/docs/emirates_id.pdf",
-          uploadedAt: "2024-06-18T09:15:00",
-        ),
-      ],
-      pendingDocuments: [
-        "Labour Card",
-        "Insurance Document",
-      ],
-    );
+  Future<void> _loadVisaData() async {
+    try {
+      final res = await _repo.fetchVisaData();
+      setState(() {
+        visaData = res;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = "Failed to load visa & document details";
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _uploadPendingDocument(String documentType) async {
+    try {
+      debugPrint("📂 Opening file picker...");
+
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        withData: false,
+      );
+
+      if (result == null ||
+          result.files.isEmpty ||
+          result.files.single.path == null) {
+        debugPrint("⚠️ File picking cancelled or no file selected");
+        return;
+      }
+
+      final file = File(result.files.single.path!);
+      debugPrint("✅ File selected: ${file.path}");
+
+      setState(() => isUploading = true);
+
+      final docType = documentType.toLowerCase().replaceAll(" ", "_");
+      debugPrint("📤 Uploading as type: $docType");
+
+      await _repo.uploadDocument(
+        documentType: docType,
+        file: file,
+      );
+
+      await _loadVisaData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Document uploaded successfully")),
+        );
+      }
+    } catch (e, st) {
+      debugPrint("❌ FILE PICK / UPLOAD ERROR => $e");
+      debugPrint("🧵 STACK TRACE ↓↓↓");
+      debugPrintStack(stackTrace: st);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("File picker or upload failed. Check logs."),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => isUploading = false);
+    }
   }
 
   @override
@@ -59,107 +107,101 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 20,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Visa & Document Details",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
         ),
       ),
-      body: buildVisaUI(),
+      body: _buildBody(),
     );
   }
 
-  Widget buildVisaUI() {
-    final data = visaData;
+  Widget _buildBody() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
+    if (error != null) {
+      return Center(child: Text(error!));
+    }
+
+    return buildVisaUI(visaData!);
+  }
+
+
+  Widget buildVisaUI(VisaDocumentResponse data) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-          Text(
-            "VISA DETAILS",
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade600,
-            ),
-          ),
-          const SizedBox(height: 15),
+          _buildField(Icons.calendar_month, "Visa Expiry Date",
+              _val(data.visaExpiryDate), valueColor: Colors.red),
 
-          _buildField(Icons.badge_outlined, "Visa Number", data.visaNumber),
-          _buildField(
-            Icons.calendar_month,
-            "Visa Expiry Date",
-            data.visaExpiryDate,
-            valueColor: Colors.red,
-          ),
+          _buildField(Icons.wallet_travel_outlined, "Passport Number",
+              _val(data.passportNumber)),
 
-          _buildField(
-            Icons.wallet_travel_outlined,
-            "Passport Number",
-            data.passportNumber,
-          ),
+          _buildField(Icons.calendar_today_outlined, "Passport Expiry Date",
+              _val(data.passportExpiryDate), valueColor: Colors.red),
 
-          _buildField(
-            Icons.calendar_today_outlined,
-            "Passport Expiry Date",
-            data.passportExpiryDate,
-            valueColor: Colors.red,
-          ),
+          _buildField(Icons.credit_card_outlined, "Emirates ID Number",
+              _val(data.emiratesIdNumber)),
 
-          _buildField(
-            Icons.credit_card_outlined,
-            "Emirates ID Expiry",
-            data.emiratesIdExpiry,
-          ),
+          _buildField(Icons.credit_card_outlined, "Emirates ID Expiry",
+              _val(data.emiratesIdExpiry)),
 
           const SizedBox(height: 25),
 
-          Text(
-            "DOCUMENTS",
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.grey.shade600,
-            ),
-          ),
+          _sectionTitle("DOCUMENTS"),
           const SizedBox(height: 15),
 
-          ...data.documents.map((doc) => _buildDocumentCard(doc)).toList(),
+          if (data.documents.isEmpty)
+            _emptyText("No documents uploaded")
+          else
+            ...data.documents.map((doc) => _buildDocumentCard(doc)).toList(),
 
           const SizedBox(height: 25),
 
-          Text(
-            "PENDING DOCUMENT UPLOADS",
-            style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w700,
-              color: Colors.red,
-            ),
-          ),
+          _sectionTitle("PENDING DOCUMENT UPLOADS", color: Colors.red),
           const SizedBox(height: 15),
 
-          ...data.pendingDocuments
-              .map((item) => _buildPendingUpload(item))
-              .toList(),
+          if (data.pendingDocuments.isEmpty)
+            _emptyText("No pending documents 🎉")
+          else
+            ...data.pendingDocuments
+                .map((item) => _buildPendingUpload(item))
+                .toList(),
 
           const SizedBox(height: 40),
         ],
       ),
     );
   }
+
+  String _val(String? v) => (v == null || v.isEmpty) ? "Not provided" : v;
+
+  Widget _sectionTitle(String text, {Color? color}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+        color: color ?? Colors.grey.shade600,
+      ),
+    );
+  }
+
+  Widget _emptyText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(text, style: const TextStyle(color: Colors.black45)),
+    );
+  }
+
 
   Widget _buildField(
       IconData icon,
@@ -329,25 +371,37 @@ class _VisaAndDocumentState extends State<VisaAndDocument> {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: primaryColor,
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Row(
-              children: const [
-                Text(
-                  "Add",
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+          GestureDetector(
+            onTap: isUploading ? null : () => _uploadPendingDocument(title),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: isUploading ? Colors.grey : primaryColor,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: Row(
+                children: [
+                  isUploading
+                      ? const SizedBox(
+                    height: 14,
+                    width: 14,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                      : const Icon(Icons.add, size: 16, color: Colors.white),
+                  const SizedBox(width: 6),
+                  const Text(
+                    "Add",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                SizedBox(width: 5),
-                Icon(Icons.add, size: 16, color: Colors.white),
-              ],
+                ],
+              ),
             ),
           ),
         ],

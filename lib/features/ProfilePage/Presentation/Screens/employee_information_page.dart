@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
+import '../../Api/employee_information_repository.dart';
 import '../../Model/employee_information_model.dart';
 
 class EmployeeInformationScreen extends StatefulWidget {
@@ -13,23 +14,32 @@ class EmployeeInformationScreen extends StatefulWidget {
 class _EmployeeInformationScreenState
     extends State<EmployeeInformationScreen> {
 
-  late final EmployeeInformationResponse info;
+  EmployeeInformationResponse? info;
+  bool isLoading = true;
+  String? error;
+
+  final EmployeeInformationRepository _repo =
+  EmployeeInformationRepository();
 
   @override
   void initState() {
     super.initState();
+    _loadEmployeeInfo();
+  }
 
-    // 🔹 Hardcoded employee information
-    info = EmployeeInformationResponse(
-      employeeId: "EMP-00123",
-      fullName: "John Doe",
-      dateOfJoining: "15 August 2022",
-      department: "Field Operations",
-      profession: "Field Executive",
-      reportingManager: "Michael Johnson",
-      companyName: "Weinber Pvt Ltd",
-      branchLocation: "Dubai",
-    );
+  Future<void> _loadEmployeeInfo() async {
+    try {
+      final res = await _repo.fetchEmployeeInformation();
+      setState(() {
+        info = res;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = "Failed to load employee information";
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -40,11 +50,8 @@ class _EmployeeInformationScreenState
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 20,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              size: 20, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
@@ -56,12 +63,20 @@ class _EmployeeInformationScreenState
           ),
         ),
       ),
-      body: buildEmployeeInfoUI(),
+      body: _buildBody(),
     );
   }
 
-  Widget buildEmployeeInfoUI() {
-    final data = info;
+  Widget _buildBody() {
+    if (isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error != null) {
+      return Center(child: Text(error!));
+    }
+
+    final data = info!;
 
     final infoList = [
       {
@@ -75,24 +90,9 @@ class _EmployeeInformationScreenState
         'icon': Icons.person_outline,
       },
       {
-        'label': 'Date of Joining',
-        'value': data.dateOfJoining,
-        'icon': Icons.calendar_today_outlined,
-      },
-      {
-        'label': 'Department',
-        'value': data.department,
-        'icon': Icons.apartment_outlined,
-      },
-      {
-        'label': 'Profession',
-        'value': data.profession,
+        'label': 'Employee Type',
+        'value': data.employeeType,
         'icon': Icons.work_outline,
-      },
-      {
-        'label': 'Reporting Manager',
-        'value': data.reportingManager,
-        'icon': Icons.supervisor_account_outlined,
       },
       {
         'label': 'Company Name',
@@ -100,8 +100,13 @@ class _EmployeeInformationScreenState
         'icon': Icons.business_outlined,
       },
       {
-        'label': 'Branch Location',
-        'value': data.branchLocation,
+        'label': 'Date Joined',
+        'value': _formatDate(data.dateJoined),
+        'icon': Icons.calendar_today_outlined,
+      },
+      {
+        'label': 'Company Location',
+        'value': data.companyLocation ?? "Not provided",
         'icon': Icons.location_on_outlined,
       },
     ];
@@ -115,11 +120,8 @@ class _EmployeeInformationScreenState
             children: [
               Row(
                 children: [
-                  Icon(
-                    item['icon'] as IconData,
-                    size: 18,
-                    color: Colors.black87,
-                  ),
+                  Icon(item['icon'] as IconData,
+                      size: 18, color: Colors.black87),
                   const SizedBox(width: 8),
                   Text(
                     item['label'] as String,
@@ -135,9 +137,7 @@ class _EmployeeInformationScreenState
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 15,
-                ),
+                    horizontal: 15, vertical: 15),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -151,7 +151,6 @@ class _EmployeeInformationScreenState
                   ],
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
@@ -181,5 +180,15 @@ class _EmployeeInformationScreenState
       ),
     );
   }
-}
 
+  String _formatDate(String rawDate) {
+    try {
+      final dt = DateTime.parse(rawDate).toLocal();
+      return "${dt.day.toString().padLeft(2, '0')}-"
+          "${dt.month.toString().padLeft(2, '0')}-"
+          "${dt.year}";
+    } catch (_) {
+      return rawDate;
+    }
+  }
+}

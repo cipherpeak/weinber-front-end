@@ -15,4 +15,5 @@ class ApiEndpoints {
   static const String personalInformation = '/profile/personal-information/';
   static const String visaDocument = '/profile/visa-documents/';
   static const String employeeInformation = '/profile/employee-information/';
+  static const String visaDocumentUpdate = '/profile/visa-documents/update/';
 }

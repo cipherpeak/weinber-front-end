@@ -5,15 +5,16 @@ import '../../features/Authentication/Login/Api/login_repository.dart';
 import '../../features/Authentication/Login/Model/hive_login_model.dart';
 
 class DioClient {
-  static final Dio dio = Dio(BaseOptions(
-    baseUrl: ApiEndpoints.baseUrl,
-    connectTimeout: const Duration(seconds: 20),
-    receiveTimeout: const Duration(seconds: 20),
-    headers: {
-      "Accept": "application/json",
-    },
-  ))
-    ..interceptors.add(_AuthInterceptor());
+  static final Dio dio = Dio(
+    BaseOptions(
+      baseUrl: ApiEndpoints.baseUrl,
+      connectTimeout: const Duration(seconds: 20),
+      receiveTimeout: const Duration(seconds: 20),
+      headers: {
+        "Accept": "application/json",
+      },
+    ),
+  )..interceptors.add(_AuthInterceptor());
 }
 
 class _AuthInterceptor extends Interceptor {
@@ -22,7 +23,7 @@ class _AuthInterceptor extends Interceptor {
     final token = AuthLocalStorage.instance.getAccessToken();
 
     // Attach token to every request
-    if (token != null) {
+    if (token != null && token.isNotEmpty) {
       options.headers["Authorization"] = "Bearer $token";
     }
 
@@ -38,7 +39,6 @@ class _AuthInterceptor extends Interceptor {
       bool refreshed = await _refreshToken();
 
       if (refreshed) {
-        // Retry previous request
         final newToken = AuthLocalStorage.instance.getAccessToken();
         requestOptions.headers["Authorization"] = "Bearer $newToken";
 
@@ -62,15 +62,16 @@ class _AuthInterceptor extends Interceptor {
   }
 
   // ======================================================
-  //                         REFRESH TOKEN
+  //                      REFRESH TOKEN
   // ======================================================
   Future<bool> _refreshToken() async {
     final refresh = AuthLocalStorage.instance.getRefreshToken();
-    if (refresh == null) return false;
+    if (refresh == null || refresh.isEmpty) return false;
 
     try {
-      final response = await Dio(BaseOptions(baseUrl: ApiEndpoints.baseUrl))
-          .post("/auth/refresh/", data: {"refresh": refresh});
+      final response = await Dio(
+        BaseOptions(baseUrl: ApiEndpoints.baseUrl),
+      ).post("/auth/refresh/", data: {"refresh": refresh});
 
       if (response.statusCode == 200) {
         final access = response.data["access"];
@@ -82,7 +83,9 @@ class _AuthInterceptor extends Interceptor {
           employeeId: AuthLocalStorage.instance.getEmployeeId() ?? "",
           employeeType: AuthLocalStorage.instance.getEmployeeType() ?? "",
           profilePic: AuthLocalStorage.instance.getProfilePic() ?? "",
-          appIcon: AuthLocalStorage.instance.getAppIcon() ?? "",
+          appIcon: AuthLocalStorage.instance.getAppIcon(),
+          company: AuthLocalStorage.instance.getCompany() ?? "",
+          role: AuthLocalStorage.instance.getRole() ?? "",
         );
 
         return true;
@@ -95,7 +98,7 @@ class _AuthInterceptor extends Interceptor {
   }
 
   // ======================================================
-  //                      AUTO LOGIN RETRY
+  //                     AUTO LOGIN RETRY
   // ======================================================
   Future<bool> _autoLogin() async {
     final savedId = AuthLocalStorage.instance.getSavedEmployeeId();
@@ -105,7 +108,10 @@ class _AuthInterceptor extends Interceptor {
 
     try {
       final authRepo = AuthRepository();
-      final res = await authRepo.login(employeeId: savedId, password: savedPass);
+      final res = await authRepo.login(
+        employeeId: savedId,
+        password: savedPass,
+      );
 
       await AuthLocalStorage.instance.saveLoginData(
         access: res.access,
@@ -114,6 +120,8 @@ class _AuthInterceptor extends Interceptor {
         employeeType: res.employee.employeeType,
         profilePic: res.employee.profilePic,
         appIcon: res.employee.appIcon,
+        company: res.employee.company,
+        role: res.employee.role,
       );
 
       return true;
