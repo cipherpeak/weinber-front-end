@@ -5,6 +5,7 @@ import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/S
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Screens/Leave/LeavePage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/fine%20details%20page.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehicle_usage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
@@ -82,6 +83,8 @@ const String routerFinesAndPenaltiesPage =
     '/app/home/profile/vehicle-details/fines-and-penalties';
 const String routerFinesAndPenaltiesDetailsPage =
     '/app/home/profile/vehicle-details/fines-and-penalties/details';
+const String routerLeavePage =
+    '/app/home/profile/leave';
 
 //Dax Task
 const String routerDaxTaskPage = '/app/task-dax';
@@ -536,6 +539,18 @@ final GoRouter router = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const SettingsScreen(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerLeavePage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child:  LeaveScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../Api/temporary_vehicle_assign_repo.dart';
 
 class TemporaryVehicleUsage extends StatefulWidget {
   const TemporaryVehicleUsage({super.key});
@@ -11,6 +14,15 @@ class TemporaryVehicleUsage extends StatefulWidget {
 
 class _TemporaryVehicleUsageState extends State<TemporaryVehicleUsage> {
 
+  bool isSubmitting = false;
+  final VehicleRepository _repo = VehicleRepository();
+
+  String _apiDate(DateTime d) =>
+      "${d.year}-${d.month.toString().padLeft(2, "0")}-${d.day.toString().padLeft(2, "0")}";
+
+  String _apiTime(TimeOfDay t) =>
+      "${t.hour.toString().padLeft(2, "0")}:${t.minute.toString().padLeft(2, "0")}";
+
 
   final TextEditingController vehicleNumberController = TextEditingController();
   final TextEditingController modelController = TextEditingController();
@@ -18,9 +30,101 @@ class _TemporaryVehicleUsageState extends State<TemporaryVehicleUsage> {
 
   TimeOfDay? startTime;
   TimeOfDay? endTime;
+  String? currentLocation;
 
   DateTime? startDate;
   DateTime? endDate;
+
+  @override
+  void initState() {
+    _getCurrentLocation();
+    super.initState();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception("Location services are disabled");
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception("Location permission permanently denied");
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      final placemarks =
+      await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      if (placemarks.isNotEmpty) {
+        final p = placemarks.first;
+
+        setState(() {
+          currentLocation =
+          "${p.locality ?? ""}, ${p.administrativeArea ?? ""}, ${p.country ?? ""}";
+        });
+      }
+    } catch (e) {
+      debugPrint("📍 LOCATION ERROR => $e");
+    }
+  }
+
+  Future<void> _submitForm() async {
+    if (vehicleNumberController.text.isEmpty ||
+        modelController.text.isEmpty ||
+        startDate == null ||
+        endDate == null ||
+        startTime == null ||
+        endTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all required fields")),
+      );
+      return;
+    }
+
+    try {
+      setState(() => isSubmitting = true);
+
+      await _repo.createTemporaryVehicle(
+        vehicleNumber: vehicleNumberController.text.trim(),
+        vehicleModel: modelController.text.trim(),
+        startDate: _apiDate(startDate!),
+        endDate: _apiDate(endDate!),
+        startTime: _apiTime(startTime!),
+        endTime: _apiTime(endTime!),
+        location: currentLocation ?? "Unknown location",
+        note: noteController.text.trim(),
+      );
+
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Temporary vehicle submitted successfully")),
+      );
+
+      Navigator.pop(context, true); // go back and refresh vehicle page
+    } catch (e, st) {
+      debugPrint("❌ TEMP VEHICLE ERROR => $e");
+      debugPrint("🧵 STACK TRACE => $st");
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to submit temporary vehicle")),
+      );
+    } finally {
+      if (mounted) setState(() => isSubmitting = false);
+    }
+  }
 
   Future<void> pickStartTime() async {
     final result = await showTimePicker(
@@ -256,18 +360,28 @@ class _TemporaryVehicleUsageState extends State<TemporaryVehicleUsage> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: isSubmitting ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25)),
                 ),
-                child: const Text(
+                child: isSubmitting
+                    ? const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+                    : const Text(
                   "Submit Form",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
+
             ),
             SizedBox(height: 25,)
           ],

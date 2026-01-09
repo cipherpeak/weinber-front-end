@@ -126,7 +126,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           // 🔹 Leave Management
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              router.push(routerLeavePage);
+            },
             child: Container(
               width: double.infinity,
               padding:
