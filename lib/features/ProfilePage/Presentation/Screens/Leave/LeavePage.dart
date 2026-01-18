@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/constants.dart';
 
+import '../../../../../core/constants/page_routes.dart';
 import '../../../Api/leave_repo.dart';
 import '../../../Model/leave_response_model.dart';
 
@@ -50,11 +51,22 @@ class _LeaveScreenState extends State<LeaveScreen> {
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : _buildUI(),
-      floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: primaryColor,
-        onPressed: () {},
-        label: const Text("Apply Leave"),
-        icon: const Icon(Icons.add),
+      floatingActionButton: SizedBox(height: 45,
+        child: FloatingActionButton.extended(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          backgroundColor: primaryColor,
+          onPressed: () async {
+            final res = await router.push(routerLeaveApplyPage);
+            if (res == true) {
+              _loadLeaves(); // refresh leave list
+            }
+          },
+
+          label: const Text("Apply Leave", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),),
+          icon: const Icon(Icons.add, color: Colors.white,),
+        ),
       ),
     );
   }
@@ -175,7 +187,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Used ${data.usedVacationDays}/${data.totalVacationDays} days",
-                    style: const TextStyle(fontSize: 12, color: Colors.black45),
+                    style: const TextStyle(fontSize: 12, color: Colors.black),
                   ),
                 )
               ],
@@ -283,67 +295,69 @@ class _LeaveScreenState extends State<LeaveScreen> {
         ? const Color(0xFFFFC764)
         : Colors.redAccent;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.reason,
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: color.withOpacity(.15),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        item.status.capitalize(),
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: color,
-                          fontWeight: FontWeight.w600,
+    return GestureDetector(
+      onTap: () {
+        router.push(routerLeaveDetailsPage, extra: item.id);
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.04),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            )
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          item.reason,
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                       ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  item.startDate,
-                  style:
-                  const TextStyle(fontSize: 12, color: Colors.black45),
-                ),
-              ],
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          item.status.capitalize(),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: color,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    item.startDate,
+                    style: const TextStyle(fontSize: 12, color: Colors.black45),
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          const Icon(Icons.arrow_forward_ios_rounded,
-              size: 16, color: Colors.black38)
-        ],
+            const Icon(Icons.arrow_forward_ios_rounded,
+                size: 16, color: Colors.black38)
+          ],
+        ),
       ),
     );
   }

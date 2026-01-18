@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/page_routes.dart';
 import '../../../../utils/Common Functions/format_date_time.dart';
 import '../../Model/homepage_response.dart';
 import 'announcement_card_widget.dart';
@@ -78,13 +79,18 @@ class AnnouncementSectionWidget extends StatelessWidget {
             // Format using your own function
             final formattedDate = formatDateTime(ann.date);
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: announcementCard(
-                icon: _getAnnouncementIcon(index),
-                color: _getAnnouncementColor(index),
-                title: ann.heading,
-                date: formattedDate,
+            return GestureDetector(
+              onTap: (){
+                router.push(routerAnnouncementDetailsPage);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: announcementCard(
+                  icon: _getAnnouncementIcon(index),
+                  color: _getAnnouncementColor(index),
+                  title: ann.heading,
+                  date: formattedDate,
+                ),
               ),
             );
           }),

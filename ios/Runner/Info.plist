@@ -35,6 +35,8 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSDocumentPickerUsageDescription</key>
+    <string>Need access to pick documents</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs camera access to take pictures for profile photos.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

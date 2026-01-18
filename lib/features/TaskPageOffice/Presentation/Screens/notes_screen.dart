@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/core/constants/constants.dart';
 
 import '../../../../../core/constants/page_routes.dart';
+import '../../Model/notes_response_model.dart';
+import '../../Api/notes_repo.dart';
+import '../Provider/notes_notifier.dart';
 import 'add_notes_screen.dart';
 
-class NotesScreen extends StatefulWidget {
+class NotesScreen extends ConsumerStatefulWidget {
   const NotesScreen({super.key});
 
   @override
-  State<NotesScreen> createState() => _NotesScreenState();
+  ConsumerState<NotesScreen> createState() => _NotesScreenState();
 }
 
-class _NotesScreenState extends State<NotesScreen>
+class _NotesScreenState extends ConsumerState<NotesScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -23,103 +27,34 @@ class _NotesScreenState extends State<NotesScreen>
 
   @override
   Widget build(BuildContext context) {
+    final notesState = ref.watch(notesNotifierProvider);
+
+    return notesState.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(child: Text(e.toString())),
+      data: (notesData) => _ui(notesData),
+    );
+  }
+
+  // ================= UI =================
+
+  Widget _ui(NotesResponse notesData) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Title
-          // const SizedBox(height: 6),
-          // const Text(
-          //   "Notes",
-          //   style: TextStyle(
-          //     fontSize: 24,
-          //     fontWeight: FontWeight.w700,
-          //     fontFamily: appFont,
-          //   ),
-          // ),
-          //
-          // const SizedBox(height: 20),
-
-          /// 🔍 Search Bar
-          Container(
-            height: 48,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12.withOpacity(0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: TextField(
-              cursorColor: primaryColor,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: "Search your notes",
-                hintStyle: TextStyle(
-                  color: Colors.grey.shade500,
-                  fontSize: 14,
-                  fontFamily: appFont,
-                ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.grey.shade500,
-                  size: 22,
-                ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-              ),
-            ),
-          ),
-
+          _searchBar(),
           const SizedBox(height: 10),
-
-          /// 🧾 Tabs
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFFF6F8FF),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: primaryColor,
-              labelColor: primaryColor,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                fontFamily: appFont,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                fontFamily: appFont,
-              ),
-              indicatorWeight: 2.2,
-              indicatorSize: TabBarIndicatorSize.label,
-              tabs: const [
-                Tab(child: Text("Today's Notes")),
-                Tab(child: Text("Future Notes")),
-              ],
-            ),
-          ),
-
+          _tabs(),
           const SizedBox(height: 18),
-
-          /// TAB VIEWS
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.72,
             child: TabBarView(
               controller: _tabController,
               children: [
-                /// TODAY NOTES
-                _todayNotes(),
-
-                /// FUTURE NOTES
-                _futureNotes(),
+                _notesList(notesData.todayNotes, true),
+                _notesList(notesData.futureNotes, false),
               ],
             ),
           ),
@@ -128,69 +63,98 @@ class _NotesScreenState extends State<NotesScreen>
     );
   }
 
-  // ---------------------------
-  // TODAY'S NOTES SECTION
-  // ---------------------------
-  Widget _todayNotes() {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        _addNotesCard(),
+  // ================= SEARCH =================
 
-        const SizedBox(height: 15),
-
-        /// Example Note 1
-        GestureDetector(onTap: (){
-          router.push(routerNotesDetailsPage);
-        },
-          child: _noteCard(
-            title: "Follow-Up with Vendor",
-            description:
-                "Call the supplier to confirm the delivery timeline for the pending order...",
-            bgColor: const Color(0xFFF8E6D1),
+  Widget _searchBar() {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
+        ],
+      ),
+      child: TextField(
+        cursorColor: primaryColor,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: "Search your notes",
+          hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 14),
+          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500, size: 22),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0),
         ),
-
-        const SizedBox(height: 15),
-
-        /// Example Note 2
-        _noteCard(
-          title: "Weekly Expense Summary",
-          description:
-              "Prepare the consolidated expense sheet for the week, includin...",
-          bgColor: const Color(0xFFE0EDFF),
-        ),
-      ],
+      ),
     );
   }
 
-  // ---------------------------
-  // FUTURE NOTES SECTION
-  // ---------------------------
-  Widget _futureNotes() {
+  // ================= TABS =================
+
+  Widget _tabs() {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F8FF),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        indicatorColor: primaryColor,
+        labelColor: primaryColor,
+        unselectedLabelColor: Colors.grey,
+        indicatorWeight: 2.2,
+        tabs: const [
+          Tab(text: "Today's Notes"),
+          Tab(text: "Future Notes"),
+        ],
+      ),
+    );
+  }
+
+  // ================= NOTES LIST =================
+
+  Widget _notesList(List<OfficeNote> notes, bool isToday) {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
         _addNotesCard(),
-
         const SizedBox(height: 15),
 
-        _noteCard(
-          title: "Plan Team Meeting",
-          description: "Schedule next week's internal review meeting...",
-          bgColor: const Color(0xFFE8F8D6),
-        ),
+        if (notes.isEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 40),
+            child: Center(child: Text("No notes found")),
+          ),
+
+        ...notes.map((n) => Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: GestureDetector(
+            onTap: () {
+              router.push(routerNotesDetailsPage, extra: n.id);
+            },
+            child: _noteCard(
+              note: n,
+              bgColor:
+              isToday ? const Color(0xFFF8E6D1) : const Color(0xFFE8F8D6),
+            ),
+          ),
+        )),
       ],
     );
   }
 
-  // ---------------------------
-  // ADD NOTES CARD
-  // ---------------------------
+  // ================= ADD NOTES =================
+
   Widget _addNotesCard() {
     return GestureDetector(
-      onTap: () {
-        router.push(routerAddNotesPage);
+      onTap: () async {
+        final res = await router.push(routerAddNotesPage);
+        if (res == true) {
+          ref.read(notesNotifierProvider.notifier).refresh();
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -206,8 +170,8 @@ class _NotesScreenState extends State<NotesScreen>
             ),
           ],
         ),
-        child: Row(
-          children: const [
+        child: const Row(
+          children: [
             CircleAvatar(
               radius: 16,
               backgroundColor: primaryColor,
@@ -216,11 +180,7 @@ class _NotesScreenState extends State<NotesScreen>
             SizedBox(width: 12),
             Text(
               "Add Notes",
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                fontFamily: appFont,
-              ),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -228,19 +188,21 @@ class _NotesScreenState extends State<NotesScreen>
     );
   }
 
-  // ---------------------------
-  // NOTE CARD WIDGET
-  // ---------------------------
-  Widget _noteCard({
-    required String title,
-    required String description,
-    required Color bgColor,
-  }) {
+  // ================= NOTE CARD =================
+
+  Widget _noteCard({required OfficeNote note, required Color bgColor}) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          )
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,44 +210,147 @@ class _NotesScreenState extends State<NotesScreen>
           Row(
             children: [
               Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: appFont,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: Text(note.title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    )),
               ),
-              PopupMenuButton(
-                padding: EdgeInsets.zero,
-                icon: const Icon(Icons.more_vert, size: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                itemBuilder: (context) => [
-                  const PopupMenuItem(value: 1, child: Text("Edit")),
-                  const PopupMenuItem(
-                    value: 2,
+              PopupMenuButton<String>(
+                onSelected: (v) {
+                  if (v == "edit") _editNote(note.id);
+                  if (v == "delete") _deleteNote(note.id);
+                },
+                itemBuilder: (_) => const [
+                  PopupMenuItem(value: "edit", child: Text("Edit")),
+                  PopupMenuItem(
+                    value: "delete",
                     child: Text("Delete", style: TextStyle(color: Colors.red)),
                   ),
                 ],
               ),
+
             ],
           ),
-          // const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
-            description,
+            note.description,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontFamily: appFont,
-              fontSize: 13,
-              color: Colors.black87,
-            ),
+            style: const TextStyle(fontSize: 13, height: 1.4),
           ),
         ],
       ),
     );
   }
+
+  // ================= ACTIONS =================
+  Future<void> _editNote(int noteId) async {
+    try {
+      final repo = NotesRepository();
+
+      // show loader
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        useRootNavigator: true,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final noteDetail = await repo.fetchNoteDetails(noteId);
+
+      if (!mounted) return;
+
+      // close loader SAFELY
+      if (Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      // wait one frame before navigation (VERY IMPORTANT)
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      final res = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => AddNoteScreen(note: noteDetail),
+        ),
+      );
+
+      if (res == true) {
+        ref.read(notesNotifierProvider.notifier).refresh();
+      }
+    } catch (e) {
+      if (mounted && Navigator.of(context, rootNavigator: true).canPop()) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  Future<void> _deleteNote(int id) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text("Delete note?"),
+        content: const Text("This action cannot be undone"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx), // ✅ close only dialog
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              Navigator.pop(dialogCtx); // ✅ close dialog first
+
+              try {
+                // show loader
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  useRootNavigator: true,
+                  builder: (_) =>
+                  const Center(child: CircularProgressIndicator()),
+                );
+
+                await NotesRepository().deleteNote(id);
+
+                if (!mounted) return;
+
+                // close loader safely
+                if (Navigator.of(context, rootNavigator: true).canPop()) {
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+
+                ref.read(notesNotifierProvider.notifier).refresh();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Note deleted")),
+                );
+
+              } catch (e) {
+                if (mounted &&
+                    Navigator.of(context, rootNavigator: true).canPop()) {
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
+                }
+              }
+            },
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
 }

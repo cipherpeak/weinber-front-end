@@ -15,6 +15,8 @@ Future<void> main() async {
 
   await Hive.openBox("authBox");
 
+  await Hive.openBox('breakBox');
+
   await ApiService.init();
 
   runApp(const ProviderScope(child: MainApp()));

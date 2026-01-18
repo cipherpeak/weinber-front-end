@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'dart:convert';
+
 class HomeResponse {
-  final String name;
-  final String role;
-  final String employeeType;
+  final String? name;
   final int notificationCount;
   final bool ongoingTask;
   final List<OngoingTask> ongoingTasks;
+
+  final BreakTimer? breakTimer;
+  final BreakHistory? breakHistory;
+
   final String statusOfCheck;
   final CheckInOut checkInOutTime;
   final int totalTasksToday;
@@ -14,12 +18,12 @@ class HomeResponse {
   final List<Announcement> announcements;
 
   HomeResponse({
-    required this.name,
-    required this.role,
-    required this.employeeType,
+    this.name,
     required this.notificationCount,
     required this.ongoingTask,
     required this.ongoingTasks,
+    this.breakTimer,
+    this.breakHistory,
     required this.statusOfCheck,
     required this.checkInOutTime,
     required this.totalTasksToday,
@@ -29,46 +33,141 @@ class HomeResponse {
 
   factory HomeResponse.fromJson(Map<String, dynamic> json) {
     return HomeResponse(
-      name: json["name"] ?? "",
-      role: json["role"] ?? "",
-      employeeType: json["employee_type"] ?? "",
+      name: json["name"],
       notificationCount: json["notification_count"] ?? 0,
       ongoingTask: json["ongoing_task"] ?? false,
+
       ongoingTasks: (json["ongoing_tasks"] as List? ?? [])
           .map((e) => OngoingTask.fromJson(e))
           .toList(),
-      statusOfCheck: json["status_of_check"] ?? "",
-      checkInOutTime: CheckInOut.fromJson(json["check_in_out_time"]),
+
+      breakTimer: json["break_timer"] == null
+          ? null
+          : BreakTimer.fromJson(json["break_timer"]),
+
+      breakHistory: json["break_history"] == null
+          ? null
+          : BreakHistory.fromJson(json["break_history"]),
+
+      statusOfCheck: json["status_of_check"] ?? "out",
+
+      checkInOutTime:
+      CheckInOut.fromJson(json["check_in_out_time"] ?? {}),
+
       totalTasksToday: json["total_no_of_tasks_today"] ?? 0,
+
       tasks: (json["tasks"] as List? ?? [])
           .map((e) => Task.fromJson(e))
           .toList(),
-      announcements: (json["company_announcement_details"] as List? ?? [])
+
+      announcements:
+      (json["company_announcement_details"] as List? ?? [])
           .map((e) => Announcement.fromJson(e))
           .toList(),
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    "name": name,
-    "role": role,
-    "employee_type": employeeType,
-    "notification_count": notificationCount,
-    "ongoing_task": ongoingTask,
-    "ongoing_tasks": ongoingTasks.map((e) => e.toJson()).toList(),
-    "status_of_check": statusOfCheck,
-    "check_in_out_time": checkInOutTime.toJson(),
-    "total_no_of_tasks_today": totalTasksToday,
-    "tasks": tasks.map((e) => e.toJson()).toList(),
-    "company_announcement_details":
-    announcements.map((e) => e.toJson()).toList(),
-  };
-
   static HomeResponse fromRawJson(String str) =>
       HomeResponse.fromJson(json.decode(str));
-
-  String toRawJson() => json.encode(toJson());
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                ONGOING TASK                                */
+/* -------------------------------------------------------------------------- */
+
+class BreakTimer {
+  final int id;
+  final String breakType;
+  final String? customBreakType;
+  final String duration; // "25 min"
+  final String breakStartTime; // "00:20:00"
+  final String? breakEndTime;
+  final String date;
+  final String location;
+
+  BreakTimer({
+    required this.id,
+    required this.breakType,
+    required this.customBreakType,
+    required this.duration,
+    required this.breakStartTime,
+    required this.breakEndTime,
+    required this.date,
+    required this.location,
+  });
+
+  factory BreakTimer.fromJson(Map<String, dynamic> json) => BreakTimer(
+    id: json["id"],
+    breakType: json["break_type"] ?? "",
+    customBreakType: json["custom_break_type"],
+    duration: json["duration"] ?? "0 min",
+    breakStartTime: json["break_start_time"] ?? "00:00:00",
+    breakEndTime: json["break_end_time"],
+    date: json["date"] ?? "",
+    location: json["location"] ?? "",
+  );
+
+  /// helper for timer
+  int get durationInMinutes {
+    final number = RegExp(r'\d+').stringMatch(duration);
+    return int.tryParse(number ?? "0") ?? 0;
+  }
+}
+
+class BreakHistory {
+  final String totalTime;
+  final int numberOfExtendedBreaks;
+  final List<BreakHistoryItem> history;
+
+  BreakHistory({
+    required this.totalTime,
+    required this.numberOfExtendedBreaks,
+    required this.history,
+  });
+
+  factory BreakHistory.fromJson(Map<String, dynamic> json) => BreakHistory(
+    totalTime: json["total_break_time"] ?? "0h 0m",
+    numberOfExtendedBreaks: json["number_of_extended_breaks"] ?? 0,
+    history: (json["history"] as List? ?? [])
+        .map((e) => BreakHistoryItem.fromJson(e))
+        .toList(),
+  );
+}
+
+class BreakHistoryItem {
+  final int id;
+  final String breakType;
+  final String? customBreakType;
+  final String duration;
+  final String breakStartTime;
+  final String? breakEndTime;
+  final String date;
+  final String location;
+
+  BreakHistoryItem({
+    required this.id,
+    required this.breakType,
+    this.customBreakType,
+    required this.duration,
+    required this.breakStartTime,
+    required this.breakEndTime,
+    required this.date,
+    required this.location,
+  });
+
+  factory BreakHistoryItem.fromJson(Map<String, dynamic> json) =>
+      BreakHistoryItem(
+        id: json["id"],
+        breakType: json["break_type"] ?? "",
+        customBreakType: json["custom_break_type"],
+        duration: json["duration"] ?? "0 min",
+        breakStartTime: json["break_start_time"] ?? "",
+        breakEndTime: json["break_end_time"],
+        date: json["date"] ?? "",
+        location: json["location"] ?? "",
+      );
+}
+
 
 class OngoingTask {
   final String heading;
@@ -92,15 +191,11 @@ class OngoingTask {
     taskAssignTime: json["task_assign_time"] ?? "",
     percentageCompleted: json["percentage_completed"] ?? 0,
   );
-
-  Map<String, dynamic> toJson() => {
-    "heading": heading,
-    "status": status,
-    "address": address,
-    "task_assign_time": taskAssignTime,
-    "percentage_completed": percentageCompleted,
-  };
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   TASKS                                    */
+/* -------------------------------------------------------------------------- */
 
 class Task {
   final String type;
@@ -121,14 +216,11 @@ class Task {
     details: json["address_or_sub_details"] ?? "",
     time: json["time_of_task"] ?? "",
   );
-
-  Map<String, dynamic> toJson() => {
-    "type_of_task": type,
-    "heading": heading,
-    "address_or_sub_details": details,
-    "time_of_task": time,
-  };
 }
+
+/* -------------------------------------------------------------------------- */
+/*                              ANNOUNCEMENTS                                 */
+/* -------------------------------------------------------------------------- */
 
 class Announcement {
   final int id;
@@ -144,19 +236,16 @@ class Announcement {
   });
 
   factory Announcement.fromJson(Map<String, dynamic> json) => Announcement(
-    id: json["id"],
-    heading: json["heading"],
-    description: json["description"],
-    date: json["date"],
+    id: json["id"] ?? 0,
+    heading: json["heading"] ?? "",
+    description: json["description"] ?? "",
+    date: json["date"] ?? "",
   );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "heading": heading,
-    "description": description,
-    "date": date,
-  };
 }
+
+/* -------------------------------------------------------------------------- */
+/*                            CHECK IN / CHECK OUT                            */
+/* -------------------------------------------------------------------------- */
 
 class CheckInOut {
   final CheckTime checkIn;
@@ -168,32 +257,24 @@ class CheckInOut {
   });
 
   factory CheckInOut.fromJson(Map<String, dynamic> json) => CheckInOut(
-    checkIn: CheckTime.fromJson(json["check_in"]),
-    checkOut: CheckTime.fromJson(json["check_out"]),
+    checkIn: CheckTime.fromJson(json["check_in"] ?? {}),
+    checkOut: CheckTime.fromJson(json["check_out"] ?? {}),
   );
-
-  Map<String, dynamic> toJson() => {
-    "check_in": checkIn.toJson(),
-    "check_out": checkOut.toJson(),
-  };
 }
 
 class CheckTime {
   final String? time;
   final String? timeZone;
   final String? location;
+  final String? reason;
 
-  CheckTime({this.time, this.timeZone, this.location});
+  CheckTime({this.time, this.timeZone, this.location, this.reason});
 
   factory CheckTime.fromJson(Map<String, dynamic> json) => CheckTime(
     time: json["time"],
     timeZone: json["time_zone"],
     location: json["location"],
+    reason: json["reason"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "time": time,
-    "time_zone": timeZone,
-    "location": location,
-  };
 }
+

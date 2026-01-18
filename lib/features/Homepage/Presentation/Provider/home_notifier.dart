@@ -1,39 +1,36 @@
-import 'dart:async';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../Api/home_repository.dart';
-import '../../../Authentication/Login/Model/hive_login_model.dart';
-import '../../Database/home_local_storage.dart';
 import '../../Model/homepage_response.dart';
 
-part 'home_notifier.g.dart';
 
-@riverpod
-class HomeNotifier extends _$HomeNotifier {
-  late final HomeRepository _repo;
-  late final HomeLocalStorage _local;
-  late final AuthLocalStorage _auth;
+final homeRepositoryProvider = Provider((ref) {
+  return HomeRepository();
+});
 
-  @override
-  FutureOr<HomeResponse?> build() async {
-    _local = HomeLocalStorage();
-    await _local.init();
+final homeNotifierProvider =
+StateNotifierProvider<HomeNotifier, AsyncValue<HomeResponse>>((ref) {
+  return HomeNotifier(ref.read(homeRepositoryProvider));
+});
 
-    _auth = AuthLocalStorage.instance;
-    final token = _auth.getAccessToken();
+class HomeNotifier extends StateNotifier<AsyncValue<HomeResponse>> {
+  final HomeRepository repo;
 
-    _repo = HomeRepository(_local);
-
-    if (token == null) return null;
-
-    return await _repo.fetchHomeData();
+  HomeNotifier(this.repo) : super(const AsyncLoading()) {
+    loadHome();
   }
 
-  Future<void> refreshData() async {
-    final token = _auth.getAccessToken();
-    if (token == null) return;
+  Future<void> loadHome() async {
+    try {
+      state = const AsyncLoading();
+      final data = await repo.fetchHome();
+      state = AsyncData(data);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
+  }
 
-    final data = await _repo.fetchHomeData();
-    state = AsyncData(data);
+  Future<void> refresh() async {
+    await loadHome();
   }
 }

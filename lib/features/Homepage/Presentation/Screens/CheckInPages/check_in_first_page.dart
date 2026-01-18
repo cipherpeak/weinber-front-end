@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weinber/core/constants/constants.dart';
 import '../../../../../core/constants/page_routes.dart';
 import '../../../../../utils/Common Widgets/build_labelled_field.dart';
+import '../../../Api/checkInOutRepo.dart';
 import '../../Provider/checkInStatusNotifier.dart';
 
 class CheckInFirstPage extends ConsumerStatefulWidget {
@@ -450,25 +453,48 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
             height: 35,
             child: ElevatedButton(
               onPressed: () async {
-                await checkInNotifier.setCheckInStatus(true);
+                try {
+                  final now = DateTime.now();
 
-                if (mounted) {
+                  final date = DateFormat('yyyy-MM-dd').format(now);
+                  final time = DateFormat('HH:mm').format(now);
+                  final timeZone = await FlutterNativeTimezone.getLocalTimezone();
+
+                  // final repo = AttendanceRepository();
+
+                  await AttendanceRepository.checkIn(
+                    location: _currentAddress ?? "Unknown",
+                    checkDate: date,
+                    checkTime: time,
+                    timeZone: timeZone,
+                  );
+
+                  // ✅ local attendance state
+                  await checkInNotifier.setCheckInStatus(true);
+
+                  if (!mounted) return;
+
                   Navigator.pop(context);
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.green,
-                      content: Text(
-                        "Checked In Successfully!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      content: Text("Checked in successfully"),
                     ),
                   );
+
                   router.go(routerHomePage);
+
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text("Check-in failed"),
+                    ),
+                  );
                 }
               },
+
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 shape: RoundedRectangleBorder(

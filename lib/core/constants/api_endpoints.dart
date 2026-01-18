@@ -10,6 +10,7 @@ class ApiEndpoints {
 
   static const String login = '/auth/login/';
   static const String home = '/home/';
+  static const companyAnnouncements = "/home/company-announcements/";
   static const String logout = '/logout/';
   static const String profile = '/profile/';
   static const String personalInformation = '/profile/personal-information/';
@@ -20,5 +21,17 @@ class ApiEndpoints {
   static const createTemporaryVehicle =
       "/profile/create-temporary-vehicle/";
   static const leaveList = "/home/leave-list/";
+  static const leaveApply =  "/home/leave-apply/";
+  static const leaveDetails = "/home/leave/";
+  static const reportIssue = "/profile/report-issue/";
+  static const startBreak = "/home/break/start/";
+  static const endBreak = "/home/break/end/";
+  static const extendBreak = "/home/break/extend/";
+  static const String checkIn = "/home/checkin/";
+  static const String checkOut = "/home/checkout/";
+
+  // Office
+  static const notes = "/office/notes/";
+
 
 }

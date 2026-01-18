@@ -5,6 +5,7 @@ import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/S
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
 import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
+import 'package:weinber/features/Homepage/Presentation/Screens/announcementDetailsPage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Leave/LeavePage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/fine%20details%20page.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehicle_usage.dart';
@@ -19,6 +20,8 @@ import '../../features/Authentication/Forgot Password/Presentation/Screens/forgo
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
 import '../../features/BottomNavPage/Presentation/Screens/notification_page.dart';
+import '../../features/ProfilePage/Presentation/Screens/Leave/LeaveDetailsScreen.dart';
+import '../../features/ProfilePage/Presentation/Screens/Leave/leave_apply_page.dart';
 import '../../features/ProfilePage/Presentation/Screens/Vehicle details/fines and penalties.dart';
 import '../../features/ProfilePage/Presentation/Screens/employee_information_page.dart';
 import '../../features/Homepage/Presentation/Screens/CheckInPages/check_in_first_page.dart';
@@ -55,6 +58,7 @@ const routerPasswordResetSuccessPage = '/password-reset-success';
 
 // Shell route
 const String routerHomePage = '/app/home';
+const String routerAnnouncementDetailsPage = '/app/home/announcement';
 
 //Attendance
 const String routerAttendancePage = '/app/attendance';
@@ -85,6 +89,11 @@ const String routerFinesAndPenaltiesDetailsPage =
     '/app/home/profile/vehicle-details/fines-and-penalties/details';
 const String routerLeavePage =
     '/app/home/profile/leave';
+
+const String routerLeaveApplyPage =
+    '/app/home/profile/leave-apply';
+
+const String routerLeaveDetailsPage = '/app/home/profile/leave/details';
 
 //Dax Task
 const String routerDaxTaskPage = '/app/task-dax';
@@ -262,6 +271,20 @@ final GoRouter router = GoRouter(
     ),
 
     GoRoute(
+      path: routerAnnouncementDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const AnnouncementDetailsPage(),
+        transitionDuration: const Duration(milliseconds: 300),
+        reverseTransitionDuration: const Duration(milliseconds: 300),
+        transitionsBuilder:
+            (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+
+    GoRoute(
       path: routerTechnicianCreateTaskPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
@@ -341,15 +364,19 @@ final GoRouter router = GoRouter(
 
     GoRoute(
       path: routerNotesDetailsPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const NoteDetailsScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final raw = state.extra;
+
+        final int noteId = int.parse(raw.toString());
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: NoteDetailsScreen(noteId: noteId),
+          transitionsBuilder: (context, animation, _, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
+
 
     // --- Task details (outside shell) ---
     GoRoute(
@@ -556,6 +583,34 @@ final GoRouter router = GoRouter(
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
+    ),
+
+
+    GoRoute(
+      path: routerLeaveApplyPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child:  LeaveApplyPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
+
+    GoRoute(
+      path: routerLeaveDetailsPage,
+      pageBuilder: (context, state) {
+        final leaveId = state.extra is int ? state.extra as int : 0;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: LeaveDetailsScreen(leaveId: leaveId),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
 
     // --- Employee Information Screen ---

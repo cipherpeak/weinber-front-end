@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 import '../../../../../utils/Common Widgets/build_labelled_field.dart';
+import '../../../Api/checkInOutRepo.dart';
+import '../../../Database/breakLocal.dart';
 import '../../Provider/checkInStatusNotifier.dart';
 
 class CheckOutFirstPage extends ConsumerStatefulWidget {
@@ -552,31 +556,53 @@ class _CheckOutFirstPageState extends ConsumerState<CheckOutFirstPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.red,
-                      content: Text("Please select or enter a reason for check-out"),
+                      content: Text("Please select or enter a reason"),
                     ),
                   );
                   return;
                 }
 
-                await checkInNotifier.setCheckInStatus(false);
+                try {
+                  final now = DateTime.now();
 
-                if (mounted) {
+                  final date = DateFormat('yyyy-MM-dd').format(now);
+                  final time = DateFormat('HH:mm:ss').format(now);
+                  final timeZone = await FlutterNativeTimezone.getLocalTimezone();
+
+                  await AttendanceRepository.checkOut(
+                    location: _currentAddress ?? "UAE",
+                    checkDate: date,
+                    checkTime: time,
+                    timeZone: timeZone,
+                    reason: selectedReason!,
+                  );
+
+                  await ref.read(checkInStatusProvider.notifier).setCheckInStatus(false);
+
+                  if (!mounted) return;
+
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       backgroundColor: Colors.green,
-                      content: Text(
-                        "Checked Out Successfully!",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                      content: Text("Checked out successfully"),
                     ),
                   );
+                  await BreakLocalStorage.clear();
+
+
                   router.go(routerHomePage);
+
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(e.toString()),
+                    ),
+                  );
                 }
-              },
+              }
+,
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 3),
                 shape: RoundedRectangleBorder(

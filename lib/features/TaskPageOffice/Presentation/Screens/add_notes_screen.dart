@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/constants/constants.dart';
+import '../../Api/notes_repo.dart';
+import '../../Model/notes_detail_model.dart';
+
 
 class AddNoteScreen extends StatefulWidget {
-  const AddNoteScreen({super.key});
+  final NoteDetail? note; // 🔥 if null → add, if not null → edit
+
+  const AddNoteScreen({super.key, this.note});
 
   @override
   State<AddNoteScreen> createState() => _AddNoteScreenState();
@@ -12,12 +16,33 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+
   DateTime? selectedDate;
+  bool isSaving = false;
+
+  final repo = NotesRepository();
+
+  bool get isEdit => widget.note != null;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// ✏️ PREFILL IF EDIT MODE
+    if (isEdit) {
+      final n = widget.note!;
+      titleController.text = n.title;
+      descriptionController.text = n.description;
+      selectedDate = DateTime.parse(n.date);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
+
+      /// APP BAR
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
@@ -25,11 +50,15 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Text(
+          isEdit ? "Edit Note" : "Add Note",
+          style: const TextStyle(color: Colors.black),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: ElevatedButton(
-              onPressed: _saveNote,
+              onPressed: isSaving ? null : _saveNote,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
                 shape: RoundedRectangleBorder(
@@ -38,9 +67,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 padding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               ),
-              child: const Text(
-                "Save Notes",
-                style: TextStyle(
+              child: isSaving
+                  ? const SizedBox(
+                height: 14,
+                width: 14,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              )
+                  : Text(
+                isEdit ? "Update" : "Save",
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                 ),
@@ -50,6 +88,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         ],
       ),
 
+      /// BODY
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
         child: Column(
@@ -93,8 +132,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   ? "Select date"
                   : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}",
               style: TextStyle(
-                color:
-                selectedDate == null ? Colors.grey : Colors.black87,
+                color: selectedDate == null ? Colors.grey : Colors.black87,
               ),
             ),
             const Spacer(),
@@ -145,7 +183,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
-
   // ---------------- HELPERS ----------------
   BoxDecoration _boxDecoration() {
     return BoxDecoration(
@@ -158,25 +195,65 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   Future<void> _pickDate() async {
     final date = await showDatePicker(
       context: context,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2024),
       lastDate: DateTime(2100),
-      initialDate: DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(),
     );
     if (date != null) {
       setState(() => selectedDate = date);
     }
   }
 
-  void _saveNote() {
-    // TODO: API / Local save
-    Navigator.pop(context);
+  // ---------------- SAVE (ADD / EDIT) ----------------
+  Future<void> _saveNote() async {
+    if (titleController.text.isEmpty ||
+        descriptionController.text.isEmpty ||
+        selectedDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Fill all fields")),
+      );
+      return;
+    }
+
+    setState(() => isSaving = true);
+
+    try {
+      final date =
+          "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2,'0')}-${selectedDate!.day.toString().padLeft(2,'0')}";
+
+      if (isEdit) {
+        /// ✏️ EDIT NOTE
+        await repo.editNote(
+          id: widget.note!.id,
+          title: titleController.text.trim(),
+          description: descriptionController.text.trim(),
+          date: date,
+        );
+      } else {
+        /// ➕ ADD NOTE
+        await repo.createNote(
+          title: titleController.text.trim(),
+          description: descriptionController.text.trim(),
+          date: date,
+        );
+      }
+
+      if (!mounted) return;
+      Navigator.pop(context, true);
+
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => isSaving = false);
+    }
   }
 }
 
 /// FIELD LABEL
 class _FieldLabel extends StatelessWidget {
   final String label;
-
   const _FieldLabel({required this.label});
 
   @override
@@ -190,14 +267,9 @@ class _FieldLabel extends StatelessWidget {
           color: Colors.black87,
         ),
         children: const [
-          TextSpan(
-            text: " *",
-            style: TextStyle(color: Colors.red),
-          )
+          TextSpan(text: " *", style: TextStyle(color: Colors.red))
         ],
       ),
     );
   }
 }
-
-

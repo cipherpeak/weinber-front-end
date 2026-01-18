@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:weinber/core/constants/constants.dart';
 import '../../../../../core/constants/page_routes.dart';
+import '../../../Api/takeABreakRepo.dart';
+import '../../../Database/breakTimerHive.dart';
 
 class TakeABreakFirstPage extends StatefulWidget {
   const TakeABreakFirstPage({super.key});
@@ -13,43 +16,86 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
   String selectedBreak = '';
   int selectedDuration = 10;
   final TextEditingController otherController = TextEditingController();
+  bool isLoading = false;
+
   final List<int> durations = [10, 15, 20];
 
   final List<Map<String, dynamic>> breakTypes = [
-    {
-      'title': 'Lunch Break',
-      'icon': Icons.lunch_dining,
-      'color': Colors.blue.shade100,
-    },
-    {
-      'title': 'Coffee Break',
-      'icon': Icons.local_cafe,
-      'color': Colors.yellow.shade100,
-    },
-    {
-      'title': 'Stretch Break',
-      'icon': Icons.self_improvement,
-      'color': Colors.purple.shade100,
-    },
+    {'title': 'Lunch Break', 'icon': Icons.lunch_dining, 'api': 'lunch'},
+    {'title': 'Coffee Break', 'icon': Icons.local_cafe, 'api': 'coffee'},
+    {'title': 'Stretch Break', 'icon': Icons.self_improvement, 'api': 'stretch'},
   ];
+
+  String _mapBreakTypeToApi(String value) {
+    final match = breakTypes.where((e) => e['title'] == value);
+    if (match.isNotEmpty) return match.first['api'];
+    return "other";
+  }
+
+  Future<void> _startBreak() async {
+    if (selectedBreak.isEmpty) return;
+
+    try {
+      setState(() => isLoading = true);
+
+      final now = DateTime.now();
+      final apiBreakType = _mapBreakTypeToApi(selectedBreak);
+
+      await BreakRepository().startBreak(
+        breakType: apiBreakType,       // lunch / coffee / stretch / other
+        date: DateFormat('yyyy-MM-dd').format(now),
+        time: DateFormat('HH:mm:ss').format(now),
+        location: "UAE",
+        duration: selectedDuration,
+        customType: apiBreakType == "other" ? otherController.text.trim() : null,
+      );
+
+      await BreakLocalStorage.saveBreak(
+        breakType: selectedBreak,
+        startTime: now.toUtc(),
+        allowedMinutes: selectedDuration,
+      );
+
+      if (!mounted) return;
+
+      router.go(routerHomePage);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Break started successfully"),
+        ),
+      );
+    } catch (e, st) {
+      debugPrint("❌ START BREAK ERROR: $e");
+      debugPrint("🧵 $st");
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Failed to start break: $e"),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    var screenHeight = MediaQuery.of(context).size.height;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           "Choose Your Break Type",
-          style: TextStyle(
-              fontWeight: FontWeight.w600, fontSize: 16, color: Colors.black),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => router.go(routerHomePage),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
       ),
       backgroundColor: primaryBackgroundColor,
       body: Padding(
@@ -58,123 +104,42 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ...breakTypes.map((b) => GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedBreak = b['title'];
+                    otherController.clear();
+                  });
+                },
+                child: _breakTile(b),
+              )),
+
               const SizedBox(height: 10),
-              ...breakTypes.map(
-                    (b) => GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedBreak = b['title'];
-                      otherController.clear();
-                    });
-                  },
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: selectedBreak == b['title']
-                          ? b['color'].withOpacity(0.4)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: selectedBreak == b['title']
-                            ? Colors.blueAccent
-                            : Colors.grey.shade200,
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: primaryColor.withOpacity(0.15),
-                          spreadRadius: 1,
-                          blurRadius: 5,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundColor: b['color'],
-                          child: Icon(
-                            b['icon'],
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        Text(
-                          b['title'],
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+              const Text("Others", style: TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 6),
+
+              TextField(
+                controller: otherController,
+                onChanged: (v) {
+                  setState(() {
+                    if (v.trim().isNotEmpty) selectedBreak = v.trim();
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: "Enter break type",
+                  filled: true,
                 ),
               ),
-              const SizedBox(height: 5),
-              const Text(
-                "Others",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: primaryColor.withOpacity(0.15),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: TextField(
-                  controller: otherController,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedBreak = value.isNotEmpty ? value : selectedBreak;
-                    });
-                  },
-                  decoration: InputDecoration(
-                    hintStyle: const TextStyle(fontSize: 14),
-                    hintText: "Enter break type",
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 14),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 25),
-              const Text(
-                "Duration",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
+
+              const SizedBox(height: 20),
+              const Text("Duration", style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 10),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: durations.map((d) {
                   return Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedDuration = d;
-                        });
-                      },
+                      onTap: () => setState(() => selectedDuration = d),
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 5),
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -183,127 +148,76 @@ class _TakeABreakFirstPageState extends State<TakeABreakFirstPage> {
                               ? Colors.blue.shade100
                               : Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: selectedDuration == d
-                                ? Colors.blueAccent
-                                : Colors.grey.shade200,
-                            width: 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: primaryColor.withOpacity(0.15),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          border: Border.all(color: Colors.grey.shade300),
                         ),
                         alignment: Alignment.center,
-                        child: Text(
-                          "$d min",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            color: selectedDuration == d
-                                ? Colors.blueAccent
-                                : Colors.black87,
-                          ),
-                        ),
+                        child: Text("$d min"),
                       ),
                     ),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 15),
-              Container(
-                decoration: BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.15),
-                      spreadRadius: 1,
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonFormField<int>(
-                  decoration: InputDecoration(
-                    hintStyle: const TextStyle(fontSize: 14),
-                    hintText: "Custom minutes",
-                    suffixStyle: const TextStyle(fontSize: 14),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15, vertical: 14),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                  items: List.generate(
-                    60,
-                        (index) => DropdownMenuItem(
-                      value: index + 1,
-                      child: Text("${index + 1} min",
-                          style: const TextStyle(fontSize: 13)),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        selectedDuration = value;
-                      });
-                    }
-                  },
-                ),
-              ),
-              SizedBox(height: screenHeight * 0.12),
+
+              SizedBox(height: screenHeight * 0.18),
             ],
           ),
         ),
       ),
 
-      // 🔹 Floating Start Button
+      /// ▶ START BREAK BUTTON
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: selectedBreak.isEmpty
-                ? null
-                : () {
-              router.go(routerHomePage);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(backgroundColor: Colors.green,
-                  content: Text(
-                    'Starting $selectedBreak for $selectedDuration min!',
-                    style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              );
-            },
+            onPressed: isLoading ? null : _startBreak,
             style: ElevatedButton.styleFrom(
               backgroundColor: primaryColor,
-              disabledBackgroundColor: Colors.grey.shade400,
               padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(25),
               ),
-              elevation: 6,
-              shadowColor: primaryColor.withOpacity(0.3),
             ),
-            child: const Text(
-              "Start Break",
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 15,
+            child: isLoading
+                ? const SizedBox(
+              height: 22,
+              width: 22,
+              child: CircularProgressIndicator(
                 color: Colors.white,
+                strokeWidth: 2,
               ),
+            )
+                : const Text(
+              "Start Break",
+              style: TextStyle(fontWeight: FontWeight.w700),
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _breakTile(Map<String, dynamic> b) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: selectedBreak == b['title']
+            ? Colors.blue.shade50
+            : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          Icon(b['icon']),
+          const SizedBox(width: 12),
+          Text(
+            b['title'],
+            style: const TextStyle(fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }

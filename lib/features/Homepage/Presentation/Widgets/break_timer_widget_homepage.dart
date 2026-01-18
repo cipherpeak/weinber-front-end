@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../Database/breakTimerHive.dart';
 
 class BreakTimerWidget extends StatefulWidget {
-  final String breakType;
-  final int durationInMinutes;
   final VoidCallback onEndBreak;
   final VoidCallback onExtendBreak;
 
   const BreakTimerWidget({
     super.key,
-    required this.breakType,
-    required this.durationInMinutes,
     required this.onEndBreak,
     required this.onExtendBreak,
   });
@@ -20,237 +17,180 @@ class BreakTimerWidget extends StatefulWidget {
 }
 
 class _BreakTimerWidgetState extends State<BreakTimerWidget> {
-  late int totalSeconds;
-  late Timer timer;
+  Timer? _timer;
+  int totalSeconds = 0;
   bool isExceeded = false;
+
+  DateTime? startTime;
+  int allowedMinutes = 0;
+  String breakType = "";
+
+  DateTime get endTime =>
+      startTime!.add(Duration(minutes: allowedMinutes));
 
   @override
   void initState() {
     super.initState();
-    totalSeconds = widget.durationInMinutes * 60;
-    startTimer();
+    _loadBreakFromHive();
   }
 
-  void startTimer() {
-    timer = Timer.periodic(const Duration(seconds: 1), (t) {
-      if (mounted) {
-        setState(() {
-          if (totalSeconds > 0) {
-            totalSeconds--;
-          } else {
-            isExceeded = true;
-          }
-        });
-      }
+  void _loadBreakFromHive() {
+    if (!BreakLocalStorage.hasBreak()) return;
+
+    final s = BreakLocalStorage.getStartTime();
+    if (s == null) return;
+
+    startTime = s;
+    allowedMinutes = BreakLocalStorage.getAllowedMinutes();
+    breakType = BreakLocalStorage.getBreakType();
+
+    _syncTimer();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _syncTimer());
+  }
+
+  void _syncTimer() {
+    if (startTime == null) return;
+
+    final now = DateTime.now().toUtc();
+    final diff = endTime.toUtc().difference(now).inSeconds;
+
+    if (!mounted) return;
+
+    setState(() {
+      totalSeconds = diff;
+      isExceeded = diff < 0;
     });
   }
 
   @override
   void dispose() {
-    timer.cancel();
+    _timer?.cancel();
     super.dispose();
   }
 
   String formatTime(int seconds) {
-    final minutes = (seconds ~/ 60).toString().padLeft(2, '0');
-    final secs = (seconds % 60).toString().padLeft(2, '0');
+    final s = seconds.abs();
+    final minutes = (s ~/ 60).toString().padLeft(2, '0');
+    final secs = (s % 60).toString().padLeft(2, '0');
     return "$minutes:$secs";
   }
 
   @override
   Widget build(BuildContext context) {
-    final remainingMinutes = (totalSeconds ~/ 60);
+    if (!BreakLocalStorage.hasBreak() || startTime == null) {
+      _timer?.cancel();
+      return const SizedBox();
+    }
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 400),
-          child: !isExceeded
-              ? Container(
-            key: const ValueKey('normal'),
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 12),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF9152F4),
-                  Color(0xFF7187FA)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                )
-              ],
-            ),
-            child: Column(
-              children: [
-                Text(
-                  "${widget.breakType} Timer",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  formatTime(totalSeconds),
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  "$remainingMinutes min remaining",
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          )
-              : Container(
-            key: const ValueKey('exceeded'),
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(horizontal: 12),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.redAccent,
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.red.withOpacity(0.3),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                )
-              ],
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  "Break Time Exceeded !!",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  formatTime(totalSeconds.abs()),
-                  style: const TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  "Please return to your daily work",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          child: !isExceeded ? _normalCard() : _exceededCard(),
         ),
-
         const SizedBox(height: 25),
+        !isExceeded ? _buttons() : _endNow(),
+      ],
+    );
+  }
 
-        // Buttons Section
-        if (!isExceeded)
-          Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15, bottom: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: SizedBox(height: 40,
-                    child: OutlinedButton(
-                      onPressed: widget.onExtendBreak,
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.grey),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: const Text(
-                        "Extend Break",
-                        style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: SizedBox(height: 40,
-                    child: ElevatedButton(
-                      onPressed: widget.onEndBreak,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF7ED776),
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: const Text(
-                        "End Break",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          Padding(
-            padding: const EdgeInsets.only(top: 5, bottom: 20, left: 40, right: 40),
-            child: SizedBox(height: 45,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: widget.onEndBreak,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding: const EdgeInsets.symmetric(vertical: 3),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  elevation: 4,
-                ),
-                child: const Text(
-                  "End Break Now",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 15,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+  // ================= UI =================
+
+  Widget _normalCard() {
+    return Container(
+      key: const ValueKey('normal'),
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF9152F4), Color(0xFF7187FA)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          Text("$breakType Timer",
+              style: const TextStyle(color: Colors.white)),
+          const SizedBox(height: 10),
+          Text(formatTime(totalSeconds),
+              style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          const SizedBox(height: 6),
+          Text("${(totalSeconds ~/ 60).abs()} min remaining",
+              style: const TextStyle(color: Colors.white70)),
+        ],
+      ),
+    );
+  }
+
+  Widget _exceededCard() {
+    return Container(
+      key: const ValueKey('exceeded'),
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.redAccent,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          const Text("Break Time Exceeded !!",
+              style: TextStyle(color: Colors.white)),
+          const SizedBox(height: 10),
+          Text(formatTime(totalSeconds),
+              style: const TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white)),
+          const SizedBox(height: 6),
+          const Text("Please return to your daily work",
+              style: TextStyle(color: Colors.white70)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buttons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              onPressed: widget.onExtendBreak,
+              child: const Text("Extend Break"),
             ),
           ),
-      ],
+          const SizedBox(width: 10),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: widget.onEndBreak,
+              child: const Text("End Break"),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _endNow() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton(
+          onPressed: widget.onEndBreak,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+          child: const Text("End Break Now"),
+        ),
+      ),
     );
   }
 }

@@ -27,8 +27,8 @@ class AttendanceCardSection extends ConsumerWidget {
           child: ScaleTransition(scale: animation, child: child),
         ),
         child: isCheckedIn
-            ? attendanceCardCheckOut()
-            : attendanceCardCheckIn(),
+            ? attendanceCardCheckOut(checkInOut)
+            : attendanceCardCheckIn(checkInOut),
       ),
       loading: () =>
       const Center(child: CircularProgressIndicator(strokeWidth: 1.5)),

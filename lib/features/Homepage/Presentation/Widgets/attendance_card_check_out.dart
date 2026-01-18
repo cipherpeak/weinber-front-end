@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/page_routes.dart';
 
+import '../../../../utils/Common Functions/format_date_time.dart';
+import '../../Model/homepage_response.dart';
 import 'attendace_card_check_in.dart';
 
-Widget attendanceCardCheckOut() {
+Widget attendanceCardCheckOut(CheckInOut data) {
   return Container(
     decoration: BoxDecoration(
       color: Colors.white,
@@ -53,7 +55,7 @@ Widget attendanceCardCheckOut() {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              timeInfo("Checked In at:", "--:-- AM"),
+              timeInfo("Checked In at:", formatApiTime(data.checkIn.time)),
               GestureDetector(
                 onTap: () {
                   router.push(routerCheckOutFirstPage);
@@ -119,7 +121,7 @@ Widget attendanceCardCheckOut() {
                   ],
                 ),
               ),
-              timeInfo("Checked Out at:", "--:-- PM"),
+              timeInfo("Checked Out at:", formatApiTime(data.checkOut.time)),
             ],
           ),
         ),

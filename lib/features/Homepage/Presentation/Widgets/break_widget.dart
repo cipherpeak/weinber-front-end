@@ -78,28 +78,28 @@ class BreakHistoryCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Spacer(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        extendedBreaks.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.black45,
-                        ),
-                      ),
-                      SizedBox(height: 6),
-                      Text(
-                        'Extended breaks',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Spacer(),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.end,
+                  //   children: [
+                  //     Text(
+                  //       extendedBreaks.toString(),
+                  //       style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 18,
+                  //         color: Colors.black45,
+                  //       ),
+                  //     ),
+                  //     SizedBox(height: 6),
+                  //     Text(
+                  //       'Extended breaks',
+                  //       style: TextStyle(
+                  //         fontSize: 13,
+                  //         color: Colors.grey[700],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                 ],
               ),
             ),
