@@ -145,7 +145,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                   image: DecorationImage(
                     image: vehicle.vehicleImage != null
                         ? NetworkImage(vehicle.vehicleImage!)
-                        : const AssetImage("assets/images/profile.png")
+                        : const AssetImage("assets/images/no image.jpg")
                     as ImageProvider,
                     fit: BoxFit.cover,
                   ),

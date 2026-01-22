@@ -89,7 +89,7 @@ class FineDetailsScreen extends StatelessWidget {
                   Row(
                     children: const [
                       Text(
-                        "\$45",
+                        "AED 45",
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
@@ -151,7 +151,7 @@ class FineDetailsScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    "assets/images/profile.png", // replace with real image later
+                    "assets/images/no image.jpg", // replace with real image later
                     height: 160,
                     width: double.infinity,
                     fit: BoxFit.cover,

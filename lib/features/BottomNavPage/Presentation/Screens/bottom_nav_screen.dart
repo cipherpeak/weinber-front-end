@@ -21,12 +21,14 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+var company;
+var employeeType;
+var taskRoutePage = '';
 
   // Map index -> route path inside the shell
-  final List<String> _tabRoutes = [
+  late final List<String> _tabRoutes = [
     '/app/home',
-    routerAdvantageTaskPage,
+    taskRoutePage,
     '/app/attendance',
     '/app/report',
   ];
@@ -40,36 +42,55 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
     initializeFunctions();
   }
 
+
+
   Future<void> initializeFunctions() async {
+
     _local = AuthLocalStorage.instance;
     await _local.init();
-
-    final employeeType = _local.getEmployeeType();
-
+    company = _local.getCompany();
+    employeeType = _local.getEmployeeType();
     setState(() {
-      _tabRoutes[1] = _getTaskRoute(employeeType);
+      taskRoutePage = _getTaskRoute(employeeType, company);
+
     });
   }
 
-  String _getTaskRoute(String? employeeType) {
-    switch (employeeType) {
-      case "Service":
+  String _getTaskRoute(String? employeeType, String? company) {
+    final type = employeeType?.toLowerCase().trim();
+    final comp = company?.toLowerCase().trim();
+
+    // 🔧SERVICE LOGIC (company-based)
+    if (type == "service") {
+      if (comp == "dax") {
         return routerDaxTaskPage;
-
-      case "Deliver":
-        return routerDeliveryTaskPage;
-
-      case "Office":
-        return routerNotesPage;
-
-      case "Mechanic":
-        return routerTechnicianTaskPage;
-
-      default:
-      // 👈 API failed, null, garbage value, anything
+      } else if (comp == "advantage") {
         return routerAdvantageTaskPage;
+      } else {
+        // any other company but service employee
+        return routerDaxTaskPage;
+      }
     }
+
+    //  DELIVERY (same for all companies)
+    if (type == "deliver") {
+      return routerDeliveryTaskPage;
+    }
+
+    //  OFFICE
+    if (type == "office") {
+      return routerNotesPage;
+    }
+
+    //  MECHANIC
+    if (type == "mechanic") {
+      return routerTechnicianTaskPage;
+    }
+
+    //  fallback safety
+    return routerAdvantageTaskPage;
   }
+
 
   void _onTap(int index) {
     // Update Riverpod state

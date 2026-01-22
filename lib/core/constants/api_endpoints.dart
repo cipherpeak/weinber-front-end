@@ -14,6 +14,8 @@ class ApiEndpoints {
   static const String logout = '/logout/';
   static const String profile = '/profile/';
   static const String personalInformation = '/profile/personal-information/';
+  static const String personalInformationEdit = '/profile/personal-information/update/';
+
   static const String visaDocument = '/profile/visa-documents/';
   static const String employeeInformation = '/profile/employee-information/';
   static const String visaDocumentUpdate = '/profile/visa-documents/update/';
@@ -29,6 +31,9 @@ class ApiEndpoints {
   static const extendBreak = "/home/break/extend/";
   static const String checkIn = "/home/checkin/";
   static const String checkOut = "/home/checkout/";
+  static const String monthlyReview = "/home/monthly-review/";
+
+
 
   // Office
   static const notes = "/office/notes/";

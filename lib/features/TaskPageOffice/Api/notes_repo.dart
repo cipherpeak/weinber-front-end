@@ -17,7 +17,7 @@ class NotesRepository {
 
       return NotesResponse.fromJson(res.data);
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to load notes");
+      throw Exception(e.response?.data["error"] ?? "Failed to load notes");
     }
   }
 
@@ -37,7 +37,7 @@ class NotesRepository {
         },
       );
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to create note");
+      throw Exception(e.response?.data["error"] ?? "Failed to create note");
     }
   }
 
@@ -59,7 +59,7 @@ class NotesRepository {
         },
       );
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to update note");
+      throw Exception(e.response?.data["error"] ?? "Failed to update note");
     }
   }
 
@@ -70,7 +70,7 @@ class NotesRepository {
         "${ApiEndpoints.baseUrl}api/office/notes/$id/delete/",
       );
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to delete note");
+      throw Exception(e.response?.data["error"] ?? "Failed to delete note");
     }
   }
 
@@ -81,7 +81,7 @@ class NotesRepository {
         "${ApiEndpoints.baseUrl}api/office/notes/$id/mark-done/",
       );
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to mark done");
+      throw Exception(e.response?.data["error"] ?? "Failed to mark done");
     }
   }
 
@@ -96,7 +96,7 @@ class NotesRepository {
 
       return NoteDetail.fromJson(res.data["data"]);
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Failed to load note");
+      throw Exception(e.response?.data["error"] ?? "Failed to load note");
     }
   }
 
