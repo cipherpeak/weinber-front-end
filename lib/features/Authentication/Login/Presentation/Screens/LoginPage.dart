@@ -30,17 +30,19 @@ class LoginPage extends ConsumerWidget {
               SizedBox(height: screenHeight * 0.13),
 
               /// LOGO
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/logos/logo.png',
-                    height: screenHeight * 0.1,
-                    width: screenWidth * 0.5,
-                    fit: BoxFit.contain,
-                  ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Image.asset(
+              //       'assets/logos/logo.png',
+              //       height: screenHeight * 0.1,
+              //       width: screenWidth * 0.5,
+              //       fit: BoxFit.contain,
+              //     ),
+              //   ],
+              // ),
+
+              SizedBox(height: screenHeight * 0.1,child: Text('App Logo', style: TextStyle(fontSize: 22),),),
 
               SizedBox(height: screenHeight * 0.05),
 
@@ -118,22 +120,22 @@ class LoginPage extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: screenHeight * 0.01),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () => router.go(routerForgotPassword),
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(height: screenHeight * 0.01),
+              //
+              // Align(
+              //   alignment: Alignment.centerRight,
+              //   child: TextButton(
+              //     onPressed: () => router.go(routerForgotPassword),
+              //     child: const Text(
+              //       'Forgot Password?',
+              //       style: TextStyle(
+              //         color: primaryColor,
+              //         fontWeight: FontWeight.w500,
+              //         fontSize: 13,
+              //       ),
+              //     ),
+              //   ),
+              // ),
 
               SizedBox(height: screenHeight * 0.08),
 

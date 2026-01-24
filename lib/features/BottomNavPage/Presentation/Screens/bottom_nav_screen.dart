@@ -21,9 +21,11 @@ class BottomNavScreen extends ConsumerStatefulWidget {
 
 class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-var company;
-var employeeType;
-var taskRoutePage = '';
+  var company;
+  var employeeType;
+  var taskRoutePage = '';
+  String? profilePic;
+  String? appIcon;
 
   // Map index -> route path inside the shell
   late final List<String> _tabRoutes = [
@@ -33,7 +35,6 @@ var taskRoutePage = '';
     '/app/report',
   ];
 
-
   late AuthLocalStorage _local;
 
   @override
@@ -42,19 +43,20 @@ var taskRoutePage = '';
     initializeFunctions();
   }
 
-
-
   Future<void> initializeFunctions() async {
-
     _local = AuthLocalStorage.instance;
     await _local.init();
+
     company = _local.getCompany();
     employeeType = _local.getEmployeeType();
+    profilePic = _local.getProfilePic();
+    appIcon = _local.getAppIcon();
+
     setState(() {
       taskRoutePage = _getTaskRoute(employeeType, company);
-
     });
   }
+
 
   String _getTaskRoute(String? employeeType, String? company) {
     final type = employeeType?.toLowerCase().trim();
@@ -91,7 +93,6 @@ var taskRoutePage = '';
     return routerAdvantageTaskPage;
   }
 
-
   void _onTap(int index) {
     // Update Riverpod state
     ref.read(bottomNavProvider.notifier).changeIndex(index);
@@ -120,7 +121,16 @@ var taskRoutePage = '';
           backgroundColor: Colors.white,
           title: Row(
             children: [
-              Image.asset('assets/logos/logo.png', height: 35),
+              appIcon != null && appIcon!.isNotEmpty
+                  ? Image.network(
+                appIcon!,
+                height: 35,
+                errorBuilder: (_, __, ___) {
+                  return Image.asset('assets/logos/logo.png', height: 35);
+                },
+              )
+                  : SizedBox(child: Text("App Logo"),),
+
               const Spacer(),
               IconButton(
                 onPressed: () {
@@ -137,10 +147,31 @@ var taskRoutePage = '';
                 child: CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.grey.shade200,
-                  backgroundImage: const AssetImage(
-                    'assets/images/profile.png',
+                  child: ClipOval(
+                    child: profilePic != null && profilePic!.isNotEmpty
+                        ? Image.network(
+                      profilePic!,
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Image.asset(
+                          "assets/images/profile.png",
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    )
+                        : Image.asset(
+                      "assets/images/profile.png",
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
+
               ),
             ],
           ),

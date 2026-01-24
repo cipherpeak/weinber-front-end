@@ -44,8 +44,8 @@ class _NotesScreenState extends ConsumerState<NotesScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _searchBar(),
-          const SizedBox(height: 10),
+          // _searchBar(),
+          // const SizedBox(height: 10),
           _tabs(),
           const SizedBox(height: 18),
           SizedBox(

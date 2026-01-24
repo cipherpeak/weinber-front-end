@@ -256,12 +256,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       );
     }
 
+    // ✅ COPY + SORT (latest first)
+    final sortedHistory = List.of(dayDetail!.history);
+
+    sortedHistory.sort((a, b) {
+      try {
+        final t1 = _parseTime(a.time);
+        final t2 = _parseTime(b.time);
+        return t2.compareTo(t1); // 🔥 DESCENDING
+      } catch (_) {
+        return 0;
+      }
+    });
+
     return ListView.builder(
-      itemCount: dayDetail!.history.length,
+      itemCount: sortedHistory.length,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
-        final h = dayDetail!.history[index];
+        final h = sortedHistory[index];
 
         return checkInOutCard({
           "time": h.time,
@@ -272,6 +285,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       },
     );
   }
+
+  DateTime _parseTime(String time) {
+    // supports "18:00" or "18:00:00"
+    final parts = time.split(":");
+
+    final now = DateTime.now();
+
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+      parts.length > 2 ? int.parse(parts[2]) : 0,
+    );
+  }
+
+
 
   // ================= MONTHLY REVIEW =================
 

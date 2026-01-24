@@ -18,7 +18,18 @@ class CheckInStatusNotifier extends StateNotifier<AsyncValue<bool>> {
     await prefs.setBool('checkInStatus', value);
     state = AsyncValue.data(value);
   }
+
+  /// 🔥 NEW: sync directly from API status
+  Future<void> syncFromApi(String status) async {
+    final isCheckedIn = status.toLowerCase() == "in";
+    await setCheckInStatus(isCheckedIn);
+  }
 }
+
+
+// bool mapStatusToBool(String status) {
+//   return status.toLowerCase() == "in";
+// }
 
 final checkInStatusProvider =
 StateNotifierProvider<CheckInStatusNotifier, AsyncValue<bool>>((ref) {

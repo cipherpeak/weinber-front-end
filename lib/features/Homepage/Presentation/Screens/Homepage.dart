@@ -27,6 +27,8 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
   @override
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeNotifierProvider);
+
+
     int selectedExtendMinutes = 5;
 
     return SafeArea(
@@ -151,13 +153,18 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                           ),
                         );
                       } catch (e) {
+                        debugPrint("❌ END BREAK UI ERROR => $e");
+
+                        final errorMsg = e.toString().replaceFirst("Exception: ", "");
+
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
+                          SnackBar(
                             backgroundColor: Colors.red,
-                            content: Text("Failed to end break"),
+                            content: Text(errorMsg),
                           ),
                         );
                       }
+
                     },
                   ),
 

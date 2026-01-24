@@ -1,38 +1,80 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
+import '../../Api/notification_repo.dart';
+import '../../Model/notification_model.dart';
 
-class GeneralNotificationList extends StatelessWidget {
+class GeneralNotificationList extends StatefulWidget {
   const GeneralNotificationList({super.key});
+
+  @override
+  State<GeneralNotificationList> createState() =>
+      _GeneralNotificationListState();
+}
+
+class _GeneralNotificationListState extends State<GeneralNotificationList> {
+  final repo = NotificationRepository();
+
+  List<NotificationItem> notifications = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    try {
+      final now = DateTime.now();
+
+      final res = await repo.fetchNotifications(
+        date: now.day,
+        month: now.month,
+        year: now.year,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        notifications = res;
+        loading = false;
+      });
+    } catch (e) {
+      loading = false;
+      debugPrint(e.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    return ListView(
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (notifications.isEmpty) {
+      return const Center(child: Text("No notifications"));
+    }
+
+    return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      children: [
-        _notificationTile(
-          title: "You successfully Checked In",
-          subtitle: "At 08:15 AM",
-          time: "New",
+      itemCount: notifications.length,
+      itemBuilder: (context, index) {
+        final n = notifications[index];
+
+        return _notificationTile(
+          title: n.title,
+          subtitle: n.message,
+          time: _formatTime(n.createdAt),
           width: width,
-          isNew: true,
-        ),
-        _notificationTile(
-          title: "Leave Request Approved",
-          subtitle: "Your leave request has been approved",
-          time: "Yesterday",
-          width: width,
-        ),
-        _notificationTile(
-          title: "Reminder",
-          subtitle: "Remember to check in before 09:00 AM",
-          time: "3d ago",
-          width: width,
-        ),
-      ],
+          isNew: !n.isRead,
+        );
+      },
     );
   }
+
+  // ---------------- UI ----------------
 
   Widget _notificationTile({
     required String title,
@@ -134,5 +176,20 @@ class GeneralNotificationList extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  // ---------------- HELPERS ----------------
+
+  String _formatTime(DateTime dt) {
+    final now = DateTime.now();
+    final diff = now.difference(dt);
+
+    if (diff.inMinutes < 60) {
+      return "${diff.inMinutes}m ago";
+    } else if (diff.inHours < 24) {
+      return "${diff.inHours}h ago";
+    } else {
+      return "${dt.day}/${dt.month}/${dt.year}";
+    }
   }
 }

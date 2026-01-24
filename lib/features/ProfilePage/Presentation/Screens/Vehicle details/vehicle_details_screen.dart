@@ -42,8 +42,6 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,11 +69,38 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
         centerTitle: false,
       ),
 
-      body: _buildBody(),
+      body: Stack(
+        children: [
+          _buildBody(),
 
+          Positioned(
+            bottom: 25,
+            right: 20,
+            child: FloatingActionButton.extended(
+              backgroundColor: primaryColor,
+              icon: const Icon(
+                Icons.report_problem_outlined,
+                color: Colors.white,
+              ),
+              label: const Text(
+                "Report Vehicle Issue",
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+              onPressed: () {
+                router.push(routerReportVehicleIssuePage);
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
-
-
   }
 
   Widget _buildBody() {
@@ -90,7 +115,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     final current = vehicleData!.currentVehicle;
     final temporary = vehicleData!.temporaryVehicle;
 
-//temporary overrides current
+    //temporary overrides current
     final activeVehicle = temporary ?? current;
 
     if (activeVehicle == null) {
@@ -98,7 +123,6 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     }
 
     return buildVehicleUI(activeVehicle);
-
   }
 
   Widget buildVehicleUI(VehicleData vehicle) {
@@ -127,15 +151,12 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 10,)
+            SizedBox(height: 10),
           ],
 
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
-
-
               // Vehicle image
               Container(
                 width: 120,
@@ -146,7 +167,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                     image: vehicle.vehicleImage != null
                         ? NetworkImage(vehicle.vehicleImage!)
                         : const AssetImage("assets/images/no image.jpg")
-                    as ImageProvider,
+                              as ImageProvider,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -158,18 +179,24 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _VehicleDetailText(
-                        label: "Vehicle Number:",
-                        value: _v(vehicle.vehicleNumber)),
+                      label: "Vehicle Number:",
+                      value: _v(vehicle.vehicleNumber),
+                    ),
                     const SizedBox(height: 6),
                     _VehicleDetailText(
-                        label: "Vehicle Model:", value: _v(vehicle.model)),
+                      label: "Vehicle Model:",
+                      value: _v(vehicle.model),
+                    ),
                     const SizedBox(height: 6),
                     _VehicleDetailText(
-                        label: "Type:", value: _v(vehicle.vehicleType)),
+                      label: "Type:",
+                      value: _v(vehicle.vehicleType),
+                    ),
                     const SizedBox(height: 6),
                     _VehicleDetailText(
-                        label: "Assigned Date:",
-                        value: _format(vehicle.assignedDate)),
+                      label: "Assigned Date:",
+                      value: _format(vehicle.assignedDate),
+                    ),
                   ],
                 ),
               ),
@@ -182,45 +209,54 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
           const SizedBox(height: 15),
 
           if (issues.isEmpty)
-            const Text("No issues reported",
-                style: TextStyle(color: Colors.black45))
+            const Text(
+              "No issues reported",
+              style: TextStyle(color: Colors.black45),
+            )
           else
-            ...issues.map((e) => _buildApiIssueCard(e)),
+            ...issues.map((e) => GestureDetector(
+              onTap: () {
+                router.push(routerReportedVehicleDetailsPage);
+              },
+              child: _buildApiIssueCard(e),
+            )),
 
 
           const SizedBox(height: 25),
 
           if (vehicleData!.temporaryVehicle == null) ...[
             SizedBox(
-                height: 45,
-                width: double.infinity,
-                child:  ElevatedButton(
-                  onPressed: () async {
-                    final res = await router.push(routerTemporaryVehicleUsagePage);
+              height: 45,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  final res = await router.push(
+                    routerTemporaryVehicleUsagePage,
+                  );
 
-                    if (res == true) {
-                      _loadVehicleDetails();
-                    }
-                  },
+                  if (res == true) {
+                    _loadVehicleDetails();
+                  }
+                },
 
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 2),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Text(
-                    vehicleData!.temporaryVehicle == null
-                        ? "Use Temporary Vehicle"
-                        : "View / Change Temporary Vehicle",
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                ),
+                child: Text(
+                  vehicleData!.temporaryVehicle == null
+                      ? "Use Temporary Vehicle"
+                      : "View / Change Temporary Vehicle",
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
                   ),
                 ),
+              ),
             ),
           ],
 
@@ -229,7 +265,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
           GestureDetector(
             onTap: () {
-              router.push(routerFinesAndPenaltiesPage);
+              // router.push(routerFinesAndPenaltiesPage);
             },
             child: Container(
               width: double.infinity,
@@ -281,10 +317,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                         SizedBox(height: 4),
                         Text(
                           "View history of traffic violations",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.black54),
                         ),
                       ],
                     ),
@@ -351,10 +384,10 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
     );
   }
 
-
   Widget _buildApiIssueCard(VehicleIssue issue) {
-    final statusColor =
-    issue.status.toLowerCase() == "resolved" ? Color(0xFF5ED18F) : Color(0xFFFFC764);
+    final statusColor = issue.status.toLowerCase() == "resolved"
+        ? Color(0xFF5ED18F)
+        : Color(0xFFFFC764);
 
     return _buildIssueCard({
       "title": issue.title,
@@ -364,7 +397,6 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
       "date": issue.date,
     });
   }
-
 
   Widget _buildIssueCard(Map<String, dynamic> issue) {
     return Container(
@@ -423,13 +455,13 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-
-              // User + date
-              Text(
-                "By ${issue["user"]} · ${issue["date"]}",
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
+              // const SizedBox(height: 8),
+              //
+              // // User + date
+              // Text(
+              //   "By ${issue["user"]} · ${issue["date"]}",
+              //   style: const TextStyle(fontSize: 12, color: Colors.black54),
+              // ),
             ],
           ),
           Icon(Icons.arrow_forward_ios, size: 16, color: Colors.black87),

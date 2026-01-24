@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:weinber/core/constants/api_endpoints.dart';
 import '../../../../core/constants/constants.dart';
 import '../../Api/personal_information_repository.dart';
 import '../../Model/personal_information_response.dart';
@@ -155,39 +156,36 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         children: [
 
           /// PROFILE IMAGE
-          Center(
-            child: GestureDetector(
-              onTap: _pickImage,
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey.shade200,
-                    radius: 55,
-                    foregroundImage: pickedImage != null
-                        ? FileImage(pickedImage!)
-                        : info.proPic.isNotEmpty
-                        ? NetworkImage("https://www.cipher-peak.com${info.proPic}")
-                        : null,
-                    child: (info.proPic.isEmpty && pickedImage == null)
-                        ? const Icon(Icons.person, size: 60, color: Colors.grey)
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: primaryColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.edit, size: 18, color: Colors.white),
-                    ),
-                  ),
-                ],
+      /// PROFILE IMAGE
+      Center(
+      child: GestureDetector(
+      onTap: _pickImage,
+        child: Stack(
+          children: [
+            CircleAvatar(
+              radius: 55,
+              backgroundColor: Colors.grey.shade200,
+              child: ClipOval(
+                child: _buildProfileImage(info),
               ),
             ),
-          ),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: primaryColor,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.edit, size: 18, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+
 
           const SizedBox(height: 30),
 
@@ -281,6 +279,58 @@ class _PersonalInformationScreenState extends State<PersonalInformationScreen> {
         ],
       ),
     );
+  }
+
+  Widget _defaultAvatar() {
+    return Icon(Icons.person, size: 60, color: Colors.grey.shade400);
+  }
+
+
+  Widget _buildProfileImage(PersonalInfoResponse info) {
+    debugPrint("🧩 buildProfileImage called");
+    debugPrint("➡️ pickedImage = ${pickedImage?.path}");
+    debugPrint("➡️ api proPic = ${info.proPic}");
+
+    // 1️⃣ Picked from gallery
+    if (pickedImage != null) {
+      return Image.file(
+        pickedImage!,
+        width: 110,
+        height: 110,
+        fit: BoxFit.cover,
+      );
+    }
+
+    // 2️⃣ From API
+    if (info.proPic.trim().isNotEmpty) {
+      final fullUrl = "${ApiEndpoints.mediaBaseUrl}${info.proPic}";
+      debugPrint("🌍 TRYING TO LOAD => $fullUrl");
+
+      return Image.network(
+        fullUrl,
+        width: 110,
+        height: 110,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stack) {
+          debugPrint("❌ IMAGE LOAD FAILED => $error");
+          return _defaultAvatar();
+        },
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return const Center(
+            child: SizedBox(
+              height: 22,
+              width: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        },
+      );
+    }
+
+    // 3️⃣ Fallback
+    debugPrint("⚠️ NO IMAGE FOUND — showing default avatar");
+    return _defaultAvatar();
   }
 
 

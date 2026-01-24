@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weinber/features/AttendancePage/Presentation/Screens/AttendancePage.dart';
-import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/otp_verification_page.dart';
-import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/password_reset_success_page.dart';
-import 'package:weinber/features/Authentication/Forgot%20Password/Presentation/Screens/reset_password_page.dart';
+import 'package:weinber/features/BottomNavPage/Presentation/Screens/scheduleMeetingScreen.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/TakeABreakPages/take_a_break_first_page.dart';
 import 'package:weinber/features/Homepage/Presentation/Screens/announcementDetailsPage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Leave/LeavePage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/fine%20details%20page.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/reportVehicleIssuePage.dart';
+import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/reportedVehicleIssueDetailsPage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/temporary_vehicle_usage.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/Vehicle%20details/vehicle_details_screen.dart';
 import 'package:weinber/features/ProfilePage/Presentation/Screens/visa_and_document.dart';
@@ -16,7 +16,6 @@ import 'package:weinber/features/TaskPageAdvantage/Presentation/Screens/advantag
 import 'package:weinber/features/TaskPageDax/Presentation/Screens/daxCreateTaskPage.dart';
 import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskDetailsPage.dart';
 import 'package:weinber/features/TaskPageTechnician/Presentation/Screens/technicianTaskInProgressPage.dart';
-import '../../features/Authentication/Forgot Password/Presentation/Screens/forgot password page.dart';
 import '../../features/Authentication/Login/Presentation/Screens/LoginPage.dart';
 import '../../features/BottomNavPage/Presentation/Screens/bottom_nav_screen.dart';
 import '../../features/BottomNavPage/Presentation/Screens/notification_page.dart';
@@ -50,11 +49,6 @@ import '../../features/splash/presentation/Screens/splash_screen.dart';
 // 🧭 Route constants
 const String routerSplash = '/';
 const String routerLoginPage = '/login';
-//Password
-const routerForgotPassword = '/forgot-password';
-const routerOtpVerificationPage = '/otp-verification';
-const routerResetPasswordPage = '/reset-password';
-const routerPasswordResetSuccessPage = '/password-reset-success';
 
 // Shell route
 const String routerHomePage = '/app/home';
@@ -72,6 +66,9 @@ const String routerReportPage = '/app/report';
 //Notification
 const String routerNotificationPage = '/app/home/notification';
 
+//Meeting
+const String routerScheduleMeetingPage = '/app/home/notification/schedule-meeting';
+
 //Profile
 const String routerProfilePage = '/app/home/profile';
 const String routerSettingsPage = '/app/home/profile/setting';
@@ -82,6 +79,10 @@ const String routerVisaAndDocumentPage =
     '/app/home/profile/visa-and-document';
 const String routerVehicleDetailsPage =
     '/app/home/profile/vehicle-details';
+const String routerReportVehicleIssuePage =
+    '/app/home/profile/vehicle-details/report-vehicle-issue';
+const String routerReportedVehicleDetailsPage =
+    '/app/home/profile/vehicle-details/reported-vehicle-details';
 const String routerTemporaryVehicleUsagePage = '/app/home/profile/temporary-vehicle-usage';
 const String routerFinesAndPenaltiesPage =
     '/app/home/profile/vehicle-details/fines-and-penalties';
@@ -514,51 +515,22 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-    // --- Forgot Password Flow ---
     GoRoute(
-      path: routerForgotPassword,
+      path: routerScheduleMeetingPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child: const ForgotPasswordScreen(),
+        child: const ScheduleMeetingScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
-    GoRoute(
-      path: routerOtpVerificationPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const OtpVerificationScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
-    ),
-    GoRoute(
-      path: routerResetPasswordPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const ResetPasswordScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
-    ),
-    GoRoute(
-      path: routerPasswordResetSuccessPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const PasswordResetSuccessScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
-    ),
+
+
+
+
+
 
     // --- Setting Screen ---
     GoRoute(
@@ -663,7 +635,29 @@ final GoRouter router = GoRouter(
       ),
     ),
 
+    GoRoute(
+      path: routerReportVehicleIssuePage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ReportVehicleIssuePage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
 
+    GoRoute(
+      path: routerReportedVehicleDetailsPage,
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const ReportedVehicleDetailsPage(),
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+      ),
+    ),
     GoRoute(
       path: routerFinesAndPenaltiesPage,
       pageBuilder: (context, state) => CustomTransitionPage(

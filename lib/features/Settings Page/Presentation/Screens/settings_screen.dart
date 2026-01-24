@@ -42,33 +42,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSectionTitle("ACCOUNT"),
-            const SizedBox(height: 8),
-            _buildTile(
-              icon: Icons.lock_outline,
-              title: "Change Password",
-              iconColor: iconOrange,
-              onTap: () {},
-            ),
-            const SizedBox(height: 25),
+            // _buildSectionTitle("ACCOUNT"),
+            // const SizedBox(height: 8),
+            // _buildTile(
+            //   icon: Icons.lock_outline,
+            //   title: "Change Password",
+            //   iconColor: iconOrange,
+            //   onTap: () {},
+            // ),
+            // const SizedBox(height: 25),
 
-            _buildSectionTitle("APPLICATION SETTINGS"),
-            const SizedBox(height: 8),
-            _buildSwitchTile(
-              icon: Icons.notifications_none_rounded,
-              title: "Enable Notification",
-              iconColor: iconBlue,
-              value: _notificationsEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-            ),
-            const SizedBox(height: 25),
+            // _buildSectionTitle("APPLICATION SETTINGS"),
+            // const SizedBox(height: 8),
+            // _buildSwitchTile(
+            //   icon: Icons.notifications_none_rounded,
+            //   title: "Enable Notification",
+            //   iconColor: iconBlue,
+            //   value: _notificationsEnabled,
+            //   onChanged: (value) {
+            //     setState(() {
+            //       _notificationsEnabled = value;
+            //     });
+            //   },
+            // ),
+            // const SizedBox(height: 25),
 
-            _buildSectionTitle("ABOUT"),
-            const SizedBox(height: 8),
+            // _buildSectionTitle("ABOUT"),
+            // const SizedBox(height: 8),
             _buildTile(
               icon: Icons.info_outline,
               title: "About App",

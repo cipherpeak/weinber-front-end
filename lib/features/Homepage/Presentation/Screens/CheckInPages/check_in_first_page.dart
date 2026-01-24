@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:geocoding/geocoding.dart' as geocoding;
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:weinber/core/constants/constants.dart';
 import '../../../../../core/constants/page_routes.dart';
+import '../../../../../utils/Common Functions/extractTimeZone.dart';
 import '../../../../../utils/Common Widgets/build_labelled_field.dart';
 import '../../../Api/checkInOutRepo.dart';
 import '../../Provider/checkInStatusNotifier.dart';
@@ -458,16 +459,19 @@ class _CheckInFirstPageState extends ConsumerState<CheckInFirstPage>
 
                   final date = DateFormat('yyyy-MM-dd').format(now);
                   final time = DateFormat('HH:mm').format(now);
-                  final timeZone = await FlutterNativeTimezone.getLocalTimezone();
+                  final rawTimeZone = await FlutterTimezone.getLocalTimezone();
+                  final cleanTimeZone = extractTimeZoneName(rawTimeZone.toString());
 
-                  // final repo = AttendanceRepository();
+                  debugPrint("🌍 RAW timezone => $rawTimeZone");
+                  debugPrint("🌍 CLEAN timezone => $cleanTimeZone");
 
                   await AttendanceRepository.checkIn(
                     location: _currentAddress ?? "Unknown",
                     checkDate: date,
                     checkTime: time,
-                    timeZone: timeZone,
+                    timeZone: cleanTimeZone, // ✅ Asia/Kolkata only
                   );
+
 
                   // ✅ local attendance state
                   await checkInNotifier.setCheckInStatus(true);

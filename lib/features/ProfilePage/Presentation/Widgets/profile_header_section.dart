@@ -15,7 +15,6 @@ class ProfileHeaderSection extends StatelessWidget {
       clipBehavior: Clip.none,
       alignment: Alignment.center,
       children: [
-
         Container(
           width: double.infinity,
           margin: const EdgeInsets.only(top: 55),
@@ -61,10 +60,33 @@ class ProfileHeaderSection extends StatelessWidget {
             child: CircleAvatar(
               radius: 52,
               backgroundColor: Colors.grey[200],
-              backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-              child: imageUrl.isEmpty
-                  ? Icon(Icons.person, size: 60, color: Colors.grey[400])
-                  : null,
+              child: ClipOval(
+                child: imageUrl.isNotEmpty
+                    ? Image.network(
+                        imageUrl,
+                        width: 104,
+                        height: 104,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.person,
+                            size: 60,
+                            color: Colors.grey[400],
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: SizedBox(
+                              height: 22,
+                              width: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
+                      )
+                    : Icon(Icons.person, size: 60, color: Colors.grey[400]),
+              ),
             ),
           ),
         ),
@@ -72,4 +94,3 @@ class ProfileHeaderSection extends StatelessWidget {
     );
   }
 }
-

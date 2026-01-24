@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/page_routes.dart';
 import '../../../Authentication/Login/Model/hive_login_model.dart';
+import '../../Api/meeting_repository.dart';
+import '../../Model/meeting_list_model.dart';
+
 
 class MeetingNotificationList extends StatefulWidget {
   const MeetingNotificationList({super.key});
@@ -14,6 +18,11 @@ class _MeetingNotificationListState extends State<MeetingNotificationList> {
   String? role;
   late AuthLocalStorage _local;
 
+  final repo = MeetingRepository();
+
+  bool loading = true;
+  List<MeetingModel> meetings = [];
+
   @override
   void initState() {
     super.initState();
@@ -23,44 +32,56 @@ class _MeetingNotificationListState extends State<MeetingNotificationList> {
   Future<void> initializeFunctions() async {
     _local = AuthLocalStorage.instance;
     await _local.init();
+
     final r = _local.getRole();
+    final m = await repo.fetchMeetings();
+
+    // ✅ Sort latest first
+    m.sort((a, b) {
+      final aDateTime = DateTime.parse("${a.date} ${a.time}");
+      final bDateTime = DateTime.parse("${b.date} ${b.time}");
+      return bDateTime.compareTo(aDateTime); // DESCENDING
+    });
 
     if (!mounted) return;
 
     setState(() {
       role = r?.toLowerCase();
+      meetings = m;
+      loading = false;
     });
   }
+
 
   bool get isAdmin => role == "admin";
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
     return Stack(
       children: [
         /// 🔹 Meeting List
-        ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          children: [
-            _notificationTile(
-              title: "Design Team Bi-Weekly",
-              subtitle: "11 December 2025 • 2:30 PM • Office Bay 2",
-              time: "Nov 20",
-              width: width,
-            ),
-            _notificationTile(
-              title: "Client Review Meeting",
-              subtitle: "15 December 2025 • 11:00 AM • Conference Hall",
-              time: "Nov 18",
-              width: width,
-            ),
-          ],
+        loading
+            ? const Center(child: CircularProgressIndicator())
+            : meetings.isEmpty
+            ? const Center(child: Text("No meetings found"))
+            : ListView.builder(
+          padding: const EdgeInsets.symmetric(
+              horizontal: 20, vertical: 15),
+          itemCount: meetings.length,
+          itemBuilder: (context, index) {
+            final m = meetings[index];
+
+            return _notificationTile(
+              title: m.title,
+              subtitle:
+              "${_formatDate(m.date)} • ${_formatTime(m.time)} • ${m.location}",
+              time: _shortDate(m.date),
+            );
+          },
         ),
 
         /// 🔥 Schedule Meeting Button (ADMIN ONLY)
-        // if (isAdmin)
+        if (isAdmin)
           Positioned(
             bottom: 40,
             right: 20,
@@ -80,7 +101,7 @@ class _MeetingNotificationListState extends State<MeetingNotificationList> {
                 ),
               ),
               onPressed: () {
-                debugPrint("Schedule Meeting clicked");
+                router.push(routerScheduleMeetingPage);
               },
             ),
           ),
@@ -94,7 +115,6 @@ class _MeetingNotificationListState extends State<MeetingNotificationList> {
     required String title,
     required String subtitle,
     required String time,
-    required double width,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -168,5 +188,35 @@ class _MeetingNotificationListState extends State<MeetingNotificationList> {
         ],
       ),
     );
+  }
+
+  // ------------------------------------------------------------------
+  // Helpers
+
+  String _formatDate(String date) {
+    final d = DateTime.parse(date);
+    return "${d.day} ${_month(d.month)} ${d.year}";
+  }
+
+  String _shortDate(String date) {
+    final d = DateTime.parse(date);
+    return "${_month(d.month)} ${d.day}";
+  }
+
+  String _formatTime(String time) {
+    final t = time.split(":");
+    int hour = int.parse(t[0]);
+    final minute = t[1];
+    final ampm = hour >= 12 ? "PM" : "AM";
+    hour = hour > 12 ? hour - 12 : hour;
+    return "$hour:$minute $ampm";
+  }
+
+  String _month(int m) {
+    const months = [
+      "Jan","Feb","Mar","Apr","May","Jun",
+      "Jul","Aug","Sep","Oct","Nov","Dec"
+    ];
+    return months[m - 1];
   }
 }

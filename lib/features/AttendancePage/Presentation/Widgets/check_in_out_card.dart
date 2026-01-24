@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 Widget checkInOutCard(Map<String, dynamic> task) {
   final String title = task["title"];
   final String? reason = task["reason"];
