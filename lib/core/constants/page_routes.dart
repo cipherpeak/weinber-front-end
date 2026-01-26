@@ -326,16 +326,20 @@ final GoRouter router = GoRouter(
 
     GoRoute(
       path: routerDeliveryTaskDetailsPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const DeliveryTaskDetailsScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final taskId = state.extra as String;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: DeliveryTaskDetailsScreen(taskId: taskId),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
+
 
     GoRoute(
       path: routerDeliveryTaskStartTaskPage,

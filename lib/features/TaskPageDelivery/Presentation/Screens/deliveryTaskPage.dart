@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:weinber/core/constants/constants.dart';
 
 import '../../../../core/constants/page_routes.dart';
+import '../../Api/delivery_task_repository.dart';
+import '../../Model/delivery_task_model.dart';
 
 class DeliveryTaskScreen extends StatefulWidget {
   const DeliveryTaskScreen({super.key});
@@ -12,25 +14,63 @@ class DeliveryTaskScreen extends StatefulWidget {
 
 class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
     with SingleTickerProviderStateMixin {
+
   late TabController _tabController;
+
+  final repo = DeliveryTaskRepository();
+
+  bool loading = true;
+  String? error;
+
+  List<DeliveryTaskModel> todayTasks = [];
+  List<DeliveryTaskModel> pendingTasks = [];
+  List<DeliveryTaskModel> completedTasks = [];
+
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _loadTasks();
   }
+
+  Future<void> _loadTasks() async {
+    try {
+      final res = await repo.fetchDeliveryTasks();
+
+      setState(() {
+        todayTasks = res.todayTasks;
+        pendingTasks = res.pendingTasks;
+        completedTasks = res.completedTasks; // ✅
+        loading = false;
+      });
+
+    } catch (e) {
+      setState(() {
+        error = e.toString();
+        loading = false;
+      });
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error != null) {
+      return Center(child: Text(error!));
+    }
+
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// ============================
-            /// TITLE
-            /// ============================
+
             const Text(
               "Tasks Summary",
               style: TextStyle(
@@ -42,132 +82,156 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
 
             const SizedBox(height: 14),
 
-            /// ============================
-            /// SEARCH BAR
-            /// ============================
-            Container(
-              height: 46,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12.withOpacity(0.05),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: TextField(
-                cursorColor: primaryColor,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: "Search by vehicle or task",
-                  hintStyle: TextStyle(
-                    color: Colors.grey.shade500,
-                    fontSize: 14,
-                    fontFamily: appFont,
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade500,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
+            _searchBar(),
 
             const SizedBox(height: 14),
 
-            /// ============================
-            /// TABS
-            /// ============================
-            TabBar(
-              controller: _tabController,
-              indicatorColor: primaryColor,
-              labelColor: primaryColor,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                fontFamily: appFont,
-              ),
-              indicatorWeight: 2.5,
-              tabs: const [
-                Tab(text: "Today's Task"),
-                Tab(text: "Pending Task"),
-              ],
-            ),
+            _tabs(),
 
             const SizedBox(height: 12),
 
-            /// ============================
-            /// TAB VIEWS
-            /// ============================
             Expanded(
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _todayTasks(),
-                  _pendingTasks(),
+                  _todayWithCompleted(), // ✅ today + completed
+                  _taskList(pendingTasks),
                 ],
               ),
             ),
+
           ],
         ),
       ),
     );
   }
 
-  // =====================================================
-  // TODAY TASKS
-  // =====================================================
-  Widget _todayTasks() {
+  Widget _todayWithCompleted() {
+    if (todayTasks.isEmpty && completedTasks.isEmpty) {
+      return const Center(child: Text("No tasks found"));
+    }
+
     return ListView(
-      padding: EdgeInsets.zero,
       children: [
-        GestureDetector(onTap: (){
-          router.push(routerDeliveryTaskDetailsPage);
-        },
-          child: _taskCard(
-            taskId: "#8B342-A",
-            from: "Jane Doe",
-            address: "123 Main Street, Anytown",
-            isHighPriority: true,
+
+        /// 🔵 TODAY TASKS
+        if (todayTasks.isNotEmpty)
+          ...todayTasks.map((t) => GestureDetector(
+            onTap: () {
+              router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+            },
+            child: _taskCard(
+              taskId: t.deliveryId,
+              from: t.customerName,
+              address: t.location,
+              isHighPriority: t.isHighPriority,
+            ),
+          )),
+
+        /// 🟢 COMPLETED SECTION
+        if (completedTasks.isNotEmpty) ...[
+          const SizedBox(height: 10),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+            child: Text(
+              "COMPLETED TASKS",
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.grey.shade600,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
-        ),
-        _taskCard(
-          taskId: "#7637G-M",
-          from: "John Smith",
-          address: "456 Oak Avenue, Sometown",
-        ),
-        _taskCard(
-          taskId: "#7545Q2-4P",
-          from: "Emily White",
-          address: "789 Pine Lane, Otherville",
-        ),
+
+          ...completedTasks.map((t) => GestureDetector(
+            onTap: () {
+              router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+            },
+            child: _taskCard(
+              taskId: t.deliveryId,
+              from: t.customerName,
+              address: t.location,
+              isHighPriority: false,
+            ),
+          )),
+        ],
+
+        const SizedBox(height: 10),
       ],
     );
   }
 
-  // =====================================================
-  // PENDING TASKS
-  // =====================================================
-  Widget _pendingTasks() {
-    return ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        _taskCard(
-          taskId: "#1122X-A",
-          from: "Vendor ABC",
-          address: "Warehouse Road, Industrial Area",
+
+  // ---------------- UI PARTS ----------------
+
+  Widget _searchBar() {
+    return Container(
+      height: 46,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12.withOpacity(0.05),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Colors.white,
+          hintText: "Search by vehicle or task",
+          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _tabs() {
+    return TabBar(
+      controller: _tabController,
+      indicatorColor: primaryColor,
+      labelColor: primaryColor,
+      unselectedLabelColor: Colors.grey,
+      tabs: const [
+        Tab(text: "Today's Task"),
+        Tab(text: "Pending Task"),
       ],
     );
   }
+
+  Widget _taskList(List<DeliveryTaskModel> tasks) {
+    if (tasks.isEmpty) {
+      return const Center(child: Text("No tasks found"));
+    }
+
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final t = tasks[index];
+
+        return GestureDetector(
+          onTap: () {
+            router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+          },
+          child: _taskCard(
+            taskId: t.deliveryId,
+            from: t.customerName,
+            address: t.location,
+            isHighPriority: t.isHighPriority,
+          ),
+        );
+      },
+    );
+  }
+
 
   // =====================================================
   // TASK CARD
