@@ -1,164 +1,170 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:weinber/core/constants/constants.dart';
-
 import '../../../../core/constants/page_routes.dart';
+import '../../../../utils/Common Functions/compressImage.dart';
+import '../../Api/delivery_task_repository.dart';
+import '../../Model/delivery_task_start_details_model.dart';
 
-class DeliveryTaskStartTaskScreen extends StatelessWidget {
-  const DeliveryTaskStartTaskScreen({super.key});
+class DeliveryTaskStartTaskScreen extends StatefulWidget {
+  final int taskId;
+
+  const DeliveryTaskStartTaskScreen({
+    super.key,
+    required this.taskId,
+  });
+
+  @override
+  State<DeliveryTaskStartTaskScreen> createState() =>
+      _DeliveryTaskStartTaskScreenState();
+}
+
+class _DeliveryTaskStartTaskScreenState
+    extends State<DeliveryTaskStartTaskScreen> {
+  final repo = DeliveryTaskRepository();
+
+  bool loading = true;
+  bool endingTask = false;
+
+  String? error;
+  DeliveryTaskStartDetails? data;
+
+  File? selectedImage;
+  final notesController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStartedTask();
+  }
+
+  // ================= STARTED TASK DETAILS =================
+
+  Future<void> _loadStartedTask() async {
+    try {
+      final res = await repo.fetchStartedTaskDetails(widget.taskId);
+
+      if (!mounted) return;
+
+      setState(() {
+        data = res;
+        loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        error = e.toString();
+        loading = false;
+      });
+    }
+  }
+
+  // ================= IMAGE PICK =================
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: source, imageQuality: 70);
+
+    if (picked != null) {
+      setState(() {
+        selectedImage = File(picked.path);
+      });
+    }
+  }
+
+  // ================= END TASK =================
+
+  Future<void> _endTask() async {
+    if (endingTask) return;
+    if (selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Please upload task completion image"),
+        ),
+      );
+      return;
+    }
+
+    setState(() => endingTask = true);
+    final compressed = await compressImage(selectedImage!);
+    try {
+      await repo.endDeliveryTask(
+        taskId: widget.taskId,
+        notes: notesController.text,
+        image: compressed,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Task completed successfully"),
+        ),
+      );
+      router.go(routerDeliveryTaskPage);
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(e.toString()),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => endingTask = false);
+    }
+  }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (error != null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(child: Text(error!)),
+      );
+    }
+
+    final t = data!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
 
-      /// ================= APP BAR =================
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 18,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              size: 18, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
 
-      /// ================= BODY =================
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         child: Column(
           children: [
-            /// ================= CUSTOMER CARD =================
-            _card(
-              child: Row(
-                children: [
-                  const CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Color(0xFFF1F3F5),
-                    child: Icon(Icons.person, color: Colors.grey),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "John Smith",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          "+1 (555) 123-4567",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.redAccent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.call, size: 14, color: Colors.white),
-                        SizedBox(width: 6),
-                        Text(
-                          "Call",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            _card(child: _customerCard(t)),
             const SizedBox(height: 14),
-
-            /// ================= TASK DETAILS CARD =================
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        "Order ID : #7637G-M",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFFF3D6),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Text(
-                          "In Progress",
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFFFF9800),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  _info("Estimated Delivery Time", "02:00 PM"),
-                  _info("Location", "123 Main Street, Dubai, UAE"),
-                  const SizedBox(height: 10),
-                  Container(
-                    height: 150,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      image: const DecorationImage(
-                        image: AssetImage("assets/images/mapDummy.png"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Center(
-                    child: Text(
-                      "Go to Map  →",
-                      style: TextStyle(
-                        color: primaryColor,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            _card(child: _taskDetailsCard(t)),
             const SizedBox(height: 90),
           ],
         ),
       ),
 
-      /// ================= BOTTOM CTA =================
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
         child: SizedBox(
@@ -171,9 +177,7 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {
-              _showEndTaskDialog(context);
-            },
+            onPressed: endingTask ? null : () => _showEndTaskDialog(context),
             child: const Text(
               "End Task",
               style: TextStyle(
@@ -188,9 +192,76 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
     );
   }
 
-  /// ==========================================================
-  /// END TASK BOTTOM SHEET
-  /// ==========================================================
+  // ================= CUSTOMER =================
+
+  Widget _customerCard(DeliveryTaskStartDetails t) {
+    return Row(
+      children: [
+        const CircleAvatar(
+          radius: 22,
+          backgroundColor: Color(0xFFF1F3F5),
+          child: Icon(Icons.person, color: Colors.grey),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.customerName,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Text(t.customerPhone,
+                  style: const TextStyle(
+                      fontSize: 12, color: Colors.black54)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ================= TASK DETAILS =================
+
+  Widget _taskDetailsCard(DeliveryTaskStartDetails t) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Order ID : ${t.deliveryId}",
+                style: const TextStyle(
+                    fontSize: 13, fontWeight: FontWeight.w600)),
+            _statusChip(t.status),
+          ],
+        ),
+        const SizedBox(height: 12),
+        _info("Estimated Delivery Time", t.dueTime),
+        _info("Location", t.location),
+      ],
+    );
+  }
+
+  Widget _statusChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3D6),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text.toUpperCase(),
+        style: const TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFFFF9800)),
+      ),
+    );
+  }
+
+  // ================= END TASK UI =================
+
   void _showEndTaskDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -198,7 +269,7 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) {
+      builder: (_) {
         return Padding(
           padding: EdgeInsets.only(
             left: 16,
@@ -224,32 +295,38 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              const Text(
-                "Complete Task",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+              const Text("Complete Task",
+                  style: TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w700)),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
-              /// IMAGE PICKER PLACEHOLDER
               Row(
                 children: [
-                  _imagePickerBox(Icons.camera_alt, "Camera"),
+                  _imageBox(Icons.camera_alt, "Camera",
+                          () => _pickImage(ImageSource.camera)),
                   const SizedBox(width: 12),
-                  _imagePickerBox(Icons.photo_library, "Gallery"),
+                  _imageBox(Icons.photo_library, "Gallery",
+                          () => _pickImage(ImageSource.gallery)),
                 ],
               ),
 
-              const SizedBox(height: 16),
+              if (selectedImage != null) ...[
+                const SizedBox(height: 10),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.file(selectedImage!,
+                      height: 120, fit: BoxFit.cover),
+                ),
+              ],
 
-              /// COMMENTS FIELD
+              const SizedBox(height: 14),
+
               TextField(
+                controller: notesController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: "Add comments (optional)",
+                  hintText: "Add notes (optional)",
                   filled: true,
                   fillColor: const Color(0xFFF8F9FB),
                   border: OutlineInputBorder(
@@ -261,39 +338,38 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              /// BUTTONS
               Row(
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
+                      onPressed:
+                      endingTask ? null : () => Navigator.pop(context),
                       child: const Text("Cancel"),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        // TODO: Submit task completion
-                        Navigator.pop(context);
-                        router.go(routerDeliveryTaskPage);
-                      },
+                      onPressed: endingTask ? null : _endTask, // 🔥 block multiple taps
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
                       ),
-                      child: const Text("Mark as Complete"),
+                      child: endingTask
+                          ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                          : const Text("Mark as Complete"),
                     ),
                   ),
+
                 ],
               ),
             ],
@@ -303,26 +379,26 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
     );
   }
 
-  /// ================= HELPERS =================
+  // ================= HELPERS =================
 
-  Widget _imagePickerBox(IconData icon, String label) {
+  Widget _imageBox(IconData icon, String label, VoidCallback onTap) {
     return Expanded(
-      child: Container(
-        height: 90,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 28, color: primaryColor),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 12),
-            ),
-          ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 90,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 28, color: primaryColor),
+              const SizedBox(height: 6),
+              Text(label, style: const TextStyle(fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );
@@ -334,21 +410,13 @@ class DeliveryTaskStartTaskScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
-          ),
+          Text(label,
+              style:
+              const TextStyle(fontSize: 12, color: Colors.black54)),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          Text(value,
+              style: const TextStyle(
+                  fontSize: 13, fontWeight: FontWeight.w600)),
         ],
       ),
     );

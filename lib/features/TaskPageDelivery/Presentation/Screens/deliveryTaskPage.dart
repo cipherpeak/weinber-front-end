@@ -118,7 +118,13 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
         if (todayTasks.isNotEmpty)
           ...todayTasks.map((t) => GestureDetector(
             onTap: () {
-              router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+              router.push(
+                routerDeliveryTaskDetailsPage,
+                extra: {
+                  "id": t.id,
+                  "isCompleted": false,
+                },
+              );
             },
             child: _taskCard(
               taskId: t.deliveryId,
@@ -147,7 +153,13 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
 
           ...completedTasks.map((t) => GestureDetector(
             onTap: () {
-              router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+              router.push(
+                routerDeliveryTaskDetailsPage,
+                extra: {
+                  "id": t.id,
+                  "isCompleted": true,
+                },
+              );
             },
             child: _taskCard(
               taskId: t.deliveryId,
@@ -219,7 +231,13 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
 
         return GestureDetector(
           onTap: () {
-            router.push(routerDeliveryTaskDetailsPage, extra: t.deliveryId);
+            router.push(
+              routerDeliveryTaskDetailsPage,
+              extra: {
+                "id": t.id,
+                "isCompleted": false,
+              },
+            );
           },
           child: _taskCard(
             taskId: t.deliveryId,

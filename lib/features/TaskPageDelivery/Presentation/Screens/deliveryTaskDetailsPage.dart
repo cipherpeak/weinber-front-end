@@ -6,14 +6,20 @@ import '../../Api/delivery_task_repository.dart';
 import '../../Model/delivery_task_details_model.dart';
 
 class DeliveryTaskDetailsScreen extends StatefulWidget {
-  final String taskId;
+  final int taskId;
+  final bool isCompleted;
 
-  const DeliveryTaskDetailsScreen({super.key, required this.taskId});
+  const DeliveryTaskDetailsScreen({
+    super.key,
+    required this.taskId,
+    required this.isCompleted,
+  });
 
   @override
   State<DeliveryTaskDetailsScreen> createState() =>
       _DeliveryTaskDetailsScreenState();
 }
+
 
 class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
   final repo = DeliveryTaskRepository();
@@ -21,6 +27,7 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
   bool loading = true;
   String? error;
   DeliveryTaskDetails? data;
+  bool startingTask = false;
 
   @override
   void initState() {
@@ -40,6 +47,39 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
         error = e.toString();
         loading = false;
       });
+    }
+  }
+  Future<void> _startTask() async {
+    setState(() => startingTask = true);
+
+    try {
+      await repo.startDeliveryTask(taskId: widget.taskId);
+
+      // ✅ Started successfully
+      router.push(
+        routerDeliveryTaskStartTaskPage,
+        extra: widget.taskId,
+      );
+
+    } catch (e) {
+      final msg = e.toString().toLowerCase();
+
+      if (msg.contains("already in progress")) {
+        // 🟡 Task already started → just open started task page
+        router.push(
+          routerDeliveryTaskStartTaskPage,
+          extra: widget.taskId,
+        );
+        return;
+      }
+
+      // 🔴 Real error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(e.toString())),
+      );
+
+    } finally {
+      if (mounted) setState(() => startingTask = false);
     }
   }
 
@@ -153,7 +193,9 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
         ),
       ),
 
-      bottomNavigationBar: Padding(
+      bottomNavigationBar: widget.isCompleted
+          ? null // ❌ no button
+          : Padding(
         padding: const EdgeInsets.all(16),
         child: SizedBox(
           height: 45,
@@ -163,10 +205,10 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25)),
             ),
-            onPressed: () {
-              router.push(routerDeliveryTaskStartTaskPage, extra: t);
-            },
-            child: const Text(
+            onPressed: startingTask ? null : _startTask,
+            child: startingTask
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
               "Start Task",
               style: TextStyle(
                   fontSize: 16,
@@ -176,11 +218,13 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
           ),
         ),
       ),
+
     );
   }
 
   Widget _detailsCard(DeliveryTaskDetails t) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: _cardDecoration(),
       child: Column(

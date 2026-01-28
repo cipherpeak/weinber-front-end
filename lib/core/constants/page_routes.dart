@@ -327,31 +327,36 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: routerDeliveryTaskDetailsPage,
       pageBuilder: (context, state) {
-        final taskId = state.extra as String;
+        final data = state.extra as Map<String, dynamic>;
+
         return CustomTransitionPage(
           key: state.pageKey,
-          child: DeliveryTaskDetailsScreen(taskId: taskId),
-          transitionDuration: const Duration(milliseconds: 300),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) =>
+          child: DeliveryTaskDetailsScreen(
+            taskId: data["id"],
+            isCompleted: data["isCompleted"],
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               FadeTransition(opacity: animation, child: child),
         );
       },
     ),
 
 
+
     GoRoute(
       path: routerDeliveryTaskStartTaskPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const DeliveryTaskStartTaskScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final taskId = state.extra as int;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: DeliveryTaskStartTaskScreen(taskId: taskId,),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      }
     ),
 
 
