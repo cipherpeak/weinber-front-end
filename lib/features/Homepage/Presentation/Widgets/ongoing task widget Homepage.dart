@@ -59,7 +59,23 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
 
           Row(
             children: [
-              Expanded(
+
+              if (task.maintenanceHeading != null && task.maintenanceHeading!.isNotEmpty)
+                Expanded(
+                  child: Text(
+                    task.maintenanceHeading!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+
+                if(task.maintenanceHeading == null || task.maintenanceHeading!.isEmpty)
+                Expanded(
                 child: Text(
                   task.heading,
                   maxLines: 1,
@@ -71,6 +87,8 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
                   ),
                 ),
               ),
+
+
 
               const SizedBox(width: 8),
 
@@ -125,25 +143,26 @@ class OngoingTaskWidgetHomepage extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          /// Progress %
-          Align(
-            alignment: Alignment.centerRight,
-            child: Text(
-              "${task.percentageCompleted}%",
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                color: Colors.black,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 6),
-
-          /// Percentage Bar
-
-          PercentageBarHomepage(task.percentageCompleted),
+          // /// Progress %
+          // if (task.percentageCompleted > 0)
+          // Align(
+          //   alignment: Alignment.centerRight,
+          //   child: Text(
+          //     "${task.percentageCompleted}%",
+          //     maxLines: 1,
+          //     overflow: TextOverflow.ellipsis,
+          //     style: const TextStyle(
+          //       fontSize: 12,
+          //       color: Colors.black,
+          //     ),
+          //   ),
+          // ),
+          //
+          // const SizedBox(height: 6),
+          //
+          // /// Percentage Bar
+          // if (task.percentageCompleted > 0)
+          // PercentageBarHomepage(task.percentageCompleted),
         ],
       ),
     );

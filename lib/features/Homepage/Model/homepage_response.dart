@@ -175,6 +175,7 @@ class OngoingTask {
   final String address;
   final String taskAssignTime;
   final int percentageCompleted;
+  final String? maintenanceHeading;
 
   OngoingTask({
     required this.heading,
@@ -182,6 +183,7 @@ class OngoingTask {
     required this.address,
     required this.taskAssignTime,
     required this.percentageCompleted,
+    this.maintenanceHeading,
   });
 
   factory OngoingTask.fromJson(Map<String, dynamic> json) => OngoingTask(
@@ -190,6 +192,7 @@ class OngoingTask {
     address: json["address"] ?? "",
     taskAssignTime: json["task_assign_time"] ?? "",
     percentageCompleted: json["percentage_completed"] ?? 0,
+    maintenanceHeading: json["maintenance_heading"] ?? '',
   );
 }
 

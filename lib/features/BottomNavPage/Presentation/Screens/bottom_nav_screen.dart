@@ -5,6 +5,7 @@ import 'package:weinber/core/constants/constants.dart';
 import 'package:weinber/features/Authentication/Login/Model/hive_login_model.dart';
 
 import '../../../../core/constants/page_routes.dart';
+import '../../../../utils/Common Functions/getTaskPageRoute.dart';
 import '../../../AttendancePage/Presentation/Screens/AttendancePage.dart';
 import '../../../Homepage/Presentation/Screens/Homepage.dart';
 import '../../../ReportPage/Presentation/Screens/ReportPage.dart';
@@ -53,45 +54,12 @@ class _BottomNavScreenState extends ConsumerState<BottomNavScreen> {
     appIcon = _local.getAppIcon();
 
     setState(() {
-      taskRoutePage = _getTaskRoute(employeeType, company);
+      taskRoutePage = getTaskRoute(employeeType, company);
     });
   }
 
 
-  String _getTaskRoute(String? employeeType, String? company) {
-    final type = employeeType?.toLowerCase().trim();
-    final comp = company?.toLowerCase().trim();
 
-    // 🔧SERVICE LOGIC (company-based)
-    if (type == "service") {
-      if (comp == "dax") {
-        return routerDaxTaskPage;
-      } else if (comp == "advantage") {
-        return routerAdvantageTaskPage;
-      } else {
-        // any other company but service employee
-        return routerDaxTaskPage;
-      }
-    }
-
-    //  DELIVERY (same for all companies)
-    if (type == "deliver") {
-      return routerDeliveryTaskPage;
-    }
-
-    //  OFFICE
-    if (type == "office") {
-      return routerNotesPage;
-    }
-
-    //  MECHANIC
-    if (type == "mechanic") {
-      return routerTechnicianTaskPage;
-    }
-
-    //  fallback safety
-    return routerAdvantageTaskPage;
-  }
 
   void _onTap(int index) {
     // Update Riverpod state

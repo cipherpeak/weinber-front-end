@@ -1,42 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/features/Homepage/Presentation/Widgets/task_widget_homepage.dart';
 
 import '../../../../core/constants/constants.dart';
+import '../../../../core/constants/page_routes.dart';
+import '../../../BottomNavPage/Presentation/Provider/bottom_nav_provider.dart';
 import '../../Model/homepage_response.dart';
 
-class TaskSectionWidget extends StatelessWidget {
+class TaskSectionWidget extends ConsumerWidget {
   final List<Task> tasks;
+  final String route;
 
-  const TaskSectionWidget({required this.tasks, super.key});
 
-  IconData _getTaskIcon(String type) {
-    switch (type.toLowerCase()) {
-      case "car_wash":
-        return Icons.local_car_wash_outlined;
-      case "cleaning":
-        return Icons.cleaning_services_outlined;
-      case "delivery":
-        return Icons.delivery_dining_outlined;
-      default:
-        return Icons.task_alt_rounded;
-    }
-  }
+  const TaskSectionWidget({required this.tasks, required this.route, super.key});
 
-  Color _getTaskColor(String type) {
-    switch (type.toLowerCase()) {
-      case "car_wash":
-        return iconBlue;
-      case "cleaning":
-        return iconOrange;
-      case "delivery":
-        return Colors.green;
-      default:
-        return Colors.black54;
-    }
-  }
+  // ✅ Common icon and color for all tasks
+  static const IconData _commonTaskIcon =
+      Icons.task_outlined;
+
+  static const Color _commonTaskColor = primaryColor;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build( BuildContext context, WidgetRef ref) {
+    // ✅ Show only max 3 tasks
+    final visibleTasks =
+    tasks.length > 3 ? tasks.take(3).toList() : tasks;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -68,7 +57,7 @@ class TaskSectionWidget extends StatelessWidget {
             ),
           ),
 
-          // Summary Text
+          // ✅ Summary Text
           Text.rich(
             TextSpan(
               children: [
@@ -102,26 +91,29 @@ class TaskSectionWidget extends StatelessWidget {
 
           const SizedBox(height: 12),
 
-          // Dynamic Task List
-          ...tasks.map((task) {
+          // ✅ Max 3 tasks only
+          ...visibleTasks.map((task) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: taskCard(
-                icon: _getTaskIcon(task.type),
-                color: _getTaskColor(task.type),
+                icon: _commonTaskIcon,
+                color: _commonTaskColor,
                 title: task.heading,
                 subtitle: "${task.details} • ${task.time}",
               ),
             );
           }),
 
-          // View All Button
+          // ✅ View All Button
           if (tasks.isNotEmpty)
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
                 iconAlignment: IconAlignment.end,
-                onPressed: () {},
+                onPressed: () {
+                  router.go(route);
+                  ref.read(bottomNavProvider.notifier).changeIndex(1);
+                },
                 icon: const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 14,

@@ -177,7 +177,12 @@ class _DeliveryTaskStartTaskScreenState
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: endingTask ? null : () => _showEndTaskDialog(context),
+            onPressed: () {
+              router.push(
+                routerDeliveryTaskCompletePage,
+                extra: widget.taskId,
+              );
+            },
             child: const Text(
               "End Task",
               style: TextStyle(

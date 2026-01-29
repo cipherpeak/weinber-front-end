@@ -1,63 +1,139 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/core/constants/constants.dart';
 
 import '../../../../core/constants/constants.dart' as AppColor;
 import '../../../../core/constants/page_routes.dart';
+import '../../../BottomNavPage/Presentation/Provider/bottom_nav_provider.dart';
+import '../../Api/technician_task_repo.dart';
 
-class TechnicianCreateTaskScreen extends StatefulWidget {
+class TechnicianCreateTaskScreen extends ConsumerStatefulWidget {
   const TechnicianCreateTaskScreen({super.key});
 
   @override
-  State<TechnicianCreateTaskScreen> createState() =>
+  ConsumerState<TechnicianCreateTaskScreen> createState() =>
       _TechnicianCreateTaskScreenState();
 }
 
 class _TechnicianCreateTaskScreenState
-    extends State<TechnicianCreateTaskScreen> {
-  final _formKey = GlobalKey<FormState>();
+    extends ConsumerState<TechnicianCreateTaskScreen> {
 
-  final List<String> bayNumbers = ["Bay 01", "Bay 02", "Bay 03", "Bay 04"];
+  final _formKey = GlobalKey<FormState>();
+  final repo = TechnicianTaskRepository();
+
+  bool creating = false;
+
+  // ================= CONTROLLERS =================
+
+  final siteController = TextEditingController();
+  final jobDescController = TextEditingController();
+  final spareController = TextEditingController();
+  final partNumberController = TextEditingController();
+  final itemController = TextEditingController();
+  final quantityController = TextEditingController();
+
+  String? selectedBay;
+  String? selectedMachineType;
+  String? selectedSerial;
+
+  final List<String> bayNumbers = ["bay_1", "bay_2", "bay_3", "bay_4"];
 
   final List<String> machineTypes = [
-    "High Pressure Machine",
-    "Low Pressure Machine",
-    "Hydraulic Press",
+    "hp_machine",
+    "lp_machine",
+    "hydraulic_press",
   ];
 
   final List<String> machineSerialNumbers = [
-    "HP-2023-001",
-    "HP-2023-002",
-    "LP-2022-015",
+    "SN001",
+    "SN002",
+    "SN003",
   ];
+
+  // ================= SUBMIT =================
+
+  Future<void> _createTask() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    if (selectedBay == null ||
+        selectedMachineType == null ||
+        selectedSerial == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Please fill all dropdown fields"),
+        ),
+      );
+      return;
+    }
+
+    setState(() => creating = true);
+
+    try {
+      await repo.createTechnicianTask(
+        siteNumber: siteController.text.trim(),
+        bayNumber: selectedBay!,
+        machineType: selectedMachineType!,
+        machineSerialNumber: selectedSerial!,
+        jobDescription: jobDescController.text.trim(),
+        sparePartDetails: spareController.text.trim(),
+        partNumber: partNumberController.text.trim() == ""
+            ? 0
+            : int.parse(partNumberController.text.trim()),
+        item: itemController.text.trim(),
+        quantity: int.parse(quantityController.text.trim()),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Task created successfully"),
+        ),
+      );
+
+      ref.read(bottomNavProvider.notifier).changeIndex(0);
+      router.go(routerTechnicianTaskPage);
+
+
+      // go back to list
+
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(e.toString()),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => creating = false);
+    }
+  }
+
+  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
 
-      /// ================= APP BAR =================
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            size: 18,
-            color: Colors.black,
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              size: 18, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           "Create Task",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
 
-      /// ================= BODY =================
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
         child: Form(
@@ -65,49 +141,63 @@ class _TechnicianCreateTaskScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _label("Site Number"),
-              _textField(
-                initialValue: "",
-                hint: 'Enter site number',
-                // enabled: false,
-              ),
+
+              _label("Site Number", required: true),
+              _textField(controller: siteController, hint: "Enter site number"),
 
               _label("Bay Number", required: true),
               _dropdownField(
-                "Select or enter your bay number",
+                "Select bay number",
+                value: selectedBay,
                 items: bayNumbers,
+                onChanged: (v) => setState(() => selectedBay = v),
               ),
 
               _label("Machine Type", required: true),
-              _dropdownField("Select machine type", items: machineTypes),
+              _dropdownField(
+                "Select machine type",
+                value: selectedMachineType,
+                items: machineTypes,
+                onChanged: (v) => setState(() => selectedMachineType = v),
+              ),
 
               _label("Machine Serial Number", required: true),
               _dropdownField(
-                "Select or enter machine serial number",
+                "Select serial number",
+                value: selectedSerial,
                 items: machineSerialNumbers,
+                onChanged: (v) => setState(() => selectedSerial = v),
               ),
 
               _label("Job Description", required: true),
-              _textField(hint: "Briefly describe your job here", maxLines: 3),
+              _textField(
+                controller: jobDescController,
+                hint: "Briefly describe job",
+                maxLines: 3,
+              ),
 
               _label("Spare Parts Details", required: true),
-              _textField(hint: "Add here", maxLines: 3),
+              _textField(
+                controller: spareController,
+                hint: "Add spare parts details",
+                maxLines: 2,
+              ),
 
               _label("Part Number", required: true),
-              _textField(hint: "Enter part number"),
+              _textField(controller: partNumberController, hint: "Enter part number"),
 
               _label("Item", required: true),
-              _textField(hint: "Enter item name"),
+              _textField(controller: itemController, hint: "Enter item name"),
 
               _label("Quantity", required: true),
               _textField(
+                controller: quantityController,
                 hint: "Enter quantity",
                 keyboardType: TextInputType.number,
               ),
 
               const SizedBox(height: 30),
 
-              /// ================= CREATE BUTTON =================
               SizedBox(
                 height: 45,
                 width: double.infinity,
@@ -117,22 +207,21 @@ class _TechnicianCreateTaskScreenState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    elevation: 0,
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
+                  onPressed: creating ? null : _createTask,
+                  child: creating
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
                     "Create Task",
                     style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white),
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -140,9 +229,7 @@ class _TechnicianCreateTaskScreenState
     );
   }
 
-  // =====================================================
-  // HELPERS
-  // =====================================================
+  // ================= HELPERS =================
 
   Widget _label(String text, {bool required = false}) {
     return Padding(
@@ -157,10 +244,7 @@ class _TechnicianCreateTaskScreenState
           children: [
             TextSpan(text: text),
             if (required)
-              const TextSpan(
-                text: " *",
-                style: TextStyle(color: Colors.red),
-              ),
+              const TextSpan(text: " *", style: TextStyle(color: Colors.red)),
           ],
         ),
       ),
@@ -168,94 +252,57 @@ class _TechnicianCreateTaskScreenState
   }
 
   Widget _textField({
+    required TextEditingController controller,
     String? hint,
-    String? initialValue,
-    bool enabled = true,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
-      decoration: _fieldDecoration(), // outer rectangle only
+      decoration: _fieldDecoration(),
       child: TextFormField(
-        initialValue: initialValue,
-        enabled: enabled,
+        controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        validator: (v) =>
+        (v == null || v.isEmpty) ? "This field is required" : null,
         decoration: InputDecoration(
           hintText: hint,
-          filled: false,
           border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          disabledBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 14,
-          ),
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         ),
       ),
     );
   }
 
-  Widget _dropdownField(String hint, {required List<String> items}) {
+  Widget _dropdownField(
+      String hint, {
+        required List<String> items,
+        required String? value,
+        required ValueChanged<String?> onChanged,
+      }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+      decoration: _fieldDecoration(),
       child: DropdownButtonFormField<String>(
-        isExpanded: false,
-        icon: const Icon(
-          Icons.keyboard_arrow_down_rounded,
-          color: Colors.black54,
-        ),
+        value: value,
+        icon: const Icon(Icons.keyboard_arrow_down_rounded),
         items: items
             .map(
-              (item) => DropdownMenuItem<String>(
-                value: item,
-                child: Text(
-                  item,
-                  style: const TextStyle(
-                    fontSize: 14, //  normal size for selected values
-                    color: Colors.black87,
-                  ),
-                ),
-              ),
-            )
+              (e) => DropdownMenuItem(
+            value: e,
+            child: Text(e.replaceAll('_', ' ').toUpperCase()),
+          ),
+        )
             .toList(),
-        onChanged: (value) {},
+        onChanged: onChanged,
+        validator: (v) => v == null ? "Required" : null,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(
-            fontSize: 12, //  smaller hint text
-            color: Colors.grey.shade500,
-            fontWeight: FontWeight.w400,
-          ),
           border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 16,
-          ),
-        ),
-        dropdownColor: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        style: const TextStyle(
-          fontSize: 14, //  selected value text size
-          color: Colors.black87,
+          contentPadding:
+          const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
       ),
     );

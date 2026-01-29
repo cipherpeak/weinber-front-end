@@ -4,6 +4,7 @@ class DeliveryTaskModel {
   final String customerName;
   final String location;
   final String priority;
+  final String status;
 
   DeliveryTaskModel({
     required this.id,
@@ -11,6 +12,7 @@ class DeliveryTaskModel {
     required this.customerName,
     required this.location,
     required this.priority,
+    required this.status
   });
 
   factory DeliveryTaskModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class DeliveryTaskModel {
       customerName: json["customer_name"] ?? "",
       location: json["delivery_location"] ?? "",
       priority: json["task_priority"] ?? "",
+      status: json["status"] ?? "",
     );
   }
 

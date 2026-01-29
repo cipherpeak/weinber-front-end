@@ -39,6 +39,7 @@ import '../../features/TaskPageDax/Presentation/Screens/daxTaskPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskDetailsPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskPage.dart';
 import '../../features/TaskPageDelivery/Presentation/Screens/deliveryTaskStartTaskPage.dart';
+import '../../features/TaskPageDelivery/Presentation/Screens/delivery_task_complete_screen.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/add_notes_screen.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/notes_details_screen.dart';
 import '../../features/TaskPageOffice/Presentation/Screens/notes_screen.dart';
@@ -67,32 +68,31 @@ const String routerReportPage = '/app/report';
 const String routerNotificationPage = '/app/home/notification';
 
 //Meeting
-const String routerScheduleMeetingPage = '/app/home/notification/schedule-meeting';
+const String routerScheduleMeetingPage =
+    '/app/home/notification/schedule-meeting';
 
 //Profile
 const String routerProfilePage = '/app/home/profile';
 const String routerSettingsPage = '/app/home/profile/setting';
-const String routerEmployeeInformationPage = '/app/home/profile/employee-information';
+const String routerEmployeeInformationPage =
+    '/app/home/profile/employee-information';
 const String routerPersonalInformationPage =
     '/app/home/profile/personal-information';
-const String routerVisaAndDocumentPage =
-    '/app/home/profile/visa-and-document';
-const String routerVehicleDetailsPage =
-    '/app/home/profile/vehicle-details';
+const String routerVisaAndDocumentPage = '/app/home/profile/visa-and-document';
+const String routerVehicleDetailsPage = '/app/home/profile/vehicle-details';
 const String routerReportVehicleIssuePage =
     '/app/home/profile/vehicle-details/report-vehicle-issue';
 const String routerReportedVehicleDetailsPage =
     '/app/home/profile/vehicle-details/reported-vehicle-details';
-const String routerTemporaryVehicleUsagePage = '/app/home/profile/temporary-vehicle-usage';
+const String routerTemporaryVehicleUsagePage =
+    '/app/home/profile/temporary-vehicle-usage';
 const String routerFinesAndPenaltiesPage =
     '/app/home/profile/vehicle-details/fines-and-penalties';
 const String routerFinesAndPenaltiesDetailsPage =
     '/app/home/profile/vehicle-details/fines-and-penalties/details';
-const String routerLeavePage =
-    '/app/home/profile/leave';
+const String routerLeavePage = '/app/home/profile/leave';
 
-const String routerLeaveApplyPage =
-    '/app/home/profile/leave-apply';
+const String routerLeaveApplyPage = '/app/home/profile/leave-apply';
 
 const String routerLeaveDetailsPage = '/app/home/profile/leave/details';
 
@@ -106,7 +106,8 @@ const String routerDaxCreateTaskPage = '/app/task-dax/create-task';
 
 const String routerAdvantageTaskPage = '/app/task-advantage';
 const String routerAdvantageTaskDetailsPage = '/app/task-advantage/details';
-const String routerAdvantageTaskInProgressPage = '/app/task-advantage/details/in-progress';
+const String routerAdvantageTaskInProgressPage =
+    '/app/task-advantage/details/in-progress';
 const String routerAdvantageCreateTaskPage = '/app/task-advantage/create-task';
 
 // Office Task
@@ -117,14 +118,18 @@ const String routerAddNotesPage = '/app/notes/add-notes';
 //Delivery Task
 const String routerDeliveryTaskPage = '/app/delivery-task';
 const String routerDeliveryTaskDetailsPage = '/app/delivery-task/details';
-const String routerDeliveryTaskStartTaskPage = '/app/delivery-task/details/start';
+const String routerDeliveryTaskStartTaskPage =
+    '/app/delivery-task/details/start';
+const String routerDeliveryTaskCompletePage =
+    '/app/delivery-task/details/complete';
 
 //Technician Task
 const String routerTechnicianTaskPage = '/app/technician-task';
-const String routerTechnicianCreateTaskPage = '/app/technician-task/create-task';
+const String routerTechnicianCreateTaskPage =
+    '/app/technician-task/create-task';
 const String routerTechnicianTaskDetailsPage = '/app/technician-task/details';
-const String routerTechnicianTaskInProgressPage = '/app/technician-task/details/in-progress';
-
+const String routerTechnicianTaskInProgressPage =
+    '/app/technician-task/details/in-progress';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -154,7 +159,7 @@ final GoRouter router = GoRouter(
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         key: state.pageKey,
-        child:  LoginPage(),
+        child: LoginPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
@@ -186,11 +191,11 @@ final GoRouter router = GoRouter(
             child: const NotesScreen(),
             transitionDuration: const Duration(milliseconds: 500),
             reverseTransitionDuration: const Duration(milliseconds: 500),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
-
 
         GoRoute(
           path: routerDaxTaskPage,
@@ -214,7 +219,7 @@ final GoRouter router = GoRouter(
             reverseTransitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
 
@@ -227,7 +232,7 @@ final GoRouter router = GoRouter(
             reverseTransitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
 
@@ -240,10 +245,9 @@ final GoRouter router = GoRouter(
             reverseTransitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) =>
-                FadeTransition(opacity: animation, child: child),
+                    FadeTransition(opacity: animation, child: child),
           ),
         ),
-
 
         GoRoute(
           path: routerAttendancePage,
@@ -260,13 +264,14 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: routerReportPage,
           pageBuilder: (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const ReportScreen(),
-              transitionDuration: const Duration(milliseconds: 300),
-              reverseTransitionDuration: const Duration(milliseconds: 300),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) =>
-                      FadeTransition(opacity: animation, child: child)),
+            key: state.pageKey,
+            child: const ReportScreen(),
+            transitionDuration: const Duration(milliseconds: 300),
+            reverseTransitionDuration: const Duration(milliseconds: 300),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) =>
+                    FadeTransition(opacity: animation, child: child),
+          ),
         ),
       ],
     ),
@@ -278,12 +283,10 @@ final GoRouter router = GoRouter(
         child: const AnnouncementDetailsPage(),
         transitionDuration: const Duration(milliseconds: 300),
         reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
-
 
     GoRoute(
       path: routerTechnicianCreateTaskPage,
@@ -292,36 +295,39 @@ final GoRouter router = GoRouter(
         child: const TechnicianCreateTaskScreen(),
         transitionDuration: const Duration(milliseconds: 300),
         reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
+        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
       ),
     ),
 
     GoRoute(
       path: routerTechnicianTaskDetailsPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const TechnicianTaskDetailsScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final taskId = state.extra as int;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: TechnicianTaskDetailsScreen(taskId: taskId),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
 
     GoRoute(
       path: routerTechnicianTaskInProgressPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const TechnicianTaskInProgressScreen(),
-        transitionDuration: const Duration(milliseconds: 300),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        transitionsBuilder:
-            (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final taskId = state.extra as int;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: TechnicianTaskInProgressScreen(taskId: taskId),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
 
     GoRoute(
@@ -334,6 +340,7 @@ final GoRouter router = GoRouter(
           child: DeliveryTaskDetailsScreen(
             taskId: data["id"],
             isCompleted: data["isCompleted"],
+            status: data["status"], // ✅ correct
           ),
           transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               FadeTransition(opacity: animation, child: child),
@@ -341,24 +348,35 @@ final GoRouter router = GoRouter(
       },
     ),
 
-
-
     GoRoute(
       path: routerDeliveryTaskStartTaskPage,
       pageBuilder: (context, state) {
         final taskId = state.extra as int;
         return CustomTransitionPage(
           key: state.pageKey,
-          child: DeliveryTaskStartTaskScreen(taskId: taskId,),
+          child: DeliveryTaskStartTaskScreen(taskId: taskId),
           transitionDuration: const Duration(milliseconds: 300),
           reverseTransitionDuration: const Duration(milliseconds: 300),
-          transitionsBuilder:
-              (context, animation, secondaryAnimation, child) =>
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
               FadeTransition(opacity: animation, child: child),
         );
-      }
+      },
     ),
 
+    GoRoute(
+      path: routerDeliveryTaskCompletePage,
+      pageBuilder: (context, state) {
+        final taskId = state.extra as int;
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: DeliveryTaskCompleteScreen(taskId: taskId),
+          transitionDuration: const Duration(milliseconds: 300),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
+    ),
 
     GoRoute(
       path: routerAddNotesPage,
@@ -386,7 +404,6 @@ final GoRouter router = GoRouter(
         );
       },
     ),
-
 
     // --- Task details (outside shell) ---
     GoRoute(
@@ -460,7 +477,6 @@ final GoRouter router = GoRouter(
             FadeTransition(opacity: animation, child: child),
       ),
     ),
-
 
     GoRoute(
       path: routerCheckInFirstPage,
@@ -536,11 +552,6 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-
-
-
-
-
     // --- Setting Screen ---
     GoRoute(
       path: routerSettingsPage,
@@ -558,7 +569,7 @@ final GoRouter router = GoRouter(
       path: routerLeavePage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child:  LeaveScreen(),
+        child: LeaveScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -566,12 +577,11 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-
     GoRoute(
       path: routerLeaveApplyPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child:  LeaveApplyPage(),
+        child: LeaveApplyPage(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -599,7 +609,7 @@ final GoRouter router = GoRouter(
       path: routerEmployeeInformationPage,
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
-        child:  EmployeeInformationScreen(),
+        child: EmployeeInformationScreen(),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
@@ -679,7 +689,6 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-
     GoRoute(
       path: routerFinesAndPenaltiesDetailsPage,
       pageBuilder: (context, state) => CustomTransitionPage(
@@ -706,9 +715,9 @@ final GoRouter router = GoRouter(
     ),
 
     // --- Notes Screen ---
-
-
-
   ],
 );
 
+extension on Object? {
+  operator [](String other) {}
+}

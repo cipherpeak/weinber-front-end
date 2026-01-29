@@ -26,7 +26,6 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
   List<DeliveryTaskModel> pendingTasks = [];
   List<DeliveryTaskModel> completedTasks = [];
 
-
   @override
   void initState() {
     super.initState();
@@ -41,7 +40,7 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
       setState(() {
         todayTasks = res.todayTasks;
         pendingTasks = res.pendingTasks;
-        completedTasks = res.completedTasks; // ✅
+        completedTasks = res.completedTasks;
         loading = false;
       });
 
@@ -52,7 +51,6 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -94,17 +92,20 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _todayWithCompleted(), // ✅ today + completed
+                  _todayWithCompleted(),
                   _taskList(pendingTasks),
                 ],
               ),
             ),
-
           ],
         ),
       ),
     );
   }
+
+  // =====================================================
+  // TODAY + COMPLETED
+  // =====================================================
 
   Widget _todayWithCompleted() {
     if (todayTasks.isEmpty && completedTasks.isEmpty) {
@@ -123,6 +124,7 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
                 extra: {
                   "id": t.id,
                   "isCompleted": false,
+                  "status": t.status, //
                 },
               );
             },
@@ -130,11 +132,12 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
               taskId: t.deliveryId,
               from: t.customerName,
               address: t.location,
+              status: t.status,
               isHighPriority: t.isHighPriority,
             ),
           )),
 
-        /// 🟢 COMPLETED SECTION
+        /// 🟢 COMPLETED TASKS
         if (completedTasks.isNotEmpty) ...[
           const SizedBox(height: 10),
 
@@ -158,13 +161,16 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
                 extra: {
                   "id": t.id,
                   "isCompleted": true,
+                  "status": t.status, // ✅ ADD
                 },
               );
+
             },
             child: _taskCard(
               taskId: t.deliveryId,
               from: t.customerName,
               address: t.location,
+              status: t.status,
               isHighPriority: false,
             ),
           )),
@@ -175,8 +181,47 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
     );
   }
 
+  // =====================================================
+  // PENDING TAB
+  // =====================================================
 
-  // ---------------- UI PARTS ----------------
+  Widget _taskList(List<DeliveryTaskModel> tasks) {
+    if (tasks.isEmpty) {
+      return const Center(child: Text("No tasks found"));
+    }
+
+    return ListView.builder(
+      itemCount: tasks.length,
+      itemBuilder: (context, index) {
+        final t = tasks[index];
+
+        return GestureDetector(
+          onTap: () {
+            router.push(
+              routerDeliveryTaskDetailsPage,
+              extra: {
+                "id": t.id,
+                "isCompleted": false,
+                "status": t.status,
+              },
+            );
+
+          },
+          child: _taskCard(
+            taskId: t.deliveryId,
+            from: t.customerName,
+            address: t.location,
+            status: t.status,
+            isHighPriority: t.isHighPriority,
+          ),
+        );
+      },
+    );
+  }
+
+  // =====================================================
+  // SEARCH BAR
+  // =====================================================
 
   Widget _searchBar() {
     return Container(
@@ -219,45 +264,35 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
     );
   }
 
-  Widget _taskList(List<DeliveryTaskModel> tasks) {
-    if (tasks.isEmpty) {
-      return const Center(child: Text("No tasks found"));
+  // =====================================================
+  // STATUS COLOR
+  // =====================================================
+
+  Color _statusColor(String status) {
+    switch (status.toLowerCase()) {
+      case "completed":
+        return Colors.green;
+      case "pending":
+        return Colors.orange;
+      case "in_progress":
+      case "in progress":
+        return Colors.blue;
+      case "cancelled":
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
-
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) {
-        final t = tasks[index];
-
-        return GestureDetector(
-          onTap: () {
-            router.push(
-              routerDeliveryTaskDetailsPage,
-              extra: {
-                "id": t.id,
-                "isCompleted": false,
-              },
-            );
-          },
-          child: _taskCard(
-            taskId: t.deliveryId,
-            from: t.customerName,
-            address: t.location,
-            isHighPriority: t.isHighPriority,
-          ),
-        );
-      },
-    );
   }
-
 
   // =====================================================
   // TASK CARD
   // =====================================================
+
   Widget _taskCard({
     required String taskId,
     required String from,
     required String address,
+    required String status,
     bool isHighPriority = false,
   }) {
     return Container(
@@ -276,12 +311,13 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
       ),
       child: Row(
         children: [
-          /// LEFT CONTENT
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// ID + PRIORITY
+
+                /// ID + STATUS + PRIORITY
                 Row(
                   children: [
                     Text(
@@ -292,17 +328,36 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
                         fontWeight: FontWeight.w700,
                       ),
                     ),
+
+                    const SizedBox(width: 8),
+
+                    ///  STATUS BADGE
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: _statusColor(status).withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        status.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: _statusColor(status),
+                        ),
+                      ),
+                    ),
+
                     if (isHighPriority) ...[
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Text(
-                          "High Priority",
+                          "HIGH PRIORITY",
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -314,7 +369,7 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
                   ],
                 ),
 
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
 
                 Text(
                   "From: $from",
@@ -339,7 +394,6 @@ class _DeliveryTaskScreenState extends State<DeliveryTaskScreen>
             ),
           ),
 
-          /// RIGHT ARROW
           const Icon(
             Icons.arrow_forward_ios,
             size: 16,

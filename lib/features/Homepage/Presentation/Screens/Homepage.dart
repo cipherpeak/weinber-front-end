@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/page_routes.dart';
+import '../../../../utils/Common Functions/getTaskPageRoute.dart';
+import '../../../Authentication/Login/Model/hive_login_model.dart';
+import '../../../BottomNavPage/Presentation/Provider/bottom_nav_provider.dart';
 import '../../Api/takeABreakRepo.dart';
 import '../../Database/breakLocal.dart';
 import '../../Model/homepage_response.dart';
@@ -24,10 +28,29 @@ class HomepageScreen extends ConsumerStatefulWidget {
 }
 
 class _HomepageState extends ConsumerState<HomepageScreen> {
+  String taskRoutePage = '';
+
+  @override
+  void initState() {
+initializeFunctions();
+    super.initState();
+  }
+
+  void initializeFunctions() async {
+    var local = AuthLocalStorage.instance;
+    await local.init();
+
+    var company = local.getCompany();
+    var employeeType = local.getEmployeeType();
+
+    setState(() {
+      taskRoutePage = getTaskRoute(employeeType, company);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final homeState = ref.watch(homeNotifierProvider);
-
 
     int selectedExtendMinutes = 5;
 
@@ -73,7 +96,17 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                     children: [
                       GreetingWidget(name: home.name ?? "Employee"),
 
-                      OngoingTaskWidgetHomepage(tasks: home.ongoingTasks),
+
+                      ///Ongoing task
+                      GestureDetector(
+                        onTap: () {
+                          router.go(taskRoutePage);
+                          ref.read(bottomNavProvider.notifier).changeIndex(1);
+                        },
+                        child: OngoingTaskWidgetHomepage(
+                          tasks: home.ongoingTasks,
+                        ),
+                      ),
 
                       const SizedBox(height: 20),
 
@@ -155,7 +188,10 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                       } catch (e) {
                         debugPrint("❌ END BREAK UI ERROR => $e");
 
-                        final errorMsg = e.toString().replaceFirst("Exception: ", "");
+                        final errorMsg = e.toString().replaceFirst(
+                          "Exception: ",
+                          "",
+                        );
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -164,7 +200,6 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
                           ),
                         );
                       }
-
                     },
                   ),
 
@@ -176,7 +211,10 @@ class _HomepageState extends ConsumerState<HomepageScreen> {
 
                 const SizedBox(height: 15),
 
-                TaskSectionWidget(tasks: home.tasks),
+                GestureDetector(onTap:(){
+                  router.go(taskRoutePage);
+                  ref.read(bottomNavProvider.notifier).changeIndex(1);
+                },child: TaskSectionWidget(tasks: home.tasks, route: taskRoutePage)),
 
                 const SizedBox(height: 10),
 

@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:weinber/core/constants/constants.dart';
 
 import '../../../../core/constants/page_routes.dart';
+import '../../../Homepage/Presentation/Provider/home_notifier.dart';
 import '../../Api/delivery_task_repository.dart';
 import '../../Model/delivery_task_details_model.dart';
 
-class DeliveryTaskDetailsScreen extends StatefulWidget {
+class DeliveryTaskDetailsScreen extends ConsumerStatefulWidget {
   final int taskId;
   final bool isCompleted;
+  final String status;
 
   const DeliveryTaskDetailsScreen({
     super.key,
     required this.taskId,
     required this.isCompleted,
+    required this.status,
   });
 
   @override
-  State<DeliveryTaskDetailsScreen> createState() =>
+  ConsumerState<DeliveryTaskDetailsScreen> createState() =>
       _DeliveryTaskDetailsScreenState();
 }
 
 
-class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
+class _DeliveryTaskDetailsScreenState extends ConsumerState<DeliveryTaskDetailsScreen> {
   final repo = DeliveryTaskRepository();
+  bool get isNotStarted =>
+      widget.status.toLowerCase() == "not_started" ||
+          widget.status.toLowerCase() == "not started";
+
 
   bool loading = true;
   String? error;
@@ -55,23 +63,27 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
     try {
       await repo.startDeliveryTask(taskId: widget.taskId);
 
-      // ✅ Started successfully
+// ✅ refresh home data
+      ref.read(homeNotifierProvider.notifier).refresh();
+
+// ✅ navigate
       router.push(
         routerDeliveryTaskStartTaskPage,
         extra: widget.taskId,
       );
 
-    } catch (e) {
-      final msg = e.toString().toLowerCase();
 
-      if (msg.contains("already in progress")) {
-        // 🟡 Task already started → just open started task page
-        router.push(
-          routerDeliveryTaskStartTaskPage,
-          extra: widget.taskId,
-        );
-        return;
-      }
+    } catch (e) {
+      // final msg = e.toString().toLowerCase();
+      //
+      // if (msg.contains("already in progress")) {
+      //   // 🟡 Task already started → just open started task page
+      //   router.push(
+      //     routerDeliveryTaskStartTaskPage,
+      //     extra: widget.taskId,
+      //   );
+      //   return;
+      // }
 
       // 🔴 Real error
       ScaffoldMessenger.of(context).showSnackBar(
@@ -194,7 +206,7 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
       ),
 
       bottomNavigationBar: widget.isCompleted
-          ? null // ❌ no button
+          ? null
           : Padding(
         padding: const EdgeInsets.all(16),
         child: SizedBox(
@@ -205,17 +217,30 @@ class _DeliveryTaskDetailsScreenState extends State<DeliveryTaskDetailsScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25)),
             ),
-            onPressed: startingTask ? null : _startTask,
+            onPressed: startingTask
+                ? null
+                : () {
+              if (isNotStarted) {
+                _startTask(); // ▶ start API
+              } else {
+                // ▶ directly open started task page
+                router.push(
+                  routerDeliveryTaskStartTaskPage,
+                  extra: widget.taskId,
+                );
+              }
+            },
             child: startingTask
                 ? const CircularProgressIndicator(color: Colors.white)
-                : const Text(
-              "Start Task",
-              style: TextStyle(
+                : Text(
+              isNotStarted ? "Start Task" : "View Task",
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                   color: Colors.white),
             ),
           ),
+
         ),
       ),
 
