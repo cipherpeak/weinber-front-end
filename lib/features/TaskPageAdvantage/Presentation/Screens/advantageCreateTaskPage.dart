@@ -1,52 +1,109 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:weinber/core/constants/constants.dart';
-
+import 'package:weinber/utils/Common%20Functions/compressImage.dart';
 import '../../../../core/constants/page_routes.dart';
+import '../../Api/advantage_task_repo.dart';
 
 class AdvantageCreateTaskScreen extends StatefulWidget {
   const AdvantageCreateTaskScreen({super.key});
 
   @override
-  State<AdvantageCreateTaskScreen> createState() => _AdvantageCreateTaskScreenState();
+  State<AdvantageCreateTaskScreen> createState() =>
+      _AdvantageCreateTaskScreenState();
 }
 
-class _AdvantageCreateTaskScreenState extends State<AdvantageCreateTaskScreen> {
+class _AdvantageCreateTaskScreenState
+    extends State<AdvantageCreateTaskScreen> {
+  final repo = AdvantageTaskRepository();
+  final picker = ImagePicker();
+
   String? detailingSite;
   String? plu;
   String? category;
   String? subService;
+  final chassisController = TextEditingController();
+
+  File? selectedImage;
+  bool loading = false;
 
   // ---------------- DUMMY DATA ----------------
   final detailingSites = [
-    "7086 – Autopro",
-    "7090 – Mobile Wash SZR",
-    "7102 – Dubai Marina",
+    "7086_autopro",
+    "7090_mobile_wash_szr",
+    "7102_dubai_marina",
   ];
 
-  final pluList = [
-    "Number 1 (PLU eg.)",
-    "Number 2 (PLU eg.)",
-    "Number 3 (PLU eg.)",
-  ];
+  final pluList = ["1", "2", "3"];
+  final categoryList = ["Category 1 eg.", "Category 2 eg.", "Category 3 eg."];
+  final subServiceList = ["Sub Service 1 eg.", "Sub Service 2 eg."];
 
-  final categoryList = [
-    "Category 1 eg.",
-    "Category 2 eg.",
-    "Category 3 eg.",
-  ];
+  // ================= IMAGE PICK =================
+  Future<void> _pickImage() async {
+    final picked =
+    await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (picked != null) {
+      setState(() => selectedImage = File(picked.path));
+    }
+  }
 
-  final subServiceList = [
-    "Sub Service 1 eg.",
-    "Sub Service 2 eg.",
-    "Sub Service 3 eg.",
-  ];
+  // ================= CREATE TASK =================
+  Future<void> _createTask() async {
+    var compressedImage;
+
+    if(selectedImage!=null){
+      compressedImage = await compressImage(selectedImage!);
+    }
+    if (detailingSite == null ||
+        plu == null ||
+        category == null ||
+        chassisController.text.isEmpty ||
+        compressedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Please fill all required fields"),
+        ),
+      );
+      return;
+    }
+
+    setState(() => loading = true);
+
+    try {
+      await repo.createAdvantageTask(
+        detailingSite: detailingSite!,
+        plu: plu!,
+        category: category!,
+        subService: subService ?? "",
+        chassisNumber: chassisController.text,
+        image: compressedImage!,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.green,
+          content: Text("Advantage task created successfully"),
+        ),
+      );
+
+      router.go(routerAdvantageTaskPage);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: Colors.red, content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FB),
-
-      // ================= APP BAR =================
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -56,74 +113,33 @@ class _AdvantageCreateTaskScreenState extends State<AdvantageCreateTaskScreen> {
         ),
         title: const Text(
           "Create Task",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
       ),
-
-      // ================= BODY =================
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _label("Detailing Site & Mobile Wash Sites", required: true),
-            _dropdown(
-              "Select or enter the site you’re working",
-              items: detailingSites,
-              value: detailingSite,
-              onChanged: (val) => setState(() => detailingSite = val),
-            ),
+            _dropdown("Detailing Site *", detailingSites,
+                value: detailingSite,
+                onChanged: (v) => setState(() => detailingSite = v)),
 
-            _label("Select PLU", required: true),
-            _dropdown(
-              "Number 2 (PLU eg.)",
-              items: pluList,
-              value: plu,
-              onChanged: (val) => setState(() => plu = val),
-            ),
+            _dropdown("PLU *", pluList,
+                value: plu, onChanged: (v) => setState(() => plu = v)),
 
-            _label("Category", required: true),
-            _dropdown(
-              "Category 2 eg.",
-              items: categoryList,
-              value: category,
-              onChanged: (val) => setState(() => category = val),
-            ),
+            _dropdown("Category *", categoryList,
+                value: category,
+                onChanged: (v) => setState(() => category = v)),
 
-            _label("Sub Service"),
-            _dropdown(
-              "Sub Service 1 eg.",
-              items: subServiceList,
-              value: subService,
-              onChanged: (val) => setState(() => subService = val),
-            ),
+            _dropdown("Sub Service", subServiceList,
+                value: subService,
+                onChanged: (v) => setState(() => subService = v)),
 
-            const SizedBox(height: 20),
+            _textField("Chassis Number *", chassisController),
 
-            // ================= VEHICLE INFO =================
-            Text(
-              "VEHICLE INFORMATION",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey.shade600,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            _label("Chassis Number", required: true),
-            _textField("Enter your vehicle chassis number"),
-
-            _label("Vehicle Model / Type", required: true),
-            _textField("Enter your vehicle model or type"),
-
-            _label("Vehicle Image", required: true),
-            _vehicleImageField(),
+            const SizedBox(height: 10),
+            _imagePicker(),
 
             const SizedBox(height: 20),
 
@@ -131,165 +147,104 @@ class _AdvantageCreateTaskScreenState extends State<AdvantageCreateTaskScreen> {
               height: 45,
               width: double.infinity,
               child: ElevatedButton(
+                onPressed: loading ? null : _createTask,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  elevation: 0,
+                      borderRadius: BorderRadius.circular(30)),
                 ),
-                onPressed: () {
-                  router.go(routerAdvantageTaskPage);
-                },
-                child: const Text(
+                child: loading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
                   "Create Task",
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white),
                 ),
               ),
             ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  // ================= HELPERS =================
+  // ================= UI HELPERS =================
 
-  Widget _label(String text, {bool required = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5, top: 10),
-      child: RichText(
-        text: TextSpan(
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+  Widget _dropdown(String label, List<String> items,
+      {String? value, ValueChanged<String?>? onChanged}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
           ),
-          children: [
-            TextSpan(text: text),
-            if (required)
-              const TextSpan(
-                text: " *",
-                style: TextStyle(color: Colors.red),
-              ),
-          ],
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: value,
+              hint: const Text("Select"),
+              items: items
+                  .map((e) =>
+                  DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged: onChanged,
+            ),
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
-  Widget _textField(String hint) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: TextField(
+  Widget _textField(String hint, TextEditingController controller) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(hint,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
           decoration: InputDecoration(
-            hintText: hint,
-            hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
-            contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            filled: true,
+            fillColor: Colors.white,
+            border:
+            OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),
-      ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 
-  Widget _dropdown(
-      String hint, {
-        required List<String> items,
-        String? value,
-        ValueChanged<String?>? onChanged,
-      }) {
-    return Container(
-      height: 44,
-      margin: const EdgeInsets.only(bottom: 6),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          isExpanded: true,
-          value: value,
-          hint: Text(
-            hint,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-          ),
-          icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
-          items: items
-              .map(
-                (e) => DropdownMenuItem<String>(
-              value: e,
-              child: Text(
-                e,
-                style: const TextStyle(fontSize: 13),
-              ),
-            ),
-          )
-              .toList(),
-          onChanged: onChanged,
+  Widget _imagePicker() {
+    return GestureDetector(
+      onTap: _pickImage,
+      child: Container(
+        height: 140,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: Colors.grey.shade300),
         ),
-      ),
-    );
-  }
-
-  Widget _vehicleImageField() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        children: const [
-          Icon(Icons.cloud_upload_outlined, size: 36, color: Colors.grey),
-          SizedBox(height: 8),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: "Select a file",
-                  style: TextStyle(
-                    color: primaryColor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                TextSpan(
-                  text: " and drop here",
-                  style: TextStyle(color: Colors.black54),
-                ),
-              ],
-            ),
-            style: TextStyle(fontSize: 12),
-          ),
-          SizedBox(height: 6),
-          Text(
-            "Supports PNG, JPEG formats. Max file size 4MB.",
-            style: TextStyle(fontSize: 10, color: Colors.black45),
-          ),
-        ],
+        child: selectedImage == null
+            ? const Center(
+          child: Text("Tap to upload vehicle image",
+              style: TextStyle(color: Colors.black54)),
+        )
+            : ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Image.file(selectedImage!, fit: BoxFit.cover),
+        ),
       ),
     );
   }

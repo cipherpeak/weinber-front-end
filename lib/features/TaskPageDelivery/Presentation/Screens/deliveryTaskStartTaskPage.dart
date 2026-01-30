@@ -27,6 +27,7 @@ class _DeliveryTaskStartTaskScreenState
 
   bool loading = true;
   bool endingTask = false;
+  String statusOfDelivery = "";
 
   String? error;
   DeliveryTaskStartDetails? data;
@@ -62,66 +63,6 @@ class _DeliveryTaskStartTaskScreenState
     }
   }
 
-  // ================= IMAGE PICK =================
-
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source, imageQuality: 70);
-
-    if (picked != null) {
-      setState(() {
-        selectedImage = File(picked.path);
-      });
-    }
-  }
-
-  // ================= END TASK =================
-
-  Future<void> _endTask() async {
-    if (endingTask) return;
-    if (selectedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Please upload task completion image"),
-        ),
-      );
-      return;
-    }
-
-    setState(() => endingTask = true);
-    final compressed = await compressImage(selectedImage!);
-    try {
-      await repo.endDeliveryTask(
-        taskId: widget.taskId,
-        notes: notesController.text,
-        image: compressed,
-      );
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Colors.green,
-          content: Text("Task completed successfully"),
-        ),
-      );
-      router.go(routerDeliveryTaskPage);
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(e.toString()),
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => endingTask = false);
-    }
-  }
-
-  // ================= UI =================
 
   @override
   Widget build(BuildContext context) {
@@ -265,149 +206,10 @@ class _DeliveryTaskStartTaskScreenState
     );
   }
 
-  // ================= END TASK UI =================
-
-  void _showEndTaskDialog(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) {
-        return Padding(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Center(
-                child: SizedBox(
-                  width: 40,
-                  height: 4,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.black26,
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              const Text("Complete Task",
-                  style: TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w700)),
-
-              const SizedBox(height: 14),
-
-              Row(
-                children: [
-                  _imageBox(Icons.camera_alt, "Camera",
-                          () => _pickImage(ImageSource.camera)),
-                  const SizedBox(width: 12),
-                  _imageBox(Icons.photo_library, "Gallery",
-                          () => _pickImage(ImageSource.gallery)),
-                ],
-              ),
-
-              if (selectedImage != null) ...[
-                const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.file(selectedImage!,
-                      height: 120, fit: BoxFit.cover),
-                ),
-              ],
-
-              const SizedBox(height: 14),
-
-              TextField(
-                controller: notesController,
-                maxLines: 3,
-                decoration: InputDecoration(
-                  hintText: "Add notes (optional)",
-                  filled: true,
-                  fillColor: const Color(0xFFF8F9FB),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed:
-                      endingTask ? null : () => Navigator.pop(context),
-                      child: const Text("Cancel"),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: endingTask ? null : _endTask, // 🔥 block multiple taps
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                      ),
-                      child: endingTask
-                          ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                          : const Text("Mark as Complete"),
-                    ),
-                  ),
-
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   // ================= HELPERS =================
 
-  Widget _imageBox(IconData icon, String label, VoidCallback onTap) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          height: 90,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 28, color: primaryColor),
-              const SizedBox(height: 6),
-              Text(label, style: const TextStyle(fontSize: 12)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+
 
   Widget _info(String label, String value) {
     return Padding(

@@ -74,6 +74,7 @@ class DeliveryTaskRepository {
     required int taskId,
     required String notes,
     required File image,
+    required String statusOfDelivery,
   }) async {
     try {
       final formData = FormData.fromMap({
@@ -82,6 +83,7 @@ class DeliveryTaskRepository {
           image.path,
           filename: image.path.split('/').last,
         ),
+        "status_of_delivery"  : statusOfDelivery,
       });
 
       debugPrint("📦 END TASK => $taskId | notes: $notes | image: ${image.path}");

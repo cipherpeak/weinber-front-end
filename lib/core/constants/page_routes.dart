@@ -444,26 +444,41 @@ final GoRouter router = GoRouter(
 
     GoRoute(
       path: routerAdvantageTaskDetailsPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const AdvantageTaskDetailsScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+
+        final int taskId = data["taskId"];
+        final String status = data["status"];
+
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: AdvantageTaskDetailsScreen(
+            taskId: taskId,
+            status: status,
+          ),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
+
 
     GoRoute(
       path: routerAdvantageTaskInProgressPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const AdvantageTaskInProgressScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final taskId = state.extra as int;
+        return  CustomTransitionPage(
+          key: state.pageKey,
+          child:  AdvantageTaskInProgressScreen(taskId: taskId,),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+}
     ),
 
     GoRoute(

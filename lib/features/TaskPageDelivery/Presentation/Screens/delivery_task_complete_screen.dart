@@ -13,9 +13,11 @@ import '../../Api/delivery_task_repository.dart';
 class DeliveryTaskCompleteScreen extends ConsumerStatefulWidget {
   final int taskId;
 
+
   const DeliveryTaskCompleteScreen({
     super.key,
     required this.taskId,
+
   });
 
   @override
@@ -26,11 +28,22 @@ class DeliveryTaskCompleteScreen extends ConsumerStatefulWidget {
 class _DeliveryTaskCompleteScreenState
     extends ConsumerState<DeliveryTaskCompleteScreen> {
 
+  final List<String> deliveryStatuses = [
+    "completed",
+    "rejected",
+    "returned",
+    "cancelled",
+  ];
+
+
   final repo = DeliveryTaskRepository();
 
   File? selectedImage;
   final notesController = TextEditingController();
   bool endingTask = false;
+  String statusOfDelivery = "";
+
+
 
   // ================= IMAGE PICK =================
 
@@ -48,6 +61,17 @@ class _DeliveryTaskCompleteScreenState
   // ================= END TASK =================
 
   Future<void> _endTask() async {
+
+    if (statusOfDelivery.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Please select delivery status"),
+        ),
+      );
+      return;
+    }
+
     if (endingTask) return;
 
     if (selectedImage == null) {
@@ -62,13 +86,16 @@ class _DeliveryTaskCompleteScreenState
 
     setState(() => endingTask = true);
 
-    final compressed = await compressImage(selectedImage!);
+    final compressed =
+    selectedImage != null ? await compressImage(selectedImage!) : null;
+
 
     try {
       await repo.endDeliveryTask(
         taskId: widget.taskId,
         notes: notesController.text,
-        image: compressed,
+        image: compressed!,
+        statusOfDelivery: statusOfDelivery,
       );
 
       // ✅ refresh home
@@ -152,6 +179,51 @@ class _DeliveryTaskCompleteScreenState
             ],
 
             const SizedBox(height: 20),
+
+            const Text(
+              "Delivery Status",
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            ),
+
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F3F5),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: statusOfDelivery.isEmpty ? null : statusOfDelivery,
+                  hint: const Text(
+                    "Select delivery status",
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  ),
+                  isExpanded: true,
+                  items: deliveryStatuses
+                      .map(
+                        (status) => DropdownMenuItem<String>(
+                      value: status,
+                      child: Text(
+                        status.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                      .toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      statusOfDelivery = value!;
+                    });
+                  },
+                ),
+              ),
+            ),
+
 
             const Text("Notes (optional)",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
