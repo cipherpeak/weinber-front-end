@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/constants/dio_interceptor.dart';
 import '../Model/announcement_model.dart';
@@ -10,13 +11,30 @@ class AnnouncementRepository {
         ApiEndpoints.baseUrl + ApiEndpoints.companyAnnouncements,
       );
 
-      final list = res.data["announcements"] as List;
+      debugPrint("✅ ANNOUNCEMENTS STATUS: ${res.statusCode}");
+      debugPrint("✅ ANNOUNCEMENTS RESPONSE: ${res.data}");
 
-      return list.map((e) => AnnouncementModel.fromJson(e)).toList();
-    } on DioException catch (e, st) {
-      print("❌ ANNOUNCEMENT ERROR => $e");
-      print("🧵 STACK TRACE => $st");
-      throw Exception("Failed to load announcements");
+      final list = res.data["announcements"] as List? ?? [];
+
+      return list
+          .map((e) => AnnouncementModel.fromJson(e))
+          .toList();
+    } on DioException catch (e) {
+      debugPrint("❌ ANNOUNCEMENT DIO ERROR");
+      debugPrint("Message: ${e.message}");
+      debugPrint("StatusCode: ${e.response?.statusCode}");
+      debugPrint("Response: ${e.response?.data}");
+
+      throw Exception(
+        e.response?.data?["error"] ??
+            e.response?.data?["message"] ??
+            "Failed to load announcements",
+      );
+    } catch (e, st) {
+      debugPrint("❌ ANNOUNCEMENT UNKNOWN ERROR: $e");
+      debugPrintStack(stackTrace: st);
+
+      throw Exception("Something went wrong while loading announcements");
     }
   }
 }

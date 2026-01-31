@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
-
 import '../../../core/constants/api_endpoints.dart';
 import '../../../core/constants/dio_interceptor.dart';
 import '../Model/advantage_task_details_model.dart';
@@ -9,8 +7,6 @@ import '../Model/advantage_task_model.dart';
 import '../Model/advantage_task_start_details_model.dart';
 
 class AdvantageTaskRepository {
-
-
   Future<void> createAdvantageTask({
     required String detailingSite,
     required String plu,
@@ -41,7 +37,6 @@ class AdvantageTaskRepository {
     }
   }
 
-
   // ▶ START TASK
   Future<void> startAdvantageTask(int taskId) async {
     try {
@@ -63,7 +58,6 @@ class AdvantageTaskRepository {
     }
   }
 
-
   // ▶ FETCH STARTED TASK DETAILS
   Future<AdvantageTaskStartDetails> fetchAdvantageStartedTask(int taskId) async {
     try {
@@ -76,7 +70,6 @@ class AdvantageTaskRepository {
       throw Exception("Failed to load started task details");
     }
   }
-
 
   Future<List<AdvantageTaskModel>> fetchAdvantageTasks() async {
     try {
@@ -105,5 +98,4 @@ class AdvantageTaskRepository {
       throw Exception("Failed to load advantage task details");
     }
   }
-
 }

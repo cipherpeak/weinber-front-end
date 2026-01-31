@@ -10,11 +10,28 @@ class HomeRepository {
         ApiEndpoints.baseUrl + ApiEndpoints.home,
       );
 
+      print("✅ HOME API SUCCESS: ${res.data}");
+
       return HomeResponse.fromJson(res.data);
+    } on DioException catch (e) {
+      print("❌ DIO ERROR IN HOME API");
+      print("Message: ${e.message}");
+      print("Status Code: ${e.response?.statusCode}");
+      print("Response Data: ${e.response?.data}");
+      print("Headers: ${e.response?.headers}");
+
+      // 👇 Extract proper backend message
+      final errorMessage =
+          e.response?.data?["error"] ??
+              e.response?.data?["message"] ??
+              "Failed to load home data";
+
+      throw Exception(errorMessage);
     } catch (e, st) {
-      print("❌ HOME API ERROR => $e");
+      print("❌ UNKNOWN HOME ERROR: $e");
       print("🧵 STACK TRACE => $st");
-      rethrow;
+      throw Exception("Something went wrong");
     }
   }
 }
+

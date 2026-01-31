@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/constants/api_endpoints.dart';
 import '../../../../core/constants/dio_interceptor.dart';
 
@@ -12,7 +13,7 @@ class AttendanceRepository {
     required String timeZone,
   }) async {
     try {
-      await DioClient.dio.post(
+      final res = await DioClient.dio.post(
         ApiEndpoints.baseUrl + ApiEndpoints.checkIn,
         data: {
           "location": location,
@@ -21,8 +22,25 @@ class AttendanceRepository {
           "time_zone": timeZone,
         },
       );
+
+      debugPrint("✅ CHECK-IN STATUS: ${res.statusCode}");
+      debugPrint("✅ CHECK-IN RESPONSE: ${res.data}");
+
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Check-in failed");
+      debugPrint("❌ CHECK-IN DIO ERROR");
+      debugPrint("Message: ${e.message}");
+      debugPrint("StatusCode: ${e.response?.statusCode}");
+      debugPrint("Response: ${e.response?.data}");
+
+      throw Exception(
+        e.response?.data?["error"] ??
+            e.response?.data?["message"] ??
+            "Check-in failed",
+      );
+    } catch (e, st) {
+      debugPrint("❌ CHECK-IN UNKNOWN ERROR: $e");
+      debugPrintStack(stackTrace: st);
+      throw Exception("Something went wrong during check-in");
     }
   }
 
@@ -35,7 +53,7 @@ class AttendanceRepository {
     required String reason,
   }) async {
     try {
-      await DioClient.dio.post(
+      final res = await DioClient.dio.post(
         ApiEndpoints.baseUrl + ApiEndpoints.checkOut,
         data: {
           "location": location,
@@ -45,8 +63,25 @@ class AttendanceRepository {
           "reason": reason,
         },
       );
+
+      debugPrint("✅ CHECK-OUT STATUS: ${res.statusCode}");
+      debugPrint("✅ CHECK-OUT RESPONSE: ${res.data}");
+
     } on DioException catch (e) {
-      throw Exception(e.response?.data["message"] ?? "Check-out failed");
+      debugPrint("❌ CHECK-OUT DIO ERROR");
+      debugPrint("Message: ${e.message}");
+      debugPrint("StatusCode: ${e.response?.statusCode}");
+      debugPrint("Response: ${e.response?.data}");
+
+      throw Exception(
+        e.response?.data?["error"] ??
+            e.response?.data?["message"] ??
+            "Check-out failed",
+      );
+    } catch (e, st) {
+      debugPrint("❌ CHECK-OUT UNKNOWN ERROR: $e");
+      debugPrintStack(stackTrace: st);
+      throw Exception("Something went wrong during check-out");
     }
   }
 }

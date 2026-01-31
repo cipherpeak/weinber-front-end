@@ -408,26 +408,37 @@ final GoRouter router = GoRouter(
     // --- Task details (outside shell) ---
     GoRoute(
       path: routerDaxTaskDetailsPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
+      pageBuilder: (context, state) {
+
+        final data = state.extra as Map<String, dynamic>;
+        final int taskId = data["taskId"];
+        final String status = data["status"];
+        return CustomTransitionPage(
         key: state.pageKey,
-        child: const DaxTaskDetailsScreen(),
+        child:  DaxTaskDetailsScreen(taskId: taskId, status: status,),
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
         transitionsBuilder: (context, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
-      ),
+      ); }
     ),
 
     GoRoute(
       path: routerDaxTaskInProgressPage,
-      pageBuilder: (context, state) => CustomTransitionPage(
-        key: state.pageKey,
-        child: const DaxTaskInProgressScreen(),
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 500),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-            FadeTransition(opacity: animation, child: child),
-      ),
+      pageBuilder: (context, state) {
+        final data = state.extra as Map<String, dynamic>;
+        final int taskId = data["taskId"];
+
+        return CustomTransitionPage(
+          key: state.pageKey,
+          child: DaxTaskInProgressScreen(taskId: taskId),
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 500),
+          transitionsBuilder:
+              (context, animation, secondaryAnimation, child) =>
+              FadeTransition(opacity: animation, child: child),
+        );
+      },
     ),
 
     GoRoute(
